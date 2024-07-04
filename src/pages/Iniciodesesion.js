@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../assets/css/Inicio_de_sesion.css';  // Ajusta la ruta de importación aquí
+import '../assets/css/Inicio_de_sesion.css';  
 
 const InicioDeSesion = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
