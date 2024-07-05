@@ -10,12 +10,16 @@ import './assets/css/tailwind.css';
 function App() {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<VentanaPrincipal />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Rutas que no usan Layout */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* Rutas que usan Layout */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<VentanaPrincipal />} />
+          {/* Agrega más rutas aquí dentro del Layout si es necesario */}
+        </Route>
+      </Routes>
     </Router>
   );
 }

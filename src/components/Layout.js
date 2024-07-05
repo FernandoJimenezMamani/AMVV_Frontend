@@ -1,32 +1,33 @@
+// components/Layout.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import '../assets/css/Layout.css';
 import logo from '../assets/img/logo.png';
 
-const Layout = ({ children }) => {
+const Layout = () => {
   return (
     <div>
       <nav>
         <ul>
-          <>
           <div className="logo-container">
             <img src={logo} alt="Logo" />
             <li>A.M.V.V</li>
           </div>
-            <li style={{ marginLeft: '110px' }}><Link to="/">Partidos</Link></li>
-            <li><Link to="/">Posiciones</Link></li>
-            <li style={{ marginLeft: '510px' }}>|</li>
-            <li className="search-container"  >
-              <input type="text" placeholder="Buscar..." className="search-input" />
-              <button className="search-button">
-                <span className="material-icons">search</span>
-              </button>
-            </li>
-            <li ><Link to="/login">Iniciar Sesion</Link></li>
-          </>
+          <li style={{ marginLeft: '110px' }}><Link to="/">Partidos</Link></li>
+          <li><Link to="/">Posiciones</Link></li>
+          <li style={{ marginLeft: '510px' }}>|</li>
+          <li className="search-container">
+            <input type="text" placeholder="Buscar..." className="search-input" />
+            <button className="search-button">
+              <span className="material-icons">search</span>
+            </button>
+          </li>
+          <li><Link to="/login">Iniciar Sesion</Link></li>
         </ul>
       </nav>
-      <div>{children}</div>
+      <main>
+        <Outlet />
+      </main>
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-section">
