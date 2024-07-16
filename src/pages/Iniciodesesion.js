@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../assets/css/Inicio_de_sesion.css';  
+import logo from '../assets/img/logo.png';
 
 const InicioDeSesion = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -30,6 +31,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
   return (
     <div className="login-container">
       <div className="login-box">
+      <img src={logo} alt="Login Image" className="login-image" />
         <h1>INICIO DE SESION</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-container">

@@ -1,0 +1,28 @@
+/* assets/css/Sidebar.css */
+.sidebar-layout {
+  display: flex;
+}
+
+.sidebar {
+  width: 350px;
+  background: linear-gradient(to bottom, #507788, #141E22);
+  color: white;
+  padding: 20px;
+  height: 100vh;
+}
+
+.sidebar a {
+  display: block;
+  color: white;
+  padding: 10px 0;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  background-color: #575757;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+}

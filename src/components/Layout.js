@@ -14,8 +14,8 @@ const Layout = () => {
             <li>A.M.V.V</li>
           </div>
           <li style={{ marginLeft: '110px' }}><Link to="/">Partidos</Link></li>
-          <li><Link to="/">Posiciones</Link></li>
-          <li style={{ marginLeft: '510px' }}>|</li>
+          <li><Link to="/Campeonatos/Registrar">Posiciones</Link></li>
+          <li style={{ marginLeft: '500px' }}>|</li>
           <li className="search-container">
             <input type="text" placeholder="Buscar..." className="search-input" />
             <button className="search-button">
