@@ -4,12 +4,12 @@ import { DatePicker } from 'antd';
 import moment from 'moment';
 import '../../assets/css/Campeonato.css';
 
-const { RangePicker } = DatePicker; 
+const { RangePicker } = DatePicker;
+
 const RegistroCampeonato = () => {
   const [formData, setFormData] = useState({
     nombre: '',
-    fecha_inicio: '',
-    fecha_fin: ''
+    fecha_rango: [moment(), moment().add(1, 'days')]
   });
 
   const handleChange = (e) => {
@@ -18,18 +18,23 @@ const RegistroCampeonato = () => {
       [e.target.name]: e.target.value
     });
   };
- 
-  const handleDateChange = (date, dateString, name) => {
+
+  const handleDateChange = (dates) => {
     setFormData({
       ...formData,
-      [name]: date
+      fecha_rango: dates
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/campeonato/insert', formData);
+      const [fecha_inicio, fecha_fin] = formData.fecha_rango;
+      const response = await axios.post('/campeonato/insert', {
+        nombre: formData.nombre,
+        fecha_inicio: fecha_inicio.toISOString(),
+        fecha_fin: fecha_fin.toISOString()
+      });
       console.log(response.data);
       alert('Campeonato creado exitosamente');
     } catch (error) {
@@ -45,23 +50,26 @@ const RegistroCampeonato = () => {
         <div className="form-group">
           <input
             type="text"
-            placeholder='Nombre'
+            placeholder="Nombre"
             id="nombre"
             name="nombre"
             value={formData.nombre}
-            onChange={handleChange} />
+            onChange={handleChange}
+          />
         </div>
         <div className="form-group">
-          <label>Rango de Fechas:</label>
           <RangePicker
+            className="custom-range-picker"
             showTime
             value={formData.fecha_rango}
             onChange={handleDateChange}
             format="YYYY-MM-DD HH:mm:ss"
+            placeholder={['Fecha de inicio', 'Fecha de fin']}
           />
         </div>
- 
-        <button type="submit">Registrar</button>
+        <div className="form-group">
+          <button id="RegCampBtn" type="submit">Registrar</button>
+        </div>
       </form>
     </div>
   );
