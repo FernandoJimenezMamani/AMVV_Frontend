@@ -17,10 +17,12 @@ const Sidebar = () => {
         </div>
         {!isSidebarCollapsed && (
           <>
-            <Link to="/campeonatos">Campeonatos</Link>
-            <Link to="/clubes">Clubes</Link>
+            <Link to="/Campeonatos/Registrar">Campeonatos</Link>
+            <Link to="/clubes/indice">Clubes</Link>
+            <Link to="/equipos/indice">Equipos</Link>
             <Link to="/arbitros">Árbitros</Link>
             <Link to="/divisiones">Divisiones</Link>
+            <Link to="/categorias/indice">Categorias</Link>
           </>
         )}
       </div>
