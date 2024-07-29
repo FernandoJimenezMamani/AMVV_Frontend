@@ -1,4 +1,5 @@
-.registro-campeonato {
+/* EditarClub.css */
+.editar-club {
   max-width: auto;
   margin: 0;
   padding: 20px;
@@ -9,7 +10,7 @@
   align-items: center;
 }
 
-.registro-campeonato h2 {
+.editar-club h2 {
   margin-top: 40px;
   text-align: center;
   margin-bottom: 60px;
@@ -26,7 +27,7 @@
 }
 
 .form-group input[type="text"],
-.form-group input[type="file"] {
+.form-group textarea {
   width: 800px;
   height: 69px;
   padding: 8px;
@@ -36,40 +37,29 @@
   margin-bottom: 10px;
 }
 
-.form-group input:hover {
+.form-group input[type="file"] {
+  width: 800px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 15px;
+  background-color: white;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
   background-color: #F5F5F5;
 }
 
 .form-group input[type="text"]::placeholder,
-.form-group input[type="file"]::placeholder {
+.form-group textarea::placeholder {
   color: #000000;
   opacity: 0.5;
   font-size: 18px;
 }
 
-.custom-range-picker {
-  width: 800px;
-  height: 69px;
-  border-radius: 15px;
-  background-color: white;
-}
-
-.custom-range-picker:hover {
-  background-color: #F5F5F5;
-}
-
-.custom-range-picker input {
-  height: 40px !important;
-  font-size: 18px !important;
-}
-
-.custom-range-picker input::placeholder {
-  color: #000000 !important;
-  font-size: 18px;
-  opacity: 0.5;
-}
-
-#RegCampBtn {
+#edit-club-btn {
   margin-top: 20px;
   width: 200px;
   height: 50px;
@@ -82,13 +72,6 @@
   font-size: 18px;
 }
 
-#RegCampBtn:hover {
+#edit-club-btn:hover {
   opacity: 0.7;
-}
-
-.image-preview {
-  max-width: 100%;
-  max-height: 300px;
-  border-radius: 10px;
-  margin-top: 10px;
 }

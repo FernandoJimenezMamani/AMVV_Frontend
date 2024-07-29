@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/ClubesEditar.css'; // Puedes crear este archivo CSS para estilos específicos
+import '../../assets/css/Categorias/CategoriasEditar.css'; // Puedes crear este archivo CSS para estilos específicos
 
 const EditarCategoria = () => {
   const { id } = useParams();

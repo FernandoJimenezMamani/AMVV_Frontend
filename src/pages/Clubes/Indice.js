@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/ClubesIndice.css'; // Asumimos que tienes este archivo para los estilos
+import '../../assets/css/Clubes/ClubesIndice.css'; // Asumimos que tienes este archivo para los estilos
 
 const ListaClubes = () => {
   const [clubes, setClubes] = useState([]);
@@ -27,7 +27,7 @@ const ListaClubes = () => {
     navigate(`/clubes/editar/${clubId}`);
   };
 
-  const handleRegistrarClick = (clubId) => {
+  const handleRegistrarClick = () => {
     navigate(`/clubes/registrar`);
   };
 
@@ -53,13 +53,18 @@ const ListaClubes = () => {
     setClubToDelete(null);
   };
 
+  const handleProfileClick = (clubId) => {
+    navigate(`/clubes/perfil/${clubId}`);
+  };
+
   return (
     <div className="clubes-lista">
       <h2>Lista de Clubes</h2>
-      <button className="editar-btn"  onClick={() => handleRegistrarClick()}>Registrar</button>
+      <button className="registrar-btn" onClick={handleRegistrarClick}>Registrar</button>
       <table>
         <thead>
           <tr>
+            <th>Logo</th>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Acción</th>
@@ -68,9 +73,11 @@ const ListaClubes = () => {
         <tbody>
           {clubes.map((club) => (
             <tr key={club.id}>
+              <td><img src={club.club_imagen} alt={`${club.nombre} logo`} className="club-logo" /></td>
               <td>{club.nombre}</td>
               <td>{club.descripcion}</td>
               <td>
+                <button className="perfil-btn" onClick={() => handleProfileClick(club.id)}>Perfil</button>
                 <button className="editar-btn" onClick={() => handleEditClick(club.id)}>Editar</button>
                 <button className="eliminar-btn" onClick={() => handleDeleteClick(club.id)}>Eliminar</button>
               </td>

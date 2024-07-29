@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../assets/css/Campeonato.css'; // Usamos el mismo archivo CSS
+import '../../assets/css/Equipos/EquiposRegistrar.css'; // Usamos el mismo archivo CSS
 
 const RegistroEquipo = () => {
   const [formData, setFormData] = useState({

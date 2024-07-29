@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/ClubesIndice.css'; // Reutilizamos los estilos existentes
+import '../../assets/css/Categorias/CategoriasIndice.css'; // Reutilizamos los estilos existentes
 
 const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);

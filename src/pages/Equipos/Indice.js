@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/ClubesIndice.css'; // Asumimos que tienes este archivo para los estilos
+import '../../assets/css/Equipos/EquiposIndice.css'; // Asumimos que tienes este archivo para los estilos
 
 const ListaEquipos = () => {
   const [equipos, setEquipos] = useState([]);

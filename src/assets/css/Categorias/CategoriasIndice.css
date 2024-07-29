@@ -95,3 +95,12 @@
   .confirm-btn:hover, .cancel-btn:hover {
     background-color: #2A5B63;
   }
+  
+  /* Estilos para las imágenes de los logos */
+  td img.club-logo {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  

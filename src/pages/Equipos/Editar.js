@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/ClubesEditar.css'; // Usamos el mismo archivo CSS
+import '../../assets/css/Equipos/EquiposEditar.css'; // Usamos el mismo archivo CSS
 
 const EditarEquipo = () => {
   const { id } = useParams();
@@ -93,7 +93,6 @@ const EditarEquipo = () => {
             value={formData.club_id}
             onChange={handleChange}
           >
-            <option value="">Seleccione un Club</option>
             {clubes.map(club => (
               <option key={club.id} value={club.id}>
                 {club.nombre}
@@ -108,7 +107,6 @@ const EditarEquipo = () => {
             value={formData.categoria_id}
             onChange={handleChange}
           >
-            <option value="">Seleccione una Categoría</option>
             {categorias.map(categoria => (
               <option key={categoria.id} value={categoria.id}>
                 {categoria.nombre}

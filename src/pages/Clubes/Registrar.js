@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../../assets/css/Campeonato.css'; // Usamos el mismo archivo CSS
+import Cropper from 'react-easy-crop';
+import Modal from 'react-modal';
+import Slider from '@mui/material/Slider';
+import { getCroppedImg } from '../RecortarImagen.js';
+import '../../assets/css/Clubes/ClubesRegistrar.css'; // Usamos el mismo archivo CSS
 
 const RegistroClub = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +13,14 @@ const RegistroClub = () => {
     user_id: 1
   });
 
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -16,10 +28,36 @@ const RegistroClub = () => {
     });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    setImagePreview(URL.createObjectURL(file));
+    setModalIsOpen(true);
+  };
+
+  const onCropComplete = (croppedArea, croppedAreaPixels) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const data = new FormData();
+    data.append('nombre', formData.nombre);
+    data.append('descripcion', formData.descripcion);
+    data.append('user_id', formData.user_id);
+    if (croppedImage) {
+      data.append('image', croppedImage);
+    } else if (image) {
+      data.append('image', image);
+    }
+
     try {
-      const response = await axios.post('http://localhost:5002/api/club/post_club', formData);
+      const response = await axios.post('http://localhost:5002/api/club/post_club', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
       console.log(response.data);
       alert('Club creado exitosamente');
     } catch (error) {
@@ -28,10 +66,21 @@ const RegistroClub = () => {
     }
   };
 
+  const handleCropConfirm = async () => {
+    try {
+      const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
+      setCroppedImage(croppedImage);
+      setImagePreview(URL.createObjectURL(croppedImage));
+      setModalIsOpen(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
     <div className="registro-campeonato">
       <h2>Registrar Club</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <input
             type="text"
@@ -52,11 +101,57 @@ const RegistroClub = () => {
             onChange={handleChange}
           />
         </div>
-
+        <div className="form-group">
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleImageChange}
+          />
+        </div>
+        {imagePreview && (
+          <div className="form-group">
+            <img src={imagePreview} alt="Vista previa de la imagen" className="image-preview" />
+          </div>
+        )}
         <div className="form-group">
           <button id="RegCampBtn" type="submit">Registrar</button>
         </div>
       </form>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        contentLabel="Crop Image"
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <h2>Recortar Imagen</h2>
+        <div className="crop-container">
+          <Cropper
+            image={imagePreview}
+            crop={crop}
+            zoom={zoom}
+            aspect={1}
+            onCropChange={setCrop}
+            onZoomChange={setZoom}
+            onCropComplete={onCropComplete}
+          />
+        </div>
+        <div className="controls">
+          <Slider
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            onChange={(e, zoom) => setZoom(zoom)}
+          />
+        </div>
+        <div className="buttons">
+          <button onClick={() => setModalIsOpen(false)}>Cancelar</button>
+          <button onClick={handleCropConfirm}>Aplicar</button>
+        </div>
+      </Modal>
     </div>
   );
 };

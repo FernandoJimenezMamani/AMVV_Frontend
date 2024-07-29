@@ -8,6 +8,7 @@ import RegistroCampeonato from './pages/Campeonatos/Registrar';
 import IndiceClub from './pages/Clubes/Indice';
 import RegistrarClub from './pages/Clubes/Registrar';
 import EditarClub from './pages/Clubes/Editar';
+import PerfilClub from './pages/Clubes/Perfil';
 import ListaCategorias from './pages/Categorias/Indice';
 import RegistrarCategoria from './pages/Categorias/Registrar';
 import EditarCategoria from './pages/Categorias/Editar';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/clubes/indice" element={<IndiceClub />} />
           <Route path="/clubes/registrar" element={<RegistrarClub />} />
           <Route path="/clubes/editar/:id" element={<EditarClub />} />
+          <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
             {/* Rutas para Categorías */}
             <Route path="/categorias/indice" element={<ListaCategorias />} />
           <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
