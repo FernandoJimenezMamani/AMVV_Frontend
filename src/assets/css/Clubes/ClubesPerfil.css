@@ -1,0 +1,57 @@
+.perfil-club {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .club-logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+  }
+  
+  .club-info {
+    flex: 1;
+  }
+  
+  .club-info h2 {
+    font-size: 32px;
+    color: #1a5d57;
+    margin: 0;
+  }
+  
+  .club-info p {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0 0 0;
+  }
+  
+  .perfil-teams {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .team-card {
+    flex: 1 1 calc(50% - 20px);
+    padding: 20px;
+    background-color: #1a5d57;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  

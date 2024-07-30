@@ -37,28 +37,29 @@ const Sidebar = () => {
                 Clubes
               </a>
               <div className={`submenu ${expandedSection === 'clubes' ? 'open' : ''}`}>
-                <Link to="/clubes/Indice">Indice</Link>
+                <Link to="/clubes/indice">Clubes</Link>
                 <Link to="/clubes/Registrar">Registrar</Link>
               </div>
             </div>
             <div className="menu-item">
-              <a className="main-link" onClick={() => toggleSection('arbitros')}>
-                Árbitros
+              <a className="main-link" onClick={() => toggleSection('equipos')}>
+                Equipos
               </a>
               <div className={`submenu ${expandedSection === 'arbitros' ? 'open' : ''}`}>
-                <Link to="/arbitros/Indice">Indice</Link>
+                <Link to="/equipos/indice">Equipos</Link>
                 <Link to="/arbitros/Registrar">Registrar</Link>
               </div>
             </div>
             <div className="menu-item">
               <a className="main-link" onClick={() => toggleSection('divisiones')}>
-                Divisiones
+                Categorias
               </a>
               <div className={`submenu ${expandedSection === 'divisiones' ? 'open' : ''}`}>
-                <Link to="/divisiones/Indice">Indice</Link>
+                <Link to="/categorias/indice">Categorias</Link>
                 <Link to="/divisiones/Registrar">Registrar</Link>
               </div>
             </div>
+
           </>
         )}
       </div>
