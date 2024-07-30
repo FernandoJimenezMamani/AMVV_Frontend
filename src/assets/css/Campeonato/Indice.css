@@ -1,0 +1,67 @@
+.campeonatos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .campeonato-card {
+    background: linear-gradient(to bottom, #507788, #141E22);
+    border: 1px solid #ccc;
+    margin:40px;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .campeonato-card:hover {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+  
+  .campeonato-nombre {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: white;
+    font-weight:bold;
+  }
+  
+  .campeonato-fecha {
+    font-size: 1em;
+    color: white;
+  }
+
+  .campeonato-buttons {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .campeonato-card:hover .campeonato-buttons {
+    opacity: 1;
+  }
+
+  .campeonato-card:hover .campeonato-fecha  {
+    color: transparent;
+  }
+  
+  .campeonato-buttons button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #3D8FA4;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .campeonato-buttons button:hover {
+    background-color: #17363E;
+  }
