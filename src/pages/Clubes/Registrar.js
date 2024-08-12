@@ -4,7 +4,7 @@ import Cropper from 'react-easy-crop';
 import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
-import '../../assets/css/Clubes/ClubesRegistrar.css'; // Usamos el mismo archivo CSS
+import '../../assets/css/Registro.css'; 
 
 const RegistroClub = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ const RegistroClub = () => {
   });
 
   const [image, setImage] = useState(null);
+  const [tempImage, setTempImage] = useState(null); 
   const [imagePreview, setImagePreview] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -30,9 +31,11 @@ const RegistroClub = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setImage(file);
-    setImagePreview(URL.createObjectURL(file));
-    setModalIsOpen(true);
+    if (file) {
+      setTempImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setModalIsOpen(true);
+    }
   };
 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
@@ -70,11 +73,19 @@ const RegistroClub = () => {
     try {
       const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
       setCroppedImage(croppedImage);
+      setImage(URL.createObjectURL(croppedImage));
       setImagePreview(URL.createObjectURL(croppedImage));
       setModalIsOpen(false);
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleCancel = () => {
+    setModalIsOpen(false);
+    setTempImage(null);
+    setImagePreview(null); 
+    document.getElementById('image').value = ''; 
   };
 
   return (
@@ -107,7 +118,12 @@ const RegistroClub = () => {
             id="image"
             name="image"
             onChange={handleImageChange}
+            className="file-input"
           />
+          <label htmlFor="image" className="file-label">
+            <span className="file-button"><i className="fa fa-image"></i></span>
+            <span className="file-name">{imagePreview ? "Archivo seleccionado" : "Sin archivos seleccionados"}</span>
+          </label>
         </div>
         {imagePreview && (
           <div className="form-group">
@@ -121,12 +137,12 @@ const RegistroClub = () => {
 
       <Modal
         isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
+        onRequestClose={handleCancel}
         contentLabel="Crop Image"
         className="modal"
         overlayClassName="overlay"
       >
-        <h2>Recortar Imagen</h2>
+        <h2>Edita la imagen</h2>
         <div className="crop-container">
           <Cropper
             image={imagePreview}
@@ -148,8 +164,8 @@ const RegistroClub = () => {
           />
         </div>
         <div className="buttons">
-          <button onClick={() => setModalIsOpen(false)}>Cancelar</button>
-          <button onClick={handleCropConfirm}>Aplicar</button>
+          <button className='bottonsImageCancel' onClick={handleCancel}>Cancelar</button>
+          <button className='bottonsImage' onClick={handleCropConfirm}>Aplicar</button>
         </div>
       </Modal>
     </div>

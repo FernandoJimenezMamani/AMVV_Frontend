@@ -44,12 +44,7 @@ const App = () => {
         <Routes>
         <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/sidebar" element={<Sidebar />} />
-          <Route path="/" element={<Layout />}>
-              <Route index element={<VentanaPrincipal />} />
-            </Route>
-          <Route element={<PrivateRoutes />}>
-            
-            <Route path="/" element={<Sidebar />}>
+        <Route path="/" element={<Sidebar />}>
               <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
               <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
               <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
@@ -66,6 +61,12 @@ const App = () => {
               <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
             </Route>
+          <Route path="/" element={<Layout />}>
+              <Route index element={<VentanaPrincipal />} />
+            </Route>
+          <Route element={<PrivateRoutes />}>
+            
+            
           </Route>
         </Routes>
       </Router>

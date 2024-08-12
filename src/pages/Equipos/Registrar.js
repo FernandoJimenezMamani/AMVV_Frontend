@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../assets/css/Equipos/EquiposRegistrar.css'; // Usamos el mismo archivo CSS
+import { Select } from 'antd';
+import '../../assets/css/Registro.css';
+
+const { Option } = Select;
 
 const RegistroEquipo = () => {
   const [formData, setFormData] = useState({
     nombre: '',
-    club_id: '',
-    categoria_id: '',
+    club_id: null, // Usa null en lugar de una cadena vacía
+    categoria_id: null, // Usa null en lugar de una cadena vacía
     user_id: 1
   });
   const [clubes, setClubes] = useState([]);
@@ -35,10 +38,10 @@ const RegistroEquipo = () => {
     fetchCategorias();
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (name, value) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
@@ -65,42 +68,41 @@ const RegistroEquipo = () => {
             id="nombre"
             name="nombre"
             value={formData.nombre}
-            onChange={handleChange}
+            onChange={(e) => handleChange('nombre', e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <select
-            id="club_id"
-            name="club_id"
+        <div className="select-container">
+          <Select
+            placeholder="Seleccione un Club"
             value={formData.club_id}
-            onChange={handleChange}
+            onChange={(value) => handleChange('club_id', value)}
+            style={{ width: '100%' }}
+            allowClear
           >
-            <option value="">Seleccione un Club</option>
             {clubes.map(club => (
-              <option key={club.id} value={club.id}>
+              <Option key={club.id} value={club.id}>
                 {club.nombre}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
         </div>
-        <div className="form-group">
-          <select
-            id="categoria_id"
-            name="categoria_id"
+        <div className="select-container">
+          <Select
+            placeholder="Seleccione una Categoría"
             value={formData.categoria_id}
-            onChange={handleChange}
+            onChange={(value) => handleChange('categoria_id', value)}
+            style={{ width: '100%' }}
+            allowClear
           >
-            <option value="">Seleccione una Categoría</option>
             {categorias.map(categoria => (
-              <option key={categoria.id} value={categoria.id}>
+              <Option key={categoria.id} value={categoria.id}>
                 {categoria.nombre}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
         </div>
-
         <div className="form-group">
-          <button id="RegCampBtn" type="submit">Registrar</button>
+          <button id="RegCampBtn" type="primary" htmlType="submit">Registrar</button>
         </div>
       </form>
     </div>

@@ -37,14 +37,13 @@ const Campeonatos = () => {
           <h2 className="campeonato-nombre">{campeonato.nombre}</h2>
           <p className="campeonato-fecha">Inicio: {new Date(campeonato.fecha_inicio).toLocaleDateString()}</p>
           <div className="campeonato-buttons">
-            <button onClick={() => handleViewDetails(campeonato.id)}>Ver Detalles</button>
-            
-              <button onClick={() => handleEdit(campeonato.id)}>Editar</button>
-            
+            <button className="buttonex" onClick={() => handleViewDetails(campeonato.id)}>Ver Detalles</button>
+            <button className="buttonex" onClick={() => handleEdit(campeonato.id)}>Editar</button>
           </div>
         </div>
       ))}
     </div>
+
   );
 };
 

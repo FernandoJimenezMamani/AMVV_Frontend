@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/Clubes/ClubesIndice.css'; // Asumimos que tienes este archivo para los estilos
+import '../../assets/css/IndiceTabla.css'; 
 
 const ListaClubes = () => {
   const [clubes, setClubes] = useState([]);
@@ -38,7 +38,7 @@ const ListaClubes = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; // Reemplaza esto según el manejo de autenticación
+      const user_id = 1; 
       await axios.put(`http://localhost:5002/api/club/delete_club/${clubToDelete}`, { user_id });
       setClubes(clubes.filter(club => club.id !== clubToDelete));
       setShowConfirm(false);
@@ -59,32 +59,33 @@ const ListaClubes = () => {
 
   return (
     <div className="clubes-lista">
-      <h2>Lista de Clubes</h2>
-      <button className="registrar-btn" onClick={handleRegistrarClick}>Registrar</button>
-      <table>
-        <thead>
+      <h2 className="clubes-lista-titulo">Lista de Clubes</h2>
+      <table className="clubes-lista-tabla">
+        <thead className="clubes-lista-thead">
           <tr>
-            <th>Logo</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acción</th>
+           <th ></th>
+            <th >Logo</th>
+            <th className="clubes-lista-th" >Nombre</th>
+            <th className="clubes-lista-th" >Acción</th>
           </tr>
         </thead>
         <tbody>
           {clubes.map((club) => (
             <tr key={club.id}>
-              <td><img src={club.club_imagen} alt={`${club.nombre} logo`} className="club-logo" /></td>
-              <td>{club.nombre}</td>
-              <td>{club.descripcion}</td>
-              <td>
-                <button className="perfil-btn" onClick={() => handleProfileClick(club.id)}>Perfil</button>
-                <button className="editar-btn" onClick={() => handleEditClick(club.id)}>Editar</button>
-                <button className="eliminar-btn" onClick={() => handleDeleteClick(club.id)}>Eliminar</button>
+              <td></td>
+              <td className="clubes-lista-td"><img src={club.club_imagen} alt={`${club.nombre} logo`} className="club-logo" /></td>
+              <td className="clubes-lista-td-nombre">{club.nombre}</td>
+              
+              <td className="clubes-lista-td">
+                <button className="club-button perfil-btn" onClick={() => handleProfileClick(club.id)}>Perfil</button>
+                <button className="club-button editar-btn" onClick={() => handleEditClick(club.id)}>Editar</button>
+                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(club.id)}>Eliminar</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+    
 
       {showConfirm && (
         <div className="confirm-modal">

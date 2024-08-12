@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DatePicker, Modal } from 'antd';
 import moment from 'moment';
-import '../../assets/css/Campeonato/Registro.css';
+import '../../assets/css/Registro.css';  
 
 const { RangePicker } = DatePicker;
 

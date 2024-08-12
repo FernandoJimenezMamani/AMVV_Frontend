@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/Equipos/EquiposIndice.css'; // Asumimos que tienes este archivo para los estilos
+import '../../assets/css/IndiceTabla.css'; 
 
 const ListaEquipos = () => {
   const [equipos, setEquipos] = useState([]);
@@ -38,7 +38,7 @@ const ListaEquipos = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; // Reemplaza esto según el manejo de autenticación
+      const user_id = 1; 
       await axios.put(`http://localhost:5002/api/equipo/delete_equipo/${equipoToDelete}`, { user_id });
       setEquipos(equipos.filter(equipo => equipo.id !== equipoToDelete));
       setShowConfirm(false);
@@ -55,26 +55,25 @@ const ListaEquipos = () => {
 
   return (
     <div className="clubes-lista">
-      <h2>Lista de Equipos</h2>
-      <button className="editar-btn" onClick={handleRegistrarClick}>Registrar</button>
-      <table>
-        <thead>
+      <h2 className="clubes-lista-titulo">Lista de Equipos</h2>
+      <table className="clubes-lista-tabla">
+        <thead  className="clubes-lista-thead">
           <tr>
             <th>Nombre del Equipo</th>
             <th>Nombre del Club</th>
             <th>Nombre de la Categoría</th>
-            <th>Acción</th>
+            <th className="clubes-lista-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {equipos.map((equipo) => (
             <tr key={equipo.id}>
               <td>{equipo.nombre}</td>
-              <td>{equipo.club_nombre}</td> {/* Mostrar el nombre del club */}
-              <td>{equipo.categoria_nombre}</td> {/* Mostrar el nombre de la categoría */}
-              <td>
-                <button className="editar-btn" onClick={() => handleEditClick(equipo.id)}>Editar</button>
-                <button className="eliminar-btn" onClick={() => handleDeleteClick(equipo.id)}>Eliminar</button>
+              <td>{equipo.club_nombre}</td> 
+              <td>{equipo.categoria_nombre}</td> 
+              <td className="clubes-lista-td">
+                <button className="club-button editar-btn" onClick={() => handleEditClick(equipo.id)}>Editar</button>
+                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(equipo.id)}>Eliminar</button>
               </td>
             </tr>
           ))}

@@ -1,25 +1,28 @@
 .perfil-club {
-    width: 80%;
-    margin: auto;
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #f7f7f7;
+    background-color: transparent;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 8px 0 16px rgba(0, 0, 0, 0.2), 
+                -8px 0 16px rgba(0, 0, 0, 0.2), 
+                0 8px 16px rgba(0, 0, 0, 0.2), 
+                0 -8px 16px rgba(0, 0, 0, 0.2);
   }
   
   .perfil-header {
     display: flex;
     align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
   }
   
   .club-logo {
     width: 150px;
     height: 150px;
-    border-radius: 10px;
+    border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #ddd;
+    margin-right: 20px;
+    border: 5px solid #143E42;
   }
   
   .club-info {
@@ -27,31 +30,41 @@
   }
   
   .club-info h2 {
-    font-size: 32px;
-    color: #1a5d57;
     margin: 0;
+    font-size: 36px;
+    color: #143E42;
+    font-weight: bold;
   }
   
   .club-info p {
     font-size: 18px;
     color: #333;
-    margin: 10px 0 0 0;
+    margin-top: 10px;
   }
   
   .perfil-teams {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
   }
   
   .team-card {
-    flex: 1 1 calc(50% - 20px);
+    background-color: #ffffff;
     padding: 20px;
-    background-color: #1a5d57;
-    color: white;
-    text-align: center;
     border-radius: 10px;
-    font-size: 18px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .team-card h3 {
+    margin: 0;
+    font-size: 24px;
+    color: #143E42;
+  }
+  
+  .team-card p {
+    font-size: 16px;
+    color: #666;
+    margin-top: 10px;
   }
   

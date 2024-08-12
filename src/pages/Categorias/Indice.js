@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/Categorias/CategoriasIndice.css'; // Reutilizamos los estilos existentes
+import '../../assets/css/IndiceTabla.css'; 
 
 const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);
@@ -55,22 +55,21 @@ const ListaCategorias = () => {
 
   return (
     <div className="clubes-lista">
-      <h2>Lista de Categorías</h2>
-      <button className="editar-btn" onClick={handleRegistrarClick}>Registrar</button>
-      <table>
-        <thead>
+      <h2 className="clubes-lista-titulo">Lista de Categorías</h2>
+      <table className="clubes-lista-tabla">
+        <thead className="clubes-lista-thead">
           <tr>
             <th>Nombre</th>
-            <th>Acción</th>
+            <th className="clubes-lista-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {categorias.map((categoria) => (
             <tr key={categoria.id}>
               <td>{categoria.nombre}</td>
-              <td>
-                <button className="editar-btn" onClick={() => handleEditClick(categoria.id)}>Editar</button>
-                <button className="eliminar-btn" onClick={() => handleDeleteClick(categoria.id)}>Eliminar</button>
+              <td className="clubes-lista-td">
+                <button className="club-button editar-btn" onClick={() => handleEditClick(categoria.id)}>Editar</button>
+                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(categoria.id)}>Eliminar</button>
               </td>
             </tr>
           ))}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Clubes/ClubesEditar.css';
+import '../../assets/css/Editar.css';
 
 const EditarClub = () => {
   const { id } = useParams();
@@ -9,7 +9,7 @@ const EditarClub = () => {
     nombre: '',
     descripcion: '',
     user_id: 2,
-    image: null // Agregado para manejar la imagen
+    image: null 
   });
   
   const navigate = useNavigate();
@@ -72,43 +72,37 @@ const EditarClub = () => {
   };  
 
   return (
-    <div className="editar-club">
-      <h2>Editar Club</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="nombre">Nombre del Club</label>
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            placeholder="Ingrese el nombre del club"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="descripcion">Descripción</label>
-          <textarea
-            id="descripcion"
-            name="descripcion"
-            value={formData.descripcion}
-            onChange={handleChange}
-            placeholder="Ingrese la descripción del club"
-            rows="4"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="image">Imagen del Club</label>
-          <input
-            type="file"
-            id="image"
-            name="image"
-            onChange={handleChange}
-          />
-        </div>
-        <button id="edit-club-btn" type="submit">Guardar Cambios</button>
-      </form>
+  <div className="editar-club">
+  <h2>Editar Club</h2>
+  <form onSubmit={handleSubmit}>
+  <label className="label-edit">Nombre del Club</label>
+    <div className="form-group">
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        value={formData.nombre}
+        onChange={handleChange}
+        placeholder="Ingrese el nombre del club"
+      />
     </div>
+    <label className="label-edit">Descripción</label>
+    <div className="form-group">
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        value={formData.descripcion}
+        onChange={handleChange}
+        placeholder="Ingrese la descripción del club"
+        rows="4"
+      />
+    </div>
+      <div className="form-group">
+      <button id="edit-club-btn" type="submit">Guardar Cambios</button>
+      </div>
+    
+  </form>
+</div>
   );  
 };
 

@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Select } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Equipos/EquiposEditar.css'; // Usamos el mismo archivo CSS
+import '../../assets/css/Editar.css';
+
+const { Option } = Select;
 
 const EditarEquipo = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     nombre: '',
-    club_id: '',
-    categoria_id: '',
+    club_id: null,
+    categoria_id: null,
     user_id: 1
   });
   const [clubes, setClubes] = useState([]);
@@ -21,8 +24,8 @@ const EditarEquipo = () => {
         const response = await axios.get(`http://localhost:5002/api/equipo/get_equipo/${id}`);
         setFormData({
           nombre: response.data.nombre,
-          club_id: response.data.club_id,
-          categoria_id: response.data.categoria_id,
+          club_id: { value: response.data.club_id, label: response.data.club_nombre },
+          categoria_id: { value: response.data.categoria_id, label: response.data.categoria_nombre },
           user_id: response.data.user_id
         });
       } catch (error) {
@@ -53,17 +56,28 @@ const EditarEquipo = () => {
     fetchCategorias();
   }, [id]);
 
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
+  const handleSelectChange = (name, option) => {
+    setFormData({
+      ...formData,
+      [name]: option
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5002/api/equipo/update_equipo/${id}`, formData);
+      await axios.put(`http://localhost:5002/api/equipo/update_equipo/${id}`, {
+        ...formData,
+        club_id: formData.club_id.value,
+        categoria_id: formData.categoria_id.value
+      });
       alert('Equipo actualizado exitosamente');
       navigate('/equipos/indice');
     } catch (error) {
@@ -76,6 +90,7 @@ const EditarEquipo = () => {
     <div className="registro-campeonato">
       <h2>Editar Equipo</h2>
       <form onSubmit={handleSubmit}>
+        <label className="label-edit">Nombre del Equipo</label>
         <div className="form-group">
           <input
             type="text"
@@ -83,40 +98,45 @@ const EditarEquipo = () => {
             id="nombre"
             name="nombre"
             value={formData.nombre}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
-        <div className="form-group">
-          <select
-            id="club_id"
-            name="club_id"
+        <label className="label-edit">Club</label>
+        <div className="select-container">
+          <Select
+            placeholder="Seleccione un Club"
             value={formData.club_id}
-            onChange={handleChange}
+            labelInValue
+            onChange={(option) => handleSelectChange('club_id', option)}
+            style={{ width: '100%' }}
+            allowClear
           >
             {clubes.map(club => (
-              <option key={club.id} value={club.id}>
+              <Option key={club.id} value={club.id}>
                 {club.nombre}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
         </div>
-        <div className="form-group">
-          <select
-            id="categoria_id"
-            name="categoria_id"
+        <label className="label-edit">Categoría</label>
+        <div className="select-container">
+          <Select
+            placeholder="Seleccione una Categoría"
             value={formData.categoria_id}
-            onChange={handleChange}
+            labelInValue
+            onChange={(option) => handleSelectChange('categoria_id', option)}
+            style={{ width: '100%' }}
+            allowClear
           >
             {categorias.map(categoria => (
-              <option key={categoria.id} value={categoria.id}>
+              <Option key={categoria.id} value={categoria.id}>
                 {categoria.nombre}
-              </option>
+              </Option>
             ))}
-          </select>
+          </Select>
         </div>
-
         <div className="form-group">
-          <button id="RegCampBtn" type="submit">Guardar Cambios</button>
+          <button id="RegCampBtn" type="primary" htmlType="submit">Guardar Cambios</button>
         </div>
       </form>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Categorias/CategoriasEditar.css'; // Puedes crear este archivo CSS para estilos específicos
+import '../../assets/css/Editar.css';
 
 const EditarCategoria = () => {
   const { id } = useParams();
@@ -50,8 +50,8 @@ const EditarCategoria = () => {
     <div className="editar-club">
       <h2>Editar Categoría</h2>
       <form onSubmit={handleSubmit}>
+      <label className="label-edit">Nombre de la Categoría</label>
         <div className="form-group">
-          <label htmlFor="nombre">Nombre de la Categoría</label>
           <input
             type="text"
             id="nombre"
@@ -61,7 +61,9 @@ const EditarCategoria = () => {
             placeholder="Ingrese el nombre de la categoría"
           />
         </div>
-        <button id="edit-club-btn" type="submit">Guardar Cambios</button>
+        <div className="form-group">
+      <button id="edit-club-btn" type="submit">Guardar Cambios</button>
+      </div>
       </form>
     </div>
   );

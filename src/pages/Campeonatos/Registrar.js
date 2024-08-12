@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { DatePicker, Modal } from 'antd';
 import moment from 'moment';
-import '../../assets/css/Campeonato/Registro.css';
+import '../../assets/css/Registro.css'; 
 
 const { RangePicker } = DatePicker;
 

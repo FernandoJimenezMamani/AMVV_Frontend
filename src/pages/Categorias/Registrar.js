@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../../assets/css/Categorias/CategoriasRegistrar.css'; // Usamos el mismo archivo CSS
+import '../../assets/css/Registro.css';
 
 const RegistroCategoria = () => {
   const [formData, setFormData] = useState({

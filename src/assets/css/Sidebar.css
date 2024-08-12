@@ -86,7 +86,7 @@
 }
 
 .submenu.open {
-  max-height: 100px; /* Ajustar según el número de elementos del submenú */
+  max-height: 100px; 
   opacity: 1;
 }
 
@@ -113,7 +113,7 @@
 
 .content {
   flex: 1;
-  margin-left: 300px; /* Ensure the content starts after the sidebar */
+  margin-left: 300px; 
   padding: 20px;
   overflow: auto;
   height: 100vh;
@@ -121,5 +121,5 @@
 }
 
 .sidebar.collapsed + .content {
-  margin-left: 80px; /* Adjust the content margin when the sidebar is collapsed */
+  margin-left: 80px;
 }
