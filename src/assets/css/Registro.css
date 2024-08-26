@@ -1,103 +1,105 @@
 .registro-campeonato {
-    max-width: auto;
-    margin: 0 ;
-    padding: 20px;
-    border-radius: 4px;
-    background-color: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: auto  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 4px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.registro-campeonato h2 {
+  margin-top: 20px;
+  text-align: center;
+  margin-bottom: 40px;
+  color: #143E42;
+  font-size: 36px;
+  font-weight: bold;
 }
   
-  .registro-campeonato h2 {
-    margin-top:40px;
-    text-align: center;
-    margin-bottom: 60px;
-    color: #143E42;
-    font-size:45px;
-    font-weight:bold;
-  }
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative; /* Asegura que el ul esté posicionado relativo al form-group */
+}
   
-  .form-group {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .custom-range-picker input::placeholder{
-    color: #000000 !important; 
-    font-size:18px; 
-    opacity:0.5;
-  }
+.custom-range-picker input::placeholder {
+  color: #000000 !important; 
+  font-size: 18px; 
+  opacity: 0.5;
+}
 
 .form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="date"],
 .form-group input[type="file"] {
-  width: 800px;
+  width: 100%;
   height: 69px;
   padding: 8px;
   border-radius: 15px;
   background-color: white;
   font-size: 18px;
   margin-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Añadir una sombra para dar más definición */
+  position: relative; /* Necesario para que el ul se posicione correctamente */
+  z-index: 2; /* Asegura que el input esté por encima del ul */
 }
-
-
 .form-group input:hover {
   background-color: #F5F5F5;
 }
 
-  #RegCampBtn:hover {
-    opacity:0.7;
-  }
+#RegCampBtn:hover {
+  opacity: 0.7;
+}
 
+.custom-modal .ant-modal-content {
+  background-color: #f0f0f0; 
+  border-radius: 10px; 
+}
+  
+.custom-modal .ant-modal-header {
+  background: linear-gradient(to left, #3D8FA4, #17363E); 
+  color: white; 
+  border-bottom: 1px solid #1890ff; 
+  height: 40px;
+  padding: 7px;
+  border-radius: 5px;
+  margin: -10px;
+  margin-bottom: 30px;
+}
+  
+.custom-modal .ant-modal-title {
+  color: white; 
+}
+  
+.custom-modal .ant-modal-footer {
+  border-top: none; 
+  display: flex;
+  justify-content: flex-end;
+}
+  
+.custom-modal .ant-btn-primary {
+  background: linear-gradient(to bottom, #3D8FA4, #17363E);
+  border-color: #1890ff; 
+}
+  
+.custom-modal .ant-btn {
+  margin-left: 8px; 
+}
 
-  .custom-modal .ant-modal-content {
-    background-color: #f0f0f0; 
-    border-radius: 10px; 
-
-  }
-  
-  .custom-modal .ant-modal-header {
-    background: linear-gradient(to left, #3D8FA4, #17363E); 
-    color: white; 
-    border-bottom: 1px solid #1890ff; 
-    height:40px;
-    padding:7px;
-    border-radius:5px;
-    margin:-10px;
-    margin-bottom:30px;
-  }
-  
-  .custom-modal .ant-modal-title {
-    color: white; 
-  }
-  
-  .custom-modal .ant-modal-footer {
-    border-top: none; 
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .custom-modal .ant-btn-primary {
-    background: linear-gradient(to bottom, #3D8FA4, #17363E);
-    border-color: #1890ff; 
-  }
-  
-  .custom-modal .ant-btn {
-    margin-left: 8px; 
-  }
-
-.form-group input[type="text"]::placeholder,
-.form-group input[type="file"]::placeholder {
+.form-group input::placeholder {
   color: #000000;
   opacity: 0.5;
   font-size: 18px;
 }
 
 .custom-range-picker {
-  width: 800px;
+  width: 100%;
   height: 69px;
   border-radius: 15px;
   background-color: white;
@@ -135,7 +137,6 @@
   opacity: 0.7;
 }
 
-
 .modal {
   position: absolute;
   top: 50%;
@@ -166,7 +167,6 @@
   color: #143E42;
 }
 
-
 .crop-container {
   position: relative;
   width: 100%;
@@ -189,12 +189,10 @@
   width: 80%;
 }
 
-
 .buttons {
   display: flex;
   justify-content: space-between;
 }
-
 
 .buttons .bottonsImage {
   padding: 10px 20px;
@@ -206,6 +204,7 @@
   font-size: 1em;
   transition: background-color 0.3s ease;
 }
+
 .buttons .bottonsImageCancel {
   padding: 10px 20px;
   border: none;
@@ -217,11 +216,9 @@
   transition: background-color 0.3s ease;
 }
 
-
 .buttons .bottonsImage:first-child {
   background-color: #dc3545;
 }
-
 
 .buttons .bottonsImage:hover {
   background-color: #0056b3;
@@ -233,16 +230,15 @@
 
 .file-input {
   display: none;
-  
 }
 
 .form-group .file-label:hover {
   background-color: #F5F5F5;
-  opacity:0.7;
+  opacity: 0.7;
 }
 
 .file-label {
-  width: 800px;
+  width: 100%;
   height: 69px;
   padding: 18px;
   border-radius: 15px;
@@ -259,7 +255,6 @@
   border: none;
   cursor: pointer;
   opacity: 0.5;
-
 }
 
 .file-name {
@@ -267,8 +262,9 @@
   opacity: 0.5;
   font-size: 18px;
 }
+
 .bottonsImage {
-  dis.play: flex;
+  display: flex;
   justify-content: space-between;
 }
 
@@ -296,14 +292,13 @@
 
 .select-container {
   position: relative;
-  width: 800px;
+  width: 100%;
   margin-bottom: 25px;
   background-color: white;
   border-radius: 15px;
   border: 1px solid #ccc;
   overflow: hidden;
 }
-
 
 .select-container .ant-select {
   width: 100%;
@@ -360,10 +355,108 @@
   color: #000 !important;
 }
 
-
 .select-container .ant-select-item-option-selected {
   background-color: #e6f7ff !important;
   color: #000 !important;
 }
 
+.form-group ul {
+  position: absolute;
+  top: 100%; /* Asegura que el ul aparezca justo debajo del input */
+  left: 0;
+  width: 100%; /* Asegura que el ul tenga el mismo ancho que el input */
+  list-style: none;
+  padding: 0;
+  margin: 0; /* Elimina cualquier margen adicional */
+  border-radius: 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 3; /* Asegura que el ul esté por encima del input */
+}
 
+.form-group ul li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-bottom: 1px solid #ddd;
+}
+
+.form-group ul li:last-child {
+  border-bottom: none;
+}
+
+.form-group ul li:hover {
+  background-color: #e6f7ff;
+}
+
+.form-group ul li.selected {
+  background-color: #d6e4ff;
+  font-weight: bold;
+}
+
+.persona-seleccionada {
+  width: 48%; /* Ocupa el 48% del contenedor para que esté alineado al buscador */
+  padding: 15px;
+  border: 1px solid #1890ff;
+  border-radius: 10px;
+  background-color: #f0f7ff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* Centraliza el texto */
+}
+
+.persona-seleccionada img {
+  width: 150px; /* Ajusta el tamaño de la imagen */
+  height: 150px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.persona-seleccionada h3 {
+  margin-top: 0;
+  color: #1890ff;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.persona-seleccionada p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 16px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Alinea el contenido al inicio, dejando la imagen a la izquierda */
+  margin-bottom: 40px;
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+}
+.header-container h2 {
+  margin: 0; /* Elimina el margen superior del título */
+}
+
+.content-container {
+  display: flex;
+  align-items: flex-start; /* Alinea los elementos al inicio en la vertical */
+  justify-content: space-between; /* Deja espacio entre el buscador y los detalles */
+  width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+}
+
+.search-container {
+  width: 48%; /* Ocupa el 48% del contenedor para dejar espacio para los detalles */
+  margin-right: 4%; /* Espacio entre el buscador y los detalles */
+}
+
+.header-container img.club-logo {
+  width: 100px; /* Ajusta el tamaño de la imagen */
+  height: 100px;
+  margin-right: 20px; /* Espacio entre la imagen y el título */
+  border-radius: 50%; /* Si deseas que la imagen sea circular */
+  object-fit: cover; /* Asegura que la imagen mantenga su aspecto dentro del contenedor */
+}

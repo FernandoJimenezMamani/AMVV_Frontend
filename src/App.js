@@ -18,6 +18,13 @@ import EditarCategoria from './pages/Categorias/Editar';
 import ListaEquipo from './pages/Equipos/Indice';
 import RegistrarEquipo from './pages/Equipos/Registrar';
 import EditarEquipo from './pages/Equipos/Editar';
+import ListaPersona from './pages/Personas/Indice';
+import RegistrarPersona from './pages/Personas/Registrar';
+import EditarPersona from './pages/Personas/Editar';
+import PerfilPersona from './pages/Personas/Perfil';
+import RegistrarPresidenteClub from './pages/PresidenteClub/Registrar';
+import RegistrarJugador from './pages/Jugadores/Registrar';
+import ListaJugador from './pages/Jugadores/Indice';
 import './assets/css/tailwind.css';
 
 const App = () => {
@@ -48,6 +55,7 @@ const App = () => {
               <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
               <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
               <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
+              {/* Rutas para Clubes */}
               <Route path="/clubes/indice" element={<IndiceClub />} />
               <Route path="/clubes/registrar" element={<RegistrarClub />} />
               <Route path="/clubes/editar/:id" element={<EditarClub />} />
@@ -60,9 +68,19 @@ const App = () => {
               <Route path="/equipos/indice" element={<ListaEquipo />} />
               <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
+              {/* Rutas para Personas */}
+              <Route path="/personas/indice" element={<ListaPersona />} />
+              <Route path="/personas/registrar" element={<RegistrarPersona />} />
+              <Route path="/personas/editar/:id" element={<EditarPersona />} />
+              <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
+               {/* Rutas para PresidenteClub */}
+              <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub/>} />
+              {/* Rutas para Jugadores */}
+              <Route path="/jugadores/registrar/:id" element={<RegistrarJugador/>} />
+              <Route path="/jugadores/indice/:id" element={<ListaJugador/>} />
             </Route>
           <Route path="/" element={<Layout />}>
-              <Route index element={<VentanaPrincipal />} />
+              <Route index element={<VentanaPrincipal/>} />
             </Route>
           <Route element={<PrivateRoutes />}>
             
