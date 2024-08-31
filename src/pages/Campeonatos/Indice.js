@@ -23,7 +23,7 @@ const Campeonatos = () => {
   }, []);
 
   const handleViewDetails = (id) => {
-    navigate(`/campeonatos/detalles/${id}`);
+    navigate(`/categorias/indice/${id}`);
   };
 
   const handleEdit = (id) => {
@@ -43,7 +43,6 @@ const Campeonatos = () => {
         </div>
       ))}
     </div>
-
   );
 };
 

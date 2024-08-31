@@ -23,7 +23,7 @@ const RegistroCampeonato = () => {
   const updateNombre = () => {
     const [fecha_inicio] = formData.fecha_rango;
     const year = fecha_inicio.year();
-    const month = fecha_inicio.month() + 1; // months are 0-indexed in moment.js
+    const month = fecha_inicio.month() + 1; 
     const period = month >= 1 && month <= 6 ? 'A' : 'B';
     const nombre = `Campeonato ${year}-${period}`;
     setFormData((prevData) => ({

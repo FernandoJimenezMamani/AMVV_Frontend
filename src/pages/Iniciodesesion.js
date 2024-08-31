@@ -7,7 +7,7 @@ import { useSession } from '../context/SessionContext';
 
 const InicioDeSesion = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
-    usuario: '',
+    correo: '',
     contraseña: ''
   });
   const { login } = useSession();
@@ -45,7 +45,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
         <h1>INICIO DE SESION</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-container">
-            <input type="text" name="usuario" placeholder="Nombre de usuario o correo" value={formData.usuario} onChange={handleChange} required />
+            <input type="text" name="correo" placeholder="Nombre de usuario o correo" value={formData.correo} onChange={handleChange} required />
           </div>
           <div className="input-container">
             <input type="password" name="contraseña" placeholder="Contraseña" value={formData.contraseña} onChange={handleChange} required />

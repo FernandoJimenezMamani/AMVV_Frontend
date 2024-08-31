@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import '../assets/css/Sidebar.css';
 import logo from '../assets/img/logo.png';
+import { useSession } from '../context/SessionContext';
 
 const Sidebar = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const { user, logout } = useSession(); // Acceder a la información del usuario y la función logout
+  const navigate = useNavigate();
+  const dropdownRef = useRef(null); // Referencia al menú desplegable
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed);
@@ -14,6 +19,33 @@ const Sidebar = () => {
   const toggleSection = (section) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login'); // Redirige al usuario a la página de inicio de sesión
+  };
+
+  const handleProfileClick = (personaId) => {
+    navigate(`/personas/perfil/${personaId}`);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="sidebar-layout">
@@ -46,8 +78,8 @@ const Sidebar = () => {
                 Equipos
               </a>
               <div className={`submenu ${expandedSection === 'equipos' ? 'open' : ''}`}>
-                <Link to="/equipos/indice">Equipos</Link>
                 <Link to="/equipos/Registrar">Registrar</Link>
+                
               </div>
             </div>
             <div className="menu-item">
@@ -55,12 +87,42 @@ const Sidebar = () => {
                 Categorias
               </a>
               <div className={`submenu ${expandedSection === 'divisiones' ? 'open' : ''}`}>
-                <Link to="/categorias/indice">Categorias</Link>
                 <Link to="/categorias/Registrar">Registrar</Link>
               </div>
             </div>
-
+            <div className="menu-item">
+              <a className="main-link" onClick={() => toggleSection('lugares')}>
+                Complejos
+              </a>
+              <div className={`submenu ${expandedSection === 'lugares' ? 'open' : ''}`}>
+                <Link to="/complejos/Registro">Registrar complejos</Link>
+              </div>
+            </div>
+            <div className="menu-item">
+              <a className="main-link" onClick={() => toggleSection('personas')}>
+                Personas
+              </a>
+              <div className={`submenu ${expandedSection === 'personas' ? 'open' : ''}`}>
+                <Link to="/Personas/Indice">Indice</Link>
+                <Link to="/Personas/Registrar">Registrar</Link>
+              </div>
+            </div>
           </>
+        )}
+        {user && (
+          <div className="user-info" onClick={toggleDropdown} ref={dropdownRef}>
+            <img src={user.imagen} alt={user.nombre} className="user-avatar" />
+            {!isSidebarCollapsed && (
+              <div className="user-details">
+              </div>
+            )}
+            {isDropdownVisible && (
+              <div className={`user-dropdown ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+                <button className="dropdown-item" onClick={() => handleProfileClick(user.id)}>Perfil</button>
+                <a className="dropdown-item" onClick={handleLogout}>Cerrar sesión</a>
+              </div>
+            )}
+          </div>
         )}
       </div>
       <div className="content">

@@ -13,16 +13,23 @@ const Layout = () => {
             <img src={logo} alt="Logo" />
             <li>A.M.V.V</li>
           </div>
-          <li style={{ marginLeft: '110px' }}><Link to="/">Partidos</Link></li>
-          <li><Link to="/Campeonatos/Registrar">Posiciones</Link></li>
-          <li style={{ marginLeft: '500px' }}>|</li>
+          <li style={{ marginLeft: '110px' }}>
+            <Link to="/">Partidos</Link>
+          </li>
+          <li>
+            <Link to="/Campeonatos/Registrar">Posiciones</Link>
+          </li>
+          
           <li className="search-container">
+          <li className="line">|</li>
             <input type="text" placeholder="Buscar..." className="search-input" />
             <button className="search-button">
               <span className="material-icons">search</span>
             </button>
           </li>
-          <li><Link to="/login">Iniciar Sesion</Link></li>
+          <li className="login">
+            <Link to="/login">Iniciar Sesion</Link>
+          </li>
         </ul>
       </nav>
       <main>

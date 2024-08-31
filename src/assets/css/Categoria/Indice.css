@@ -1,0 +1,124 @@
+.categorias-container {
+  width: 80%;
+  margin: auto;
+}
+
+.categorias-titulo {
+  margin-top: 40px;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #143E42;
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.division-button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to bottom, #507788, #141E22);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.division-button:hover {
+  background-color: #2C7086;
+}
+
+.division-categorias {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 0.5s ease, height 0.5s ease;
+}
+
+.categorias-column {
+  width: 48%;
+}
+
+.categorias-column h3 {
+  font-weight: bold;
+  padding: 7px;
+  font-size: 25px;
+  color: #143E42;
+}
+
+.categorias-list {
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: transparent;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.categoria-item-man {
+  padding: 10px;
+  background: linear-gradient(to bottom, #12475E, #2694C4);
+  color: white;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.categoria-item-women {
+  padding: 10px;
+  background: linear-gradient(to top, #32936C, #0F2D21);
+  color: white;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.categoria-item-man:hover,
+.categoria-item-women:hover {
+  background-color: #2C7086;
+}
+
+/* Clases para mostrar el contenido con transición */
+.division-categorias.show {
+  opacity: 1;
+  height: auto;
+}
+
+
+.categoria-item-man, 
+.categoria-item-women {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Estilo de hombre */
+.categoria-item-man {
+    background: linear-gradient(to bottom, #12475E, #2694C4);
+    color: white;
+}
+
+/* Estilo de mujer */
+.categoria-item-women {
+    background: linear-gradient(to top, #32936C, #0F2D21);
+    color: white;
+}
+
+.categoria-item-man:hover, 
+.categoria-item-women:hover {
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+

@@ -94,11 +94,14 @@ const RegistroEquipo = () => {
             style={{ width: '100%' }}
             allowClear
           >
-            {categorias.map(categoria => (
-              <Option key={categoria.id} value={categoria.id}>
-                {categoria.nombre}
-              </Option>
-            ))}
+            {categorias.map(categoria => {
+              const generoText = categoria.genero === 'M' ? 'masculino' : 'femenino';
+              return (
+                <Option key={categoria.id} value={categoria.id}>
+                  {`${categoria.nombre} - ${generoText}`}
+                </Option>
+              );
+            })}
           </Select>
         </div>
         <div className="form-group">
