@@ -102,19 +102,6 @@ const CustomCarousel = () => {
           ))}
         </div>
       </div>
-
-      {/* New Section with Title, Image, and Text Field */}
-      <div className="custom-section">
-        <h2 className="custom-section-titulo">Sobre Nosotros</h2>
-        <div className="custom-content">
-          <img src={logo} alt="Descripción de la imagen" className="custom-image" />
-          <p className='custom-textarea'>
-          Bienvenidos a la Asociación de Voleibol Vinto,una entidad dedicada a promover, desarrollar
-           y fomentar el voleibol en nuestra comunidad y más allá. Fundada en 2016, nuestra misión
-            es proporcionar un entorno inclusivo y de apoyo donde jugadores de todas las edades y niveles de habilidad puedan disfrutar, 
-            aprender y sobresaliren el deporte del voleibol.</p>
-        </div>
-      </div>
     </div>
   );
 };
