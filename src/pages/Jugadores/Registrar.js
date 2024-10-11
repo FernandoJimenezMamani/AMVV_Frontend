@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import '../../assets/css/Registro.css'; 
+import '../../assets/css/Registro.css';
+import { toast } from 'react-toastify';
 
 const RegistrarJugador = () => {
   const { id } = useParams(); // Captura el ID del club desde la URL
@@ -9,7 +10,7 @@ const RegistrarJugador = () => {
   const [personas, setPersonas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPersona, setSelectedPersona] = useState(null);
-
+ 
   useEffect(() => {
     // Obtener detalles del club
     const fetchClub = async () => {
@@ -20,14 +21,14 @@ const RegistrarJugador = () => {
         console.error('Error al obtener detalles del club:', error);
       }
     };
-
+ 
     fetchClub();
   }, [id]);
-
+ 
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
-
+ 
     if (term.length >= 3) { // Iniciar búsqueda solo si hay al menos 3 letras
       try {
         const response = await axios.get(`http://localhost:5002/api/persona/search_persona?searchTerm=${term}`);
@@ -39,11 +40,11 @@ const RegistrarJugador = () => {
       setPersonas([]); // Limpia la lista si el término es menor a 3 letras
     }
   };
-
+ 
   const handleSelectPersona = (persona) => {
     setSelectedPersona(persona);
   };
-
+ 
   const handleSubmit = async () => {
     if (selectedPersona) {
       try {
@@ -51,7 +52,7 @@ const RegistrarJugador = () => {
           club_id: id,
           persona_id: selectedPersona.id,
         });
-        alert('Jugador registrado exitosamente');
+        toast.success('Registrado con éxito');
       } catch (error) {
         console.error('Error al registrar jugador:', error);
         alert('Hubo un error al registrar el jugador');
@@ -60,20 +61,20 @@ const RegistrarJugador = () => {
       alert('Por favor selecciona una persona');
     }
   };
-
+ 
   return (
     <div className="registro-campeonato">
       {club ? (
         <div className="form-group">
           <div className="header-container">
-            <img 
-              src={club.club_imagen} 
-              alt={`${club.nombre} logo`} 
-              className="club-logo" 
-            /> 
+            <img
+              src={club.club_imagen}
+              alt={`${club.nombre} logo`}
+              className="club-logo"
+            />
             <h2>Registrar Jugador para {club.nombre}</h2>
           </div>
-          
+         
           <div className="content-container">
             <div className="search-container">
               <input
@@ -94,16 +95,16 @@ const RegistrarJugador = () => {
                 </div>
               )}
             </div>
-
+ 
             {/* Mostrar detalles de la persona seleccionada */}
             {selectedPersona && (
               <div className="persona-seleccionada">
                 <div className="form-group">
-                  <img 
-                    src={selectedPersona.persona_imagen} 
-                    alt={`${selectedPersona.nombre} imagen`} 
-                    className="image-preview" 
-                  /> 
+                  <img
+                    src={selectedPersona.persona_imagen}
+                    alt={`${selectedPersona.nombre} imagen`}
+                    className="image-preview"
+                  />
                 </div>
                 <h3>Detalles</h3>
                 <p><strong>Nombre:</strong> {selectedPersona.nombre} {selectedPersona.apellido}</p>
@@ -112,7 +113,7 @@ const RegistrarJugador = () => {
               </div>
             )}
           </div>
-
+ 
           <div className="form-group">
             <button id="RegCampBtn" onClick={handleSubmit}>Asignar Jugador</button>
           </div>
@@ -123,5 +124,5 @@ const RegistrarJugador = () => {
     </div>
   );
 };
-
+ 
 export default RegistrarJugador;

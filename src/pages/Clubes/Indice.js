@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/IndiceTabla.css'; 
-
+import ConfirmModal from '../../components/ConfirmModal';
+import '../../assets/css/IndiceTabla.css';
+import { toast } from 'react-toastify';
 const ListaClubes = () => {
   const [clubes, setClubes] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -60,13 +61,14 @@ const ListaClubes = () => {
   return (
     <div className="clubes-lista">
       <h2 className="clubes-lista-titulo">Lista de Clubes</h2>
+      <button className="club-button" onClick={handleRegistrarClick}>Registrar Club</button>
       <table className="clubes-lista-tabla">
         <thead className="clubes-lista-thead">
           <tr>
-           <th ></th>
-            <th >Logo</th>
-            <th className="clubes-lista-th" >Nombre</th>
-            <th className="clubes-lista-th" >Acción</th>
+            <th></th>
+            <th>Logo</th>
+            <th className="clubes-lista-th">Nombre</th>
+            <th className="clubes-lista-th">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -75,7 +77,6 @@ const ListaClubes = () => {
               <td></td>
               <td className="clubes-lista-td"><img src={club.club_imagen} alt={`${club.nombre} logo`} className="club-logo" /></td>
               <td className="clubes-lista-td-nombre">{club.nombre}</td>
-              
               <td className="clubes-lista-td">
                 <button className="club-button perfil-btn" onClick={() => handleProfileClick(club.id)}>Perfil</button>
                 <button className="club-button editar-btn" onClick={() => handleEditClick(club.id)}>Editar</button>
@@ -85,15 +86,13 @@ const ListaClubes = () => {
           ))}
         </tbody>
       </table>
-    
 
-      {showConfirm && (
-        <div className="confirm-modal">
-          <p>¿Seguro que quieres eliminar este club?</p>
-          <button className="confirm-btn" onClick={handleConfirmDelete}>Sí</button>
-          <button className="cancel-btn" onClick={handleCancelDelete}>No</button>
-        </div>
-      )}
+      <ConfirmModal
+        visible={showConfirm}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        message="¿Seguro que quieres eliminar este club?"
+      />
     </div>
   );
 };

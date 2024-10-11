@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../assets/css/Campeonato/Indice.css';
 import { useSession } from '../../context/SessionContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Campeonatos = () => {
   const [campeonatos, setCampeonatos] = useState([]);
@@ -23,7 +24,7 @@ const Campeonatos = () => {
   }, []);
 
   const handleViewDetails = (id) => {
-    navigate(`/campeonatos/detalles/${id}`);
+    navigate(`/categorias/indice/${id}`);
   };
 
   const handleEdit = (id) => {
@@ -43,7 +44,6 @@ const Campeonatos = () => {
         </div>
       ))}
     </div>
-
   );
 };
 

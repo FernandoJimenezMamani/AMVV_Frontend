@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';  
 import '../../assets/css/Editar.css';
+import { toast } from 'react-toastify';
 
 const EditarClub = () => {
   const { id } = useParams();
@@ -73,7 +74,7 @@ const EditarClub = () => {
         }
       });
   
-      alert('Imagen del club actualizada exitosamente');
+      toast.success('Editado con éxito');
   
       setModalIsOpen(false);
     } catch (e) {

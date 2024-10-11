@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/IndiceTabla.css'; 
+import ConfirmModal from '../../components/ConfirmModal';
+import '../../assets/css/IndiceTabla.css';
+import { toast } from 'react-toastify';
 
 const ListaJugadores = () => {
   const [jugadores, setJugadores] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [jugadorToDelete, setJugadorToDelete] = useState(null);
 
-  const { id } = useParams(); // Captura el club_id desde la URL
+  const { id } = useParams(); 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJugadores = async () => {
       try {
         const response = await axios.get(`http://localhost:5002/api/jugador/get_jugador_club/${id}`);
-        console.log("Jugadores recibidos:", response.data); // Añadir este log para ver los datos recibidos
+        console.log("Jugadores recibidos:", response.data); 
         setJugadores(response.data);
       } catch (error) {
         console.error('Error al obtener los jugadores:', error);
@@ -23,7 +25,7 @@ const ListaJugadores = () => {
     };
 
     fetchJugadores();
-  }, [id]); // Se cambió 'club_id' a 'id' para asegurar que coincida con el parámetro recibido
+  }, [id]); 
 
   const handleEditClick = (jugadorId) => {
     navigate(`/jugadores/editar/${jugadorId}`);
@@ -36,7 +38,7 @@ const ListaJugadores = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; 
+      const user_id = 1;
       await axios.put(`http://localhost:5002/api/jugador/delete_jugador/${jugadorToDelete}`, { user_id });
       setJugadores(jugadores.filter(jugador => jugador.jugador_id !== jugadorToDelete));
       setShowConfirm(false);
@@ -59,7 +61,7 @@ const ListaJugadores = () => {
     navigate(`/jugadores/registrar/${id}`);
     console.log("Lista de jugadores");
   };
-  
+
   return (
     <div className="clubes-lista">
       <h2 className="clubes-lista-titulo">Lista de Jugadores</h2>
@@ -99,13 +101,12 @@ const ListaJugadores = () => {
         </tbody>
       </table>
 
-      {showConfirm && (
-        <div className="confirm-modal">
-          <p>¿Seguro que quieres eliminar este jugador?</p>
-          <button className="confirm-btn" onClick={handleConfirmDelete}>Sí</button>
-          <button className="cancel-btn" onClick={handleCancelDelete}>No</button>
-        </div>
-      )}
+      <ConfirmModal
+        visible={showConfirm}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        message="¿Seguro que quieres eliminar este jugador?"
+      />
     </div>
   );
 };

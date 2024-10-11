@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-
 import Layout from './components/Layout';
 import Sidebar from './components/Sidebar';
 import VentanaPrincipal from './pages/Ventanaprincipal';
+import TablaPosiciones from './pages/TablaPosiciones';
 import Login from './pages/Iniciodesesion';
 import RegistroCampeonato from './pages/Campeonatos/Registrar';
 import IndiceCampeonato from './pages/Campeonatos/Indice';
@@ -18,6 +19,8 @@ import EditarCategoria from './pages/Categorias/Editar';
 import ListaEquipo from './pages/Equipos/Indice';
 import RegistrarEquipo from './pages/Equipos/Registrar';
 import EditarEquipo from './pages/Equipos/Editar';
+import RegistrarPartido from './pages/Partidos/Registrar';
+import IndicePartido from './pages/Partidos/Indice';
 import ListaPersona from './pages/Personas/Indice';
 import RegistrarPersona from './pages/Personas/Registrar';
 import EditarPersona from './pages/Personas/Editar';
@@ -25,8 +28,11 @@ import PerfilPersona from './pages/Personas/Perfil';
 import RegistrarPresidenteClub from './pages/PresidenteClub/Registrar';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
+import RegistrarLugar from './pages/Complejos/Registro';
 import './assets/css/tailwind.css';
 
+import Toast from './components/Toast'
+import {toast} from 'react-toastify'
 const App = () => {
   const [user, setUser] = useState(null);
 
@@ -39,57 +45,64 @@ const App = () => {
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
+    toast.success('Inicio de sesión exitoso'); // Mostrar notificación de éxito en inicio de sesión
   };
 
   const handleLogout = () => {
     setUser(null);
     sessionStorage.removeItem('user');
+    toast.info('Sesión cerrada'); // Mostrar notificación al cerrar sesión
   };
+
   return (
     <SessionProvider>
       <Router>
         <Routes>
-        <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-        <Route path="/sidebar" element={<Sidebar />} />
-        <Route path="/" element={<Sidebar />}>
-              <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
-              <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
-              <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
-              {/* Rutas para Clubes */}
-              <Route path="/clubes/indice" element={<IndiceClub />} />
-              <Route path="/clubes/registrar" element={<RegistrarClub />} />
-              <Route path="/clubes/editar/:id" element={<EditarClub />} />
-              <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
-                {/* Rutas para Categorías */}
-                <Route path="/categorias/indice" element={<ListaCategorias />} />
-              <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
-              <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
-              {/* Rutas para Equipos */}
-              <Route path="/equipos/indice" element={<ListaEquipo />} />
-              <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
-              <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
-              {/* Rutas para Personas */}
-              <Route path="/personas/indice" element={<ListaPersona />} />
-              <Route path="/personas/registrar" element={<RegistrarPersona />} />
-              <Route path="/personas/editar/:id" element={<EditarPersona />} />
-              <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
-               {/* Rutas para PresidenteClub */}
-              <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub/>} />
-              {/* Rutas para Jugadores */}
-              <Route path="/jugadores/registrar/:id" element={<RegistrarJugador/>} />
-              <Route path="/jugadores/indice/:id" element={<ListaJugador/>} />
-            </Route>
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/sidebar" element={<Sidebar />} />
+          <Route path="/" element={<Sidebar />}>
+            {/* Rutas para Campeonatos */}
+            <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
+            <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
+            <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
+            {/* Rutas para Clubes */}
+            <Route path="/clubes/indice" element={<IndiceClub />} />
+            <Route path="/clubes/registrar" element={<RegistrarClub />} />
+            <Route path="/clubes/editar/:id" element={<EditarClub />} />
+            <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
+            {/* Rutas para Categorías */}
+            <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
+            <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
+            <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
+            {/* Rutas para Equipos */}
+            <Route path="/equipos/indice" element={<ListaEquipo />} />
+            <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
+            <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
+            <Route path="/complejos/registro" element={<RegistrarLugar />} />
+            <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
+            <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
+            <Route path="/tablaposiciones/:categoriaId/:campeonatoId" element={<TablaPosiciones />} />
+            <Route path="/personas/indice" element={<ListaPersona />} />
+            <Route path="/personas/registrar" element={<RegistrarPersona />} />
+            <Route path="/personas/editar/:id" element={<EditarPersona />} />
+            <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
+            {/* Rutas para PresidenteClub */}
+            <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
+            {/* Rutas para Jugadores */}
+            <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
+            <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+          </Route>
           <Route path="/" element={<Layout />}>
-              <Route index element={<VentanaPrincipal/>} />
-            </Route>
+            <Route index element={<VentanaPrincipal />} />
+          </Route>
           <Route element={<PrivateRoutes />}>
-            
-            
+            {/* Rutas privadas */}
           </Route>
         </Routes>
+        {/* Aquí va el ToastContainer para que las notificaciones funcionen globalmente */}
+        <Toast />
       </Router>
     </SessionProvider>
-
   );
 }
 

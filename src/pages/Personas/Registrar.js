@@ -4,8 +4,9 @@ import Cropper from 'react-easy-crop';
 import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
-import '../../assets/css/Registro.css'; 
-
+import '../../assets/css/Registro.css';
+import { toast } from 'react-toastify';
+ 
 const RegistroPersona = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -16,23 +17,23 @@ const RegistroPersona = () => {
     contrasena: '',
     correo: ''
   });
-
+ 
   const [image, setImage] = useState(null);
-  const [tempImage, setTempImage] = useState(null); 
+  const [tempImage, setTempImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-
+ 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
+ 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -41,14 +42,14 @@ const RegistroPersona = () => {
       setModalIsOpen(true);
     }
   };
-
+ 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const data = new FormData();
     data.append('nombre', formData.nombre);
     data.append('apellido', formData.apellido);
@@ -62,7 +63,7 @@ const RegistroPersona = () => {
     } else if (image) {
       data.append('image', image);
     }
-
+  
     try {
       const response = await axios.post('http://localhost:5002/api/persona/post_persona', data, {
         headers: {
@@ -70,13 +71,12 @@ const RegistroPersona = () => {
         }
       });
       console.log(response.data);
-      alert('Persona creada exitosamente');
+      toast.success('Registrado con éxito'); // Notificación de éxito
     } catch (error) {
-      console.error('Error al crear la persona:', error);
-      alert('Error al crear la persona');
+      toast.error('Error al registrar'); // Notificación de error
     }
   };
-
+ 
   const handleCropConfirm = async () => {
     try {
       const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
@@ -88,14 +88,14 @@ const RegistroPersona = () => {
       console.error(e);
     }
   };
-
+ 
   const handleCancel = () => {
     setModalIsOpen(false);
     setTempImage(null);
-    setImagePreview(null); 
-    document.getElementById('image').value = ''; 
+    setImagePreview(null);
+    document.getElementById('image').value = '';
   };
-
+ 
   return (
     <div className="registro-campeonato">
       <h2>Registrar Persona</h2>
@@ -169,7 +169,7 @@ const RegistroPersona = () => {
             value={formData.contrasena}
             onChange={handleChange}
           />
-        </div>     
+        </div>    
         <div className="form-group">
           <input
             type="file"
@@ -192,7 +192,7 @@ const RegistroPersona = () => {
           <button id="RegCampBtn" type="submit">Registrar</button>
         </div>
       </form>
-
+ 
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={handleCancel}
@@ -229,5 +229,5 @@ const RegistroPersona = () => {
     </div>
   );
 };
-
+ 
 export default RegistroPersona;

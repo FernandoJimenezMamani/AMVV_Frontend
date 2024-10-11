@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../assets/css/IndiceTabla.css'; 
+import ConfirmModal from '../../components/ConfirmModal';
+import '../../assets/css/IndiceTabla.css';
+import { toast } from 'react-toastify';
 
 const ListaEquipos = () => {
   const [equipos, setEquipos] = useState([]);
@@ -56,8 +58,9 @@ const ListaEquipos = () => {
   return (
     <div className="clubes-lista">
       <h2 className="clubes-lista-titulo">Lista de Equipos</h2>
+      <button className="club-button" onClick={handleRegistrarClick}>Registrar Equipo</button>
       <table className="clubes-lista-tabla">
-        <thead  className="clubes-lista-thead">
+        <thead className="clubes-lista-thead">
           <tr>
             <th>Nombre del Equipo</th>
             <th>Nombre del Club</th>
@@ -69,8 +72,8 @@ const ListaEquipos = () => {
           {equipos.map((equipo) => (
             <tr key={equipo.id}>
               <td>{equipo.nombre}</td>
-              <td>{equipo.club_nombre}</td> 
-              <td>{equipo.categoria_nombre}</td> 
+              <td>{equipo.club_nombre}</td>
+              <td>{equipo.categoria_nombre}</td>
               <td className="clubes-lista-td">
                 <button className="club-button editar-btn" onClick={() => handleEditClick(equipo.id)}>Editar</button>
                 <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(equipo.id)}>Eliminar</button>
@@ -80,13 +83,12 @@ const ListaEquipos = () => {
         </tbody>
       </table>
 
-      {showConfirm && (
-        <div className="confirm-modal">
-          <p>¿Seguro que quieres eliminar este equipo?</p>
-          <button className="confirm-btn" onClick={handleConfirmDelete}>Sí</button>
-          <button className="cancel-btn" onClick={handleCancelDelete}>No</button>
-        </div>
-      )}
+      <ConfirmModal
+        visible={showConfirm}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        message="¿Seguro que quieres eliminar este equipo?"
+      />
     </div>
   );
 };

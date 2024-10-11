@@ -16,6 +16,7 @@
   margin-bottom: 5px !important;
   color: #143E42; 
   font-weight:bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .clubes-lista-tabla {

@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { DatePicker, Modal } from 'antd';
 import moment from 'moment';
 import '../../assets/css/Registro.css';  
+import { toast } from 'react-toastify';
 
 const { RangePicker } = DatePicker;
 
@@ -93,7 +94,7 @@ const EditarCampeonato = () => {
         fecha_fin: fecha_fin.toISOString()
       });
       console.log(response.data);
-      alert('Campeonato editado exitosamente');
+      toast.success('Editado con éxito');
       navigate('/campeonatos/indice');
     } catch (error) {
       console.error('Error al editar el campeonato:', error);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import '../../assets/css/Registro.css';
+import { toast } from 'react-toastify';
 
 const RegistroCategoria = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const RegistroCategoria = () => {
     try {
       const response = await axios.post('http://localhost:5002/api/categoria/post_categoria', formData);
       console.log(response.data);
-      alert('Categoría creada exitosamente');
+      toast.success('Registrado con éxito');
     } catch (error) {
       console.error('Error al crear la categoría:', error);
       alert('Error al crear la categoría');

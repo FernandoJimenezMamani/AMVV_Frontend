@@ -7,6 +7,7 @@ import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';  
 import '../../assets/css/Editar.css';
 import { useSession } from '../../context/SessionContext'; // Asegúrate de que esto esté configurado correctamente en tu proyecto
+import { toast } from 'react-toastify';
 
 const EditarPersona = () => {
   const { id } = useParams();
@@ -17,7 +18,7 @@ const EditarPersona = () => {
     ci: '',
     direccion: '',
     user_id: 2,
-    image: null 
+    image: null
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [tempImage, setTempImage] = useState(null);
@@ -26,14 +27,14 @@ const EditarPersona = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-  
+ 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
+ 
   const { user } = useSession(); // Obtener el usuario actual desde el contexto
   const navigate = useNavigate();
-
+ 
   useEffect(() => {
     const fetchPersona = async () => {
       try {
@@ -54,10 +55,10 @@ const EditarPersona = () => {
         console.error('Error al obtener la persona:', error);
       }
     };
-
+ 
     fetchPersona();
   }, [id]);
-
+ 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -66,52 +67,52 @@ const EditarPersona = () => {
       setModalIsOpen(true);
     }
   };
-
+ 
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
-
+ 
   const handleUpdateImage = async () => {
     try {
       const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
       setCroppedImage(croppedImage);
       setImagePreview(URL.createObjectURL(croppedImage));
-  
+ 
       const formDataToSend = new FormData();
       formDataToSend.append('image', croppedImage);
-  
+ 
       const response = await axios.put(`http://localhost:5002/api/persona/update_persona_image/${id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
-  
-      alert('Imagen de la persona actualizada exitosamente');
-  
+ 
+      toast.success('Editado con éxito');
+ 
       setModalIsOpen(false);
     } catch (e) {
       console.error('Error al recortar la imagen:', e);
       alert('Error al recortar la imagen');
     }
   };
-
+ 
   const handleCancel = () => {
     setModalIsOpen(false);
     setTempImage(null);
     setImagePreview(null);
     document.getElementById('fileInput').value = '';
   };
-
+ 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
+ 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-  
+ 
     const dataToSend = {
       nombre: formData.nombre,
       apellido: formData.apellido,
@@ -120,7 +121,7 @@ const EditarPersona = () => {
       direccion: formData.direccion,
       user_id: 1 // Usar la variable de sesión correspondiente
     };
-  
+ 
     try {
       await axios.put(`http://localhost:5002/api/persona/update_persona/${id}`, dataToSend, {
         headers: {
@@ -134,21 +135,21 @@ const EditarPersona = () => {
       alert('Error al actualizar la persona');
     }
   };
-
+ 
   const handleSubmitPasswordChange = async (e) => {
     e.preventDefault();
-  
+ 
     if (newPassword !== confirmPassword) {
       alert('La nueva contraseña y la confirmación de la contraseña no coinciden');
       return;
     }
-  
+ 
     const dataToSend = {
       currentPassword,
       newPassword,
       confirmPassword
     };
-  
+ 
     try {
       await axios.put('http://localhost:5002/api/sesion/change-password', dataToSend, {
         headers: {
@@ -164,28 +165,28 @@ const EditarPersona = () => {
       alert('Error al cambiar la contraseña');
     }
   };
-  
-
-  // Solo mostrar "Ajustes de Sesión" si user && jugador.id === user.id
+ 
+ 
   return (
     <div className="editar-persona">
-      <h2>Editar Persona - {formData.id} - {user.id}</h2>
-      
+
+     
       {/* Sección para editar la foto de perfil */}
       <div className="editar-seccion">
         <h3>Editar Foto de Perfil</h3>
         <div className="form-group">
-          <input 
-            type="file" 
-            id="fileInput" 
-            onChange={handleImageChange} 
+          <input
+            className="file-inputP"
+            type="file"
+            id="fileInput"
+            onChange={handleImageChange}
             accept="image/jpeg, image/png, image/gif"
           />
           {imagePreview && <img src={imagePreview} alt="Vista previa de la imagen" className="image-preview" />}
         </div>
         <button id="edit-image-btn" onClick={handleUpdateImage}>Guardar Imagen</button>
       </div>
-
+ 
       {/* Sección para editar los ajustes del perfil */}
       <div className="editar-seccion">
         <h3>Ajustes de Perfil</h3>
@@ -250,7 +251,7 @@ const EditarPersona = () => {
           </div>
         </form>
       </div>
-
+ 
       {/* Solo mostrar "Ajustes de Sesión" si el usuario autenticado es el dueño del perfil */}
       {user && formData.id === user.id && (
         <div className="editar-seccion">
@@ -295,7 +296,7 @@ const EditarPersona = () => {
           </form>
         </div>
       )}
-
+ 
       {/* Modal para recortar la imagen */}
       <Modal
         isOpen={modalIsOpen}
@@ -333,5 +334,5 @@ const EditarPersona = () => {
     </div>
   );
 };
-
+ 
 export default EditarPersona;

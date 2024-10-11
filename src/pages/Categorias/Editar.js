@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Editar.css';
+import { toast } from 'react-toastify';
 
 const EditarCategoria = () => {
   const { id } = useParams();
@@ -38,7 +39,7 @@ const EditarCategoria = () => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:5002/api/categoria/update_categoria/${id}`, formData);
-      alert('Categoría actualizada exitosamente');
+      toast.success('Editado con éxito');
       navigate('/categorias/indice');
     } catch (error) {
       console.error('Error al actualizar la categoría:', error);

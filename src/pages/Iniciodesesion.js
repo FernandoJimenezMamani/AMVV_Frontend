@@ -45,14 +45,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
         <h1>INICIO DE SESION</h1>
         <form onSubmit={handleSubmit}>
           <div className="input-container">
-            <input 
-              type="text" 
-              name="correo" 
-              placeholder="Correo electrónico" 
-              value={formData.correo} 
-              onChange={handleChange} 
-              required 
-            />
+            <input type="text" name="correo" placeholder="Nombre de usuario o correo" value={formData.correo} onChange={handleChange} required />
           </div>
           <div className="input-container">
             <input 

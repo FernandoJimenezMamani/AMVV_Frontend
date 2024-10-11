@@ -3,13 +3,14 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom'; // Importar useNavigate
 import '../../assets/css/Persona/Perfil.css';
 import { useSession } from '../../context/SessionContext';
+import { toast } from 'react-toastify';
 
 const PerfilJugador = () => {
   const { id } = useParams();
   const [jugador, setJugador] = useState(null);
   const { user } = useSession(); // Obtener el usuario actual desde el contexto
   const navigate = useNavigate(); // Para redirigir al usuario
-
+ 
   useEffect(() => {
     const fetchJugador = async () => {
       try {
@@ -19,14 +20,14 @@ const PerfilJugador = () => {
         console.error('Error al obtener los datos del jugador:', error);
       }
     };
-
+ 
     fetchJugador();
   }, [id]);
-
+ 
   if (!jugador) {
     return <div>Cargando...</div>;
   }
-
+ 
   const calcularEdad = (fechaNacimiento) => {
     const hoy = new Date();
     const fechaNac = new Date(fechaNacimiento);
@@ -37,16 +38,15 @@ const PerfilJugador = () => {
     }
     return edad;
   };
-
+ 
   const handleEditProfile = () => {
-    navigate(`/personas/editar/${jugador.id}`); // Navega a la página de edición de perfil
+    navigate(`/personas/editar/${jugador.id}`); 
   };
-
+ 
   return (
     <div className="perfil-jugador">
       <div className="perfil-jugador-header">
         <h2>Perfil de jugador</h2>
-        {/* Mostrar el botón "Editar perfil" solo si el jugador.id coincide con el user.id */}
         {user && jugador.id === user.id && (
           <button onClick={handleEditProfile} className="editar-perfil-boton">Editar perfil</button>
         )}
@@ -66,5 +66,5 @@ const PerfilJugador = () => {
     </div>
   );
 };
-
+ 
 export default PerfilJugador;
