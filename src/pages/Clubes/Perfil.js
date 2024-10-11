@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate} from 'react-router-dom';
 import '../../assets/css/Clubes/ClubesPerfil.css';
- 
+import { toast } from 'react-toastify';
+
 const PerfilClub = () => {
   const { id } = useParams();
   const [club, setClub] = useState(null);

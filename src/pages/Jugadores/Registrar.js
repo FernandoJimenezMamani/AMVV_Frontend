@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import '../../assets/css/Registro.css';
- 
+import { toast } from 'react-toastify';
+
 const RegistrarJugador = () => {
   const { id } = useParams(); // Captura el ID del club desde la URL
   const [club, setClub] = useState(null);
@@ -51,7 +52,7 @@ const RegistrarJugador = () => {
           club_id: id,
           persona_id: selectedPersona.id,
         });
-        alert('Jugador registrado exitosamente');
+        toast.success('Registrado con éxito');
       } catch (error) {
         console.error('Error al registrar jugador:', error);
         alert('Hubo un error al registrar el jugador');

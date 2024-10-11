@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
 import '../../assets/css/Registro.css';
+import { toast } from 'react-toastify';
  
 const RegistroPersona = () => {
   const [formData, setFormData] = useState({
@@ -48,7 +49,7 @@ const RegistroPersona = () => {
  
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
+  
     const data = new FormData();
     data.append('nombre', formData.nombre);
     data.append('apellido', formData.apellido);
@@ -62,7 +63,7 @@ const RegistroPersona = () => {
     } else if (image) {
       data.append('image', image);
     }
- 
+  
     try {
       const response = await axios.post('http://localhost:5002/api/persona/post_persona', data, {
         headers: {
@@ -70,10 +71,9 @@ const RegistroPersona = () => {
         }
       });
       console.log(response.data);
-      alert('Persona creada exitosamente');
+      toast.success('Registrado con éxito'); // Notificación de éxito
     } catch (error) {
-      console.error('Error al crear la persona:', error);
-      alert('Error al crear la persona');
+      toast.error('Error al registrar'); // Notificación de error
     }
   };
  

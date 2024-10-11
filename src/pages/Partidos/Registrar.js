@@ -4,6 +4,7 @@ import moment from 'moment';
 import { useParams } from 'react-router-dom'; // Import useParams to get the URL parameters
 import '../../assets/css/Partidos/RegistrarPartido.css'; 
 import { DatePicker, Select } from 'antd';
+import { toast } from 'react-toastify';
 
 const { Option } = Select;
 
@@ -74,7 +75,7 @@ const PartidoForm = () => {
         lugar_id: lugarId,
         resultado,
       });
-      setSuccess('Partido creado exitosamente');
+      toast.success('Registrado con éxito');
       setEquipoLocalId('');
       setEquipoVisitanteId('');
       setFecha(null); // Reset date after submission

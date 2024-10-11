@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../../assets/css/Registro.css'; 
 import MapView from '../../components/MapView';
-
+import { toast } from 'react-toastify';
 
 const LugarForm = () => {
     const [nombre, setNombre] = useState('');
@@ -27,7 +27,7 @@ const LugarForm = () => {
           longitud: parseFloat(longitud),
           latitud: parseFloat(latitud),
         });
-        setSuccess('Lugar creado exitosamente');
+        toast.success('Registrado con éxito');
         setNombre('');
         setLongitud('');
         setLatitud('');

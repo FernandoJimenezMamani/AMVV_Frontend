@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Select } from 'antd';
 import '../../assets/css/Registro.css';
+import { toast } from 'react-toastify';
 
 const { Option } = Select;
 
@@ -50,7 +51,7 @@ const RegistroEquipo = () => {
     try {
       const response = await axios.post('http://localhost:5002/api/equipo/post_equipo', formData);
       console.log(response.data);
-      alert('Equipo creado exitosamente');
+      toast.success('Registrado con éxito');
     } catch (error) {
       console.error('Error al crear el equipo:', error);
       alert('Error al crear el equipo');

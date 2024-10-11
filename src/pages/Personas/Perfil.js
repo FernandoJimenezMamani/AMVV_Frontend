@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom'; // Importar useNavigate
 import '../../assets/css/Persona/Perfil.css';
 import { useSession } from '../../context/SessionContext';
- 
+import { toast } from 'react-toastify';
+
 const PerfilJugador = () => {
   const { id } = useParams();
   const [jugador, setJugador] = useState(null);

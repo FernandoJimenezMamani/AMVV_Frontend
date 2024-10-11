@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Select } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Editar.css';
+import { toast } from 'react-toastify';
 
 const { Option } = Select;
 
@@ -78,7 +79,7 @@ const EditarEquipo = () => {
         club_id: formData.club_id.value,
         categoria_id: formData.categoria_id.value
       });
-      alert('Equipo actualizado exitosamente');
+      toast.success('Editado con éxito');
       navigate('/equipos/indice');
     } catch (error) {
       console.error('Error al actualizar el equipo:', error);

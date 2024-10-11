@@ -56,6 +56,15 @@ const Sidebar = () => {
         {!isSidebarCollapsed && (
           <>
             <div className="menu-item">
+              <a className="main-link" onClick={() => toggleSection('personas')}>
+                Personas
+              </a>
+              <div className={`submenu ${expandedSection === 'personas' ? 'open' : ''}`}>
+                <Link to="/Personas/Indice">Indice</Link>
+                <Link to="/Personas/Registrar">Registrar</Link>
+              </div>
+            </div>
+            <div className="menu-item">
               <a className="main-link" onClick={() => toggleSection('campeonatos')}>
                 Campeonatos
               </a>

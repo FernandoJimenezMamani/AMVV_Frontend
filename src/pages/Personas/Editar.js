@@ -7,7 +7,8 @@ import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';  
 import '../../assets/css/Editar.css';
 import { useSession } from '../../context/SessionContext'; // Asegúrate de que esto esté configurado correctamente en tu proyecto
- 
+import { toast } from 'react-toastify';
+
 const EditarPersona = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
@@ -86,7 +87,7 @@ const EditarPersona = () => {
         }
       });
  
-      alert('Imagen de la persona actualizada exitosamente');
+      toast.success('Editado con éxito');
  
       setModalIsOpen(false);
     } catch (e) {

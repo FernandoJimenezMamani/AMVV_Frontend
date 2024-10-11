@@ -1,39 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import ConfirmModal from '../../components/ConfirmModal';
 import '../../assets/css/IndiceTabla.css';
- 
+import { toast } from 'react-toastify';
+
 const ListaJugadores = () => {
   const [jugadores, setJugadores] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [jugadorToDelete, setJugadorToDelete] = useState(null);
- 
-  const { id } = useParams(); // Captura el club_id desde la URL
+
+  const { id } = useParams(); 
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     const fetchJugadores = async () => {
       try {
         const response = await axios.get(`http://localhost:5002/api/jugador/get_jugador_club/${id}`);
-        console.log("Jugadores recibidos:", response.data); // Añadir este log para ver los datos recibidos
+        console.log("Jugadores recibidos:", response.data); 
         setJugadores(response.data);
       } catch (error) {
         console.error('Error al obtener los jugadores:', error);
       }
     };
- 
+
     fetchJugadores();
-  }, [id]); // Se cambió 'club_id' a 'id' para asegurar que coincida con el parámetro recibido
- 
+  }, [id]); 
+
   const handleEditClick = (jugadorId) => {
     navigate(`/jugadores/editar/${jugadorId}`);
   };
- 
+
   const handleDeleteClick = (jugadorId) => {
     setJugadorToDelete(jugadorId);
     setShowConfirm(true);
   };
- 
+
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1;
@@ -45,21 +47,21 @@ const ListaJugadores = () => {
       console.error('Error al eliminar el jugador:', error);
     }
   };
- 
+
   const handleCancelDelete = () => {
     setShowConfirm(false);
     setJugadorToDelete(null);
   };
- 
+
   const handleProfileClick = (jugadorId) => {
     navigate(`/jugadores/perfil/${jugadorId}`);
   };
- 
+
   const handleAssignJugador = () => {
     navigate(`/jugadores/registrar/${id}`);
     console.log("Lista de jugadores");
   };
- 
+
   return (
     <div className="clubes-lista">
       <h2 className="clubes-lista-titulo">Lista de Jugadores</h2>
@@ -98,16 +100,15 @@ const ListaJugadores = () => {
         ))}
         </tbody>
       </table>
- 
-      {showConfirm && (
-        <div className="confirm-modal">
-          <p>¿Seguro que quieres eliminar este jugador?</p>
-          <button className="confirm-btn" onClick={handleConfirmDelete}>Sí</button>
-          <button className="cancel-btn" onClick={handleCancelDelete}>No</button>
-        </div>
-      )}
+
+      <ConfirmModal
+        visible={showConfirm}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        message="¿Seguro que quieres eliminar este jugador?"
+      />
     </div>
   );
 };
- 
+
 export default ListaJugadores;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Importar useNavigate
-import '../assets/css/Inicio_de_sesion.css';  
+import { useNavigate } from 'react-router-dom';
+import '../assets/css/Inicio_de_sesion.css';
 import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
 
@@ -11,7 +11,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     contraseña: ''
   });
   const { login } = useSession();
-  const navigate = useNavigate(); // Inicializar useNavigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +23,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     try {
       const response = await axios.post('http://localhost:5002/api/sesion/login', formData, { withCredentials: true });
       const userData = response.data.user;
-      
+
       // Llamar al método de login desde el contexto de sesión
       login(userData);
 
@@ -34,7 +34,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       navigate('/sidebar'); // Ajusta la ruta según sea necesario
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      alert('Usuario o contraseña incorrectos');
+      alert('Correo o contraseña incorrectos');
     }
   };
 
@@ -48,12 +48,19 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
             <input type="text" name="correo" placeholder="Nombre de usuario o correo" value={formData.correo} onChange={handleChange} required />
           </div>
           <div className="input-container">
-            <input type="password" name="contraseña" placeholder="Contraseña" value={formData.contraseña} onChange={handleChange} required />
+            <input 
+              type="password" 
+              name="contraseña" 
+              placeholder="Contraseña" 
+              value={formData.contraseña} 
+              onChange={handleChange} 
+              required 
+            />
           </div>
           <div className="forgot-password">
             <a href="#">¿Olvidó su contraseña?</a>
           </div>
-          <button type="submit" className="login-button">Iniciar sesion</button>
+          <button type="submit" className="login-button">Iniciar sesión</button>
         </form>
       </div>
     </div>

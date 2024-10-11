@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../assets/css/IndiceTabla.css'; 
+import { toast } from 'react-toastify';
 
 const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);

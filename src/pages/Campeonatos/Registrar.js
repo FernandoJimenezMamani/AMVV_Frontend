@@ -3,6 +3,7 @@ import axios from 'axios';
 import { DatePicker, Modal } from 'antd';
 import moment from 'moment';
 import '../../assets/css/Registro.css'; 
+import { toast } from 'react-toastify';
 
 const { RangePicker } = DatePicker;
 
@@ -60,7 +61,7 @@ const RegistroCampeonato = () => {
         fecha_fin: fecha_fin.toISOString()
       });
       console.log(response.data);
-      alert('Campeonato creado exitosamente');
+      toast.success('Registrado con éxito');
     } catch (error) {
       console.error('Error al crear el campeonato:', error);
       alert('Error al crear el campeonato');

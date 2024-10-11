@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
 import '../../assets/css/Registro.css'; 
+import { toast } from 'react-toastify';
 
 const RegistroClub = () => {
   const [formData, setFormData] = useState({
@@ -62,7 +63,7 @@ const RegistroClub = () => {
         }
       });
       console.log(response.data);
-      alert('Club creado exitosamente');
+      toast.success('Registrado con éxito');
     } catch (error) {
       console.error('Error al crear el club:', error);
       alert('Error al crear el club');

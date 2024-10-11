@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Partidos/IndicePartido.css';
+import { toast } from 'react-toastify';
 
 const PartidosList = () => {
   const { campeonatoId, categoriaId } = useParams();

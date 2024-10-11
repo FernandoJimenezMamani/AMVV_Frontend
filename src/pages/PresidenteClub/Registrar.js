@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import '../../assets/css/Registro.css';
- 
+import { toast } from 'react-toastify';
+
 const RegistrarPresidenteClub = () => {
   const { id } = useParams();
   const [club, setClub] = useState(null);
@@ -51,7 +52,7 @@ const RegistrarPresidenteClub = () => {
           club_id: id,
           persona_id: selectedPersona.id,
         });
-        alert('Presidente registrado exitosamente');
+        toast.success('Registrado con éxito');
       } catch (error) {
         console.error('Error al registrar presidente:', error);
         alert('Hubo un error al registrar el presidente');
@@ -125,5 +126,3 @@ const RegistrarPresidenteClub = () => {
 };
  
 export default RegistrarPresidenteClub;
- 
- 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../assets/css/Campeonato/Indice.css';
 import { useSession } from '../../context/SessionContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Campeonatos = () => {
   const [campeonatos, setCampeonatos] = useState([]);
