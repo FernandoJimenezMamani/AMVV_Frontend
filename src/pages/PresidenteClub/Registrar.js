@@ -5,7 +5,7 @@ import '../../assets/css/Registro.css';
 import { toast } from 'react-toastify';
 
 const RegistrarPresidenteClub = () => {
-  const { id } = useParams(); // Captura el ID del club desde la URL
+  const { id } = useParams();
   const [club, setClub] = useState(null);
   const [personas, setPersonas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
