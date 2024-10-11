@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import '../../assets/css/Registro.css';
  
 const RegistrarPresidenteClub = () => {
-  const { id } = useParams(); // Captura el ID del club desde la URL
+  const { id } = useParams();
   const [club, setClub] = useState(null);
   const [personas, setPersonas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');

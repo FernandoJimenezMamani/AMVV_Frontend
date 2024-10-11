@@ -24,7 +24,7 @@ const PartidoForm = () => {
   useEffect(() => {
     const fetchEquipos = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/equipo/get_equipo/${categoriaId}`);
+        const response = await axios.get(`http://localhost:5002/api/equipo/get_equipoCategoria/${categoriaId}`);
         console.log("Equipos fetched:", response.data); // Check the data structure
         setEquipos(response.data || []); // Ensure data is an array or fallback to an empty array
       } catch (err) {
