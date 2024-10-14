@@ -26,6 +26,8 @@ import RegistrarPersona from './pages/Personas/Registrar';
 import EditarPersona from './pages/Personas/Editar';
 import PerfilPersona from './pages/Personas/Perfil';
 import RegistrarPresidenteClub from './pages/PresidenteClub/Registrar';
+import RegistrarArbitro from './pages/Arbitros/Registrar';
+import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
 import RegistrarLugar from './pages/Complejos/Registro';
@@ -76,7 +78,7 @@ const App = () => {
             <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
             {/* Rutas para Equipos */}
             <Route path="/equipos/indice" element={<ListaEquipo />} />
-            <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
+            <Route path="/equipos/registrar/:clubId" element={<RegistrarEquipo />} />
             <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
             <Route path="/complejos/registro" element={<RegistrarLugar />} />
             <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
@@ -91,6 +93,9 @@ const App = () => {
             {/* Rutas para Jugadores */}
             <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
             <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+            {/* Rutas para Arbitro */}
+            <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
+            <Route path="/arbitro/indice" element={<ListaArbitro />} />
           </Route>
           <Route path="/" element={<Layout />}>
             <Route index element={<VentanaPrincipal />} />

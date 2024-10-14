@@ -108,12 +108,12 @@ const Sidebar = () => {
               </div>
             </div>
             <div className="menu-item">
-              <a className="main-link" onClick={() => toggleSection('personas')}>
-                Personas
+              <a className="main-link" onClick={() => toggleSection('arbitros')}>
+                Arbitros
               </a>
-              <div className={`submenu ${expandedSection === 'personas' ? 'open' : ''}`}>
-                <Link to="/Personas/Indice">Indice</Link>
-                <Link to="/Personas/Registrar">Registrar</Link>
+              <div className={`submenu ${expandedSection === 'arbitros' ? 'open' : ''}`}>
+                <Link to="/Arbitro/Indice">Indice</Link>
+                <Link to="/Arbitro/Registrar">Registrar</Link>
               </div>
             </div>
           </>

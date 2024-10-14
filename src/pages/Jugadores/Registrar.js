@@ -28,18 +28,20 @@ const RegistrarJugador = () => {
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
- 
+  
     if (term.length >= 3) { // Iniciar búsqueda solo si hay al menos 3 letras
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/search_persona?searchTerm=${term}`);
+        const endpoint = `http://localhost:5002/api/persona/search_personas_sin_jugador?searchTerm=${term}`;
+  
+        const response = await axios.get(endpoint);
         setPersonas(response.data);
       } catch (error) {
-        console.error('Error al buscar personas:', error);
+        console.error('Error al buscar personas sin rol de jugador:', error);
       }
     } else {
       setPersonas([]); // Limpia la lista si el término es menor a 3 letras
     }
-  };
+  };  
  
   const handleSelectPersona = (persona) => {
     setSelectedPersona(persona);

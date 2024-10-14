@@ -14,6 +14,7 @@ const RegistroClub = () => {
     user_id: 1
   });
 
+  const [errors, setErrors] = useState({}); // Estado para errores
   const [image, setImage] = useState(null);
   const [tempImage, setTempImage] = useState(null); 
   const [imagePreview, setImagePreview] = useState(null);
@@ -28,6 +29,23 @@ const RegistroClub = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Limpiar errores al cambiar el valor
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: ''
+    }));
+  };
+
+  // Validación de los campos
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nombre) {
+      newErrors.nombre = 'El nombre del club es obligatorio';
+    }
+    if (!formData.descripcion) {
+      newErrors.descripcion = 'La descripción del club es obligatoria';
+    }
+    return newErrors;
   };
 
   const handleImageChange = (e) => {
@@ -45,6 +63,13 @@ const RegistroClub = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validar antes de enviar
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
 
     const data = new FormData();
     data.append('nombre', formData.nombre);
@@ -101,7 +126,9 @@ const RegistroClub = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
+            className={errors.nombre ? 'error' : ''}
           />
+          {errors.nombre && <span className="error-message">{errors.nombre}</span>}
         </div>
         <div className="form-group">
           <input
@@ -111,7 +138,9 @@ const RegistroClub = () => {
             name="descripcion"
             value={formData.descripcion}
             onChange={handleChange}
+            className={errors.descripcion ? 'error' : ''}
           />
+          {errors.descripcion && <span className="error-message">{errors.descripcion}</span>}
         </div>
         <div className="form-group">
           <input

@@ -460,3 +460,13 @@
   border-radius: 50%; /* Si deseas que la imagen sea circular */
   object-fit: cover; /* Asegura que la imagen mantenga su aspecto dentro del contenedor */
 }
+
+.error {
+  border: 1px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
