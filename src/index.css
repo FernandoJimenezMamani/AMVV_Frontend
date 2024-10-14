@@ -1,11 +1,22 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
 
 body {
   font-family: 'Arial', sans-serif;
   background: linear-gradient(to bottom, #FFFFFF, #999999);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-
+  min-height: 100vh; /* Asegura que el cuerpo ocupe al menos el 100% de la altura de la ventana */
+  display: flex;
+  flex-direction: column;
 }
 
+#root {
+  flex: 1; /* Permite que el contenido dentro de #root crezca y ocupe el espacio disponible */
+}
 
+footer {
+  margin-top: auto; /* Asegura que el footer se mantenga en la parte inferior de la página si el contenido es corto */
+}

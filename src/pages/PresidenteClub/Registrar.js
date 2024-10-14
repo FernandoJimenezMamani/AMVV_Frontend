@@ -16,7 +16,12 @@ const RegistrarPresidenteClub = () => {
     const fetchClub = async () => {
       try {
         const response = await axios.get(`http://localhost:5002/api/club/get_club/${id}`);
-        setClub(response.data);
+        console.log('datos xd', response)
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setClub(response.data[0]); // Accede al primer elemento del array
+        } else {
+          setClub(response.data); // Asigna los datos directamente si no es un array
+        }
       } catch (error) {
         console.error('Error al obtener detalles del club:', error);
       }

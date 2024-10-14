@@ -20,7 +20,7 @@ const ListaEquipos = () => {
 
     const fetchEquipos = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/posiciones/get_positions/${categoriaId}/${campeonatoId}`);
+        const response = await axios.get(`http://localhost:5002/api/Campeonatos/get_campeonato_posiciones/${categoriaId}/${campeonatoId}`);
         setEquipos(response.data);
       } catch (error) {
         console.error('Error al obtener los equipos:', error);

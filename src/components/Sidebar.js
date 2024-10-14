@@ -47,6 +47,10 @@ const Sidebar = () => {
     };
   }, []);
 
+  const hasRole = (...roles) => {
+    return user && user.roles && roles.some(role => user.roles.includes(role));
+  };
+
   return (
     <div className="sidebar-layout">
       <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
@@ -55,24 +59,18 @@ const Sidebar = () => {
         </div>
         {!isSidebarCollapsed && (
           <>
+          {hasRole('Presidente') && (
             <div className="menu-item">
-              <a className="main-link" onClick={() => toggleSection('personas')}>
-                Personas
-              </a>
-              <div className={`submenu ${expandedSection === 'personas' ? 'open' : ''}`}>
-                <Link to="/Personas/Indice">Indice</Link>
-                <Link to="/Personas/Registrar">Registrar</Link>
-              </div>
+            <a className="main-link" onClick={() => toggleSection('campeonatos')}>
+              Campeonatos
+            </a>
+            <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
+              <Link to="/Campeonatos/Indice">Indice</Link>
+              <Link to="/Campeonatos/Registrar">Registrar</Link>
             </div>
-            <div className="menu-item">
-              <a className="main-link" onClick={() => toggleSection('campeonatos')}>
-                Campeonatos
-              </a>
-              <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
-                <Link to="/Campeonatos/Indice">Indice</Link>
-                <Link to="/Campeonatos/Registrar">Registrar</Link>
-              </div>
-            </div>
+          </div>
+          )}
+            
             <div className="menu-item">
               <a className="main-link" onClick={() => toggleSection('clubes')}>
                 Clubes

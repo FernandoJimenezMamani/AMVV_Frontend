@@ -22,16 +22,17 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     e.preventDefault();
     try {
       const response = await axios.post('http://localhost:5002/api/sesion/login', formData, { withCredentials: true });
-      const userData = response.data.user;
-
-      // Llamar al método de login desde el contexto de sesión
-      login(userData);
-
-      console.log(userData);
-      onLoginSuccess(userData);
-
+      
+      // Verifica que la respuesta contiene los datos esperados
+      const { token, user } = response.data;
+      console.log('Datos recibidos del servidor:', response.data);
+  
+      login({ user, token });
+  
+      onLoginSuccess(user);
+  
       // Redirigir al componente Sidebar
-      navigate('/sidebar'); // Ajusta la ruta según sea necesario
+      navigate('/sidebar');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
       alert('Correo o contraseña incorrectos');

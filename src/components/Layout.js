@@ -1,4 +1,3 @@
-// components/Layout.jsx
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import '../assets/css/Layout.css';
@@ -6,7 +5,7 @@ import logo from '../assets/img/logo.png';
 
 const Layout = () => {
   return (
-    <div>
+    <div className="layout-container">
       <nav>
         <ul>
           <div className="logo-container">
@@ -17,11 +16,10 @@ const Layout = () => {
             <Link to="/">Partidos</Link>
           </li>
           <li>
-            <Link to="/Campeonatos/Registrar">Posiciones</Link>
+            <Link to="/Campeonatos/Indice">Posiciones</Link>
           </li>
-          
           <li className="search-container">
-          <li className="line">|</li>
+            <li className="line">|</li>
             <input type="text" placeholder="Buscar..." className="search-input" />
             <button className="search-button">
               <span className="material-icons">search</span>
@@ -32,7 +30,7 @@ const Layout = () => {
           </li>
         </ul>
       </nav>
-      <main>
+      <main className="layout-content">
         <Outlet />
       </main>
       <footer className="footer">

@@ -38,7 +38,7 @@ const EditarPersona = () => {
   useEffect(() => {
     const fetchPersona = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/get_persona/${id}`);
+        const response = await axios.get(`http://localhost:5002/api/persona/get_personaById/${id}`);
         setFormData({
           id: response.data.id,
           nombre: response.data.nombre,

@@ -64,16 +64,35 @@ nav ul li {
 }
 
 
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que la página ocupe al menos toda la altura de la ventana */
+}
+
+.layout-content {
+  flex: 1; /* Permite que el contenido crezca y ocupe el espacio disponible */
+  padding: 20px;
+}
+
 .footer {
-  background: linear-gradient(to bottom, #355862, #497C8B);;
+  background: linear-gradient(to bottom, #355862, #497C8B);
   color: #FFFFFF;
   padding: 20px 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  height:200px;
+  height: 200px;
   font-weight: bold;
-  font-size:20px;
+  font-size: 20px;
+  position: relative;
+  bottom: 0;
+  width: 100%; /* Asegura que el footer ocupe todo el ancho */
 }
 
 .footer-container {

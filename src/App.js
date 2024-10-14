@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import Layout from './components/Layout';
-import Sidebar from './components/Sidebar';
+import Layout from './components/Layout'; // Navbar público
+import Sidebar from './components/Sidebar'; // Sidebar solo si el usuario está logueado
 import VentanaPrincipal from './pages/Ventanaprincipal';
 import TablaPosiciones from './pages/TablaPosiciones';
 import Login from './pages/Iniciodesesion';
@@ -33,6 +33,7 @@ import './assets/css/tailwind.css';
 
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
+
 const App = () => {
   const [user, setUser] = useState(null);
 
@@ -58,45 +59,45 @@ const App = () => {
     <SessionProvider>
       <Router>
         <Routes>
+          {/* Rutas públicas */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/sidebar" element={<Sidebar />} />
-          <Route path="/" element={<Sidebar />}>
-            {/* Rutas para Campeonatos */}
-            <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
-            <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
-            <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
-            {/* Rutas para Clubes */}
-            <Route path="/clubes/indice" element={<IndiceClub />} />
-            <Route path="/clubes/registrar" element={<RegistrarClub />} />
-            <Route path="/clubes/editar/:id" element={<EditarClub />} />
-            <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
-            {/* Rutas para Categorías */}
-            <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
-            <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
-            <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
-            {/* Rutas para Equipos */}
-            <Route path="/equipos/indice" element={<ListaEquipo />} />
-            <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
-            <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
-            <Route path="/complejos/registro" element={<RegistrarLugar />} />
-            <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
-            <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
-            <Route path="/tablaposiciones/:categoriaId/:campeonatoId" element={<TablaPosiciones />} />
-            <Route path="/personas/indice" element={<ListaPersona />} />
-            <Route path="/personas/registrar" element={<RegistrarPersona />} />
-            <Route path="/personas/editar/:id" element={<EditarPersona />} />
-            <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
-            {/* Rutas para PresidenteClub */}
-            <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
-            {/* Rutas para Jugadores */}
-            <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
-            <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+ 
+          <Route path="/" element={<ConditionalLayout />}>
+          <Route index element={<VentanaPrincipal />} />
+          <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
+          <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
+          <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
+          <Route path="/tablaposiciones/:categoriaId/:campeonatoId" element={<TablaPosiciones />} />
           </Route>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<VentanaPrincipal />} />
-          </Route>
+
+          {/* Rutas privadas (Solo accesibles si el usuario está logueado) */}
           <Route element={<PrivateRoutes />}>
-            {/* Rutas privadas */}
+            <Route path="/" element={<Sidebar/>}>
+              {/* Rutas privadas */}
+              <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
+              <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
+              <Route path="/clubes/indice" element={<IndiceClub />} />
+              <Route path="/clubes/registrar" element={<RegistrarClub />} />
+              <Route path="/clubes/editar/:id" element={<EditarClub />} />
+              <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
+              
+              <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
+              <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
+              <Route path="/equipos/indice" element={<ListaEquipo />} />
+              <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
+              <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
+              <Route path="/complejos/registro" element={<RegistrarLugar />} />
+              <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
+              
+              <Route path="/personas/indice" element={<ListaPersona />} />
+              <Route path="/personas/registrar" element={<RegistrarPersona />} />
+              <Route path="/personas/editar/:id" element={<EditarPersona />} />
+              <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
+              <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
+              <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
+              <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+            </Route>
           </Route>
         </Routes>
         {/* Aquí va el ToastContainer para que las notificaciones funcionen globalmente */}
@@ -106,10 +107,26 @@ const App = () => {
   );
 }
 
+const ConditionalLayout = () => {
+  const { user } = useSession();
+
+  // Si el usuario está autenticado, renderiza el Sidebar, si no, renderiza el Layout público
+  return user ? <Sidebar /> : <Layout />;
+};
+
+// Componente para proteger las rutas privadas
 const PrivateRoutes = () => {
   const { user } = useSession();
 
+  // Mostrar un mensaje de carga o pantalla en blanco hasta que el estado del usuario esté determinado
+  if (user === null) {
+    return <div>Cargando...</div>;  // Esto evita un redireccionamiento temprano
+  }
+
+  console.log('Usuario autenticado en PrivateRoutes:', user);
+
   return user ? <Outlet /> : <Navigate to="/login" />;
-}
+};
+
 
 export default App;

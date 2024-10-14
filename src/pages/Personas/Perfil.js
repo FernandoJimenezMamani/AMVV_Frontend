@@ -14,7 +14,7 @@ const PerfilJugador = () => {
   useEffect(() => {
     const fetchJugador = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/get_persona/${id}`);
+        const response = await axios.get(`http://localhost:5002/api/persona/get_personaById/${id}`);
         setJugador(response.data);
       } catch (error) {
         console.error('Error al obtener los datos del jugador:', error);
