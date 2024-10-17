@@ -3,11 +3,13 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Partidos/IndicePartido.css';
 import { toast } from 'react-toastify';
+import { useSession } from '../../context/SessionContext';
 
 const PartidosList = () => {
   const { campeonatoId, categoriaId } = useParams();
   const [partidos, setPartidos] = useState([]);
   const navigate = useNavigate();
+  const { user } = useSession();
 
   useEffect(() => {
     const fetchPartidos = async () => {
@@ -15,6 +17,7 @@ const PartidosList = () => {
         const response = await axios.get(`http://localhost:5002/api/partidos/select/${categoriaId}`);
         setPartidos(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los partidos:', error);
       }
     };
@@ -50,12 +53,19 @@ const PartidosList = () => {
     return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
   };
 
+  const hasRole = (...roles) => {
+    return user && user.roles && roles.some(role => user.roles.includes(role));
+  };
+
   return (
     <div className="all-matches-container">
     <h2 className="all-matches-titulo">Partidos</h2>
-    <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
+    {hasRole('Presidente') &&(
+      <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
       Registrar Partido
     </button>
+    )}
+    
   
     <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
       Ver tabla

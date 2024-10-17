@@ -16,30 +16,38 @@ const RegistrarJugador = () => {
     const fetchClub = async () => {
       try {
         const response = await axios.get(`http://localhost:5002/api/club/get_club/${id}`);
-        setClub(response.data);
+        console.log("Datos del club recibidos:", response.data); // Verifica los datos aquí
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setClub(response.data[0]); // Accede al primer elemento del array
+        } else {
+          setClub(response.data); // Asigna los datos directamente si no es un array
+        }
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener detalles del club:', error);
       }
     };
- 
     fetchClub();
   }, [id]);
  
   const handleSearch = async (e) => {
     const term = e.target.value;
     setSearchTerm(term);
- 
+  
     if (term.length >= 3) { // Iniciar búsqueda solo si hay al menos 3 letras
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/search_persona?searchTerm=${term}`);
+        const endpoint = `http://localhost:5002/api/persona/search_personas_sin_jugador?searchTerm=${term}`;
+  
+        const response = await axios.get(endpoint);
         setPersonas(response.data);
       } catch (error) {
-        console.error('Error al buscar personas:', error);
+        toast.error('error')
+        console.error('Error al buscar personas sin rol de jugador:', error);
       }
     } else {
       setPersonas([]); // Limpia la lista si el término es menor a 3 letras
     }
-  };
+  };  
  
   const handleSelectPersona = (persona) => {
     setSelectedPersona(persona);

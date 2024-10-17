@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../../assets/css/Campeonato/Indice.css';
 import { useSession } from '../../context/SessionContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Campeonatos = () => {
   const [campeonatos, setCampeonatos] = useState([]);
@@ -15,6 +16,7 @@ const Campeonatos = () => {
         const response = await axios.get('http://localhost:5002/api/Campeonatos/select');
         setCampeonatos(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los campeonatos:', error);
       }
     };
@@ -32,6 +34,7 @@ const Campeonatos = () => {
 
   return (
     <div className="campeonatos-container">
+      <h2 className="campeonatos-lista-titulo">Lista de Campeonatos</h2>
       {campeonatos.map(campeonato => (
         <div key={campeonato.id} className="campeonato-card">
           <h2 className="campeonato-nombre">{campeonato.nombre}</h2>

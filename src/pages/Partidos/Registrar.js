@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { useParams } from 'react-router-dom'; // Import useParams to get the URL parameters
+import { useParams } from 'react-router-dom';
 import '../../assets/css/Partidos/RegistrarPartido.css'; 
 import { DatePicker, Select } from 'antd';
 import { toast } from 'react-toastify';
@@ -9,13 +9,13 @@ import { toast } from 'react-toastify';
 const { Option } = Select;
 
 const PartidoForm = () => {
-  const { campeonatoId, categoriaId } = useParams(); // Get the campeonatoId and categoriaId from the URL
+  const { campeonatoId, categoriaId } = useParams();
   const [equipoLocalId, setEquipoLocalId] = useState('');
   const [equipoVisitanteId, setEquipoVisitanteId] = useState('');
-  const [fecha, setFecha] = useState(null); // Initialize as null
+  const [fecha, setFecha] = useState(null);
   const [lugarId, setLugarId] = useState(''); 
   const [resultado, setResultado] = useState('');
-  const [equipos, setEquipos] = useState([]); // Initialize as an empty array
+  const [equipos, setEquipos] = useState([]);
   const [lugares, setLugares] = useState([]); 
   const [equipoLocal, setEquipoLocal] = useState(null);
   const [equipoVisitante, setEquipoVisitante] = useState(null);
@@ -26,21 +26,24 @@ const PartidoForm = () => {
     const fetchEquipos = async () => {
       try {
         const response = await axios.get(`http://localhost:5002/api/equipo/get_equipoCategoria/${categoriaId}`);
-        console.log("Equipos fetched:", response.data); // Check the data structure
-        setEquipos(response.data || []); // Ensure data is an array or fallback to an empty array
+        console.log("Equipos fetched:", response.data);
+        setEquipos(response.data || []);
       } catch (err) {
+        toast.error('Error fetching equipos');
         console.error('Error fetching equipos:', err.message);
-        setEquipos([]); // Fallback to an empty array on error
+        setEquipos([]);
       }
     };
 
     const fetchLugares = async () => {
       try {
         const response = await axios.get('http://localhost:5002/api/lugar/select');
-        setLugares(response.data || []); // Ensure data is an array or fallback to an empty array
+        console.log("Lugares fetched:", response.data);
+        setLugares(response.data || []);
       } catch (error) {
+        toast.error('Error al obtener los lugares');
         console.error('Error al obtener los lugares:', error);
-        setLugares([]); // Fallback to an empty array on error
+        setLugares([]);
       }
     };
 
@@ -50,10 +53,16 @@ const PartidoForm = () => {
 
   const handleDateChange = (date) => {
     if (date) {
-      setFecha(date.format('YYYY-MM-DD HH:mm:ss')); // Convert to string format
+      setFecha(date.format('YYYY-MM-DD HH:mm:ss'));
+      console.log("Fecha seleccionada:", date.format('YYYY-MM-DD HH:mm:ss'));
     } else {
-      setFecha(null); // Reset if no date is selected
+      setFecha(null);
     }
+  };
+
+  const disabledDate = (current) => {
+    // No puede seleccionar fechas anteriores a la fecha actual
+    return current && current < moment().startOf('day');
   };
 
   const handleSubmit = async (e) => {
@@ -66,48 +75,58 @@ const PartidoForm = () => {
       return;
     }
 
+    const formattedFecha = moment(fecha).format('YYYY-MM-DD HH:mm:ss');
+    
+    console.log({
+      campeonato_id: parseInt(campeonatoId, 10),
+      equipo_local_id: equipoLocalId,
+      equipo_visitante_id: equipoVisitanteId,
+      fecha: formattedFecha,
+      lugar_id: lugarId,
+      resultado,
+    });
+
     try {
       const response = await axios.post('http://localhost:5002/api/partidos/insert', {
-        campeonato_id: campeonatoId, // Use the campeonatoId from the URL
+        campeonato_id: parseInt(campeonatoId, 10),
         equipo_local_id: equipoLocalId,
         equipo_visitante_id: equipoVisitanteId,
-        fecha,
+        fecha: formattedFecha,
         lugar_id: lugarId,
         resultado,
       });
+      
       toast.success('Registrado con éxito');
       setEquipoLocalId('');
       setEquipoVisitanteId('');
-      setFecha(null); // Reset date after submission
+      setFecha(null);
       setLugarId('');
       setResultado('');
       setEquipoLocal(null);
       setEquipoVisitante(null);
     } catch (err) {
-      setError('Error al crear el Partido');
+      toast.error('Error al crear el Partido');
       console.error(err.message);
     }
   };
 
   const selectEquipoLocal = (id) => {
     if (id === equipoVisitanteId) {
-      setError('El equipo local y visitante no pueden ser el mismo');
+      toast.warn('El equipo local y visitante no pueden ser el mismo');
     } else {
       const selectedEquipo = equipos.find((equipo) => equipo.id === id);
       setEquipoLocalId(id);
       setEquipoLocal(selectedEquipo);
-      setError('');
     }
   };
 
   const selectEquipoVisitante = (id) => {
     if (id === equipoLocalId) {
-      setError('El equipo local y visitante no pueden ser el mismo');
+      toast.warn('El equipo local y visitante no pueden ser el mismo');
     } else {
       const selectedEquipo = equipos.find((equipo) => equipo.id === id);
       setEquipoVisitanteId(id);
       setEquipoVisitante(selectedEquipo);
-      setError('');
     }
   };
 
@@ -183,36 +202,36 @@ const PartidoForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-      <div className="select-container">
-        <Select
-          placeholder="Seleccione un Lugar"
-          value={lugarId || undefined} 
-          onChange={handleLugarChange}
-          style={{ width: '100%' }}
-          allowClear
-        >
-          {lugares.map(lugar => (
-            <Option key={lugar.id} value={lugar.id}>
-              {lugar.nombre}
-            </Option>
-          ))}
-        </Select>
-      </div>
+        <div className="select-container">
+          <Select
+            placeholder="Seleccione un Lugar"
+            value={lugarId || undefined} 
+            onChange={handleLugarChange}
+            style={{ width: '100%' }}
+            allowClear
+          >
+            {lugares.map(lugar => (
+              <Option key={lugar.id} value={lugar.id}>
+                {lugar.nombre}
+              </Option>
+            ))}
+          </Select>
+        </div>
         <div className="form-group">
           <DatePicker
             required
             className="custom-range-picker"
             showTime
-            value={fecha ? moment(fecha) : null} 
+            value={fecha ? moment(fecha) : null}
             onChange={handleDateChange}
             format="YYYY-MM-DD HH:mm:ss"
             placeholder="Seleccione la fecha del partido"
+            disabledDate={disabledDate} // Deshabilitar fechas anteriores
           />
         </div>
-      <div className="form-group">
+        <div className="form-group">
           <button id="RegCampBtn" type="submit">Registrar Partido</button>
-      </div>
-        
+        </div>
       </form>
     </div>
   );

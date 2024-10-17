@@ -52,6 +52,7 @@ const EditarPersona = () => {
           setImagePreview(response.data.persona_imagen);
         }
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener la persona:', error);
       }
     };
@@ -91,8 +92,9 @@ const EditarPersona = () => {
  
       setModalIsOpen(false);
     } catch (e) {
+      toast.error('error')
       console.error('Error al recortar la imagen:', e);
-      alert('Error al recortar la imagen');
+
     }
   };
  

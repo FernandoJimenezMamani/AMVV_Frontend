@@ -6,7 +6,7 @@ import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
 import '../../assets/css/Registro.css';
 import { toast } from 'react-toastify';
- 
+
 const RegistroPersona = () => {
   const [formData, setFormData] = useState({
     nombre: '',
@@ -14,10 +14,10 @@ const RegistroPersona = () => {
     fecha_nacimiento: '',
     ci: '',
     direccion: '',
-    contrasena: '',
     correo: ''
   });
- 
+
+  const [errors, setErrors] = useState({});
   const [image, setImage] = useState(null);
   const [tempImage, setTempImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -26,14 +26,64 @@ const RegistroPersona = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
- 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: ''
+    }));
   };
- 
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nombre) newErrors.nombre = 'El campo nombre es obligatorio';
+    if (!formData.apellido) newErrors.apellido = 'El campo apellido es obligatorio';
+    if (!formData.fecha_nacimiento) newErrors.fecha_nacimiento = 'El campo fecha de nacimiento es obligatorio';
+    if (!formData.ci) newErrors.ci = 'El campo cédula de identidad es obligatorio';
+    if (!formData.direccion) newErrors.direccion = 'El campo dirección es obligatorio';
+    if (!formData.correo) newErrors.correo = 'El campo correo es obligatorio';
+    return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    const data = new FormData();
+    data.append('nombre', formData.nombre);
+    data.append('apellido', formData.apellido);
+    data.append('fecha_nacimiento', formData.fecha_nacimiento);
+    data.append('ci', formData.ci);
+    data.append('direccion', formData.direccion);
+    data.append('correo', formData.correo);
+    if (croppedImage) {
+      data.append('image', croppedImage);
+    } else if (image) {
+      data.append('image', image);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5002/api/persona/post_persona', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      console.log(response.data);
+      toast.success('Registrado con éxito');
+    } catch (error) {
+      toast.error('Error al registrar');
+    }
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -42,41 +92,11 @@ const RegistroPersona = () => {
       setModalIsOpen(true);
     }
   };
- 
+
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
- 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const data = new FormData();
-    data.append('nombre', formData.nombre);
-    data.append('apellido', formData.apellido);
-    data.append('fecha_nacimiento', formData.fecha_nacimiento);
-    data.append('ci', formData.ci);
-    data.append('direccion', formData.direccion);
-    data.append('contrasena', formData.contrasena);
-    data.append('correo', formData.correo);
-    if (croppedImage) {
-      data.append('image', croppedImage);
-    } else if (image) {
-      data.append('image', image);
-    }
-  
-    try {
-      const response = await axios.post('http://localhost:5002/api/persona/post_persona', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log(response.data);
-      toast.success('Registrado con éxito'); // Notificación de éxito
-    } catch (error) {
-      toast.error('Error al registrar'); // Notificación de error
-    }
-  };
- 
+
   const handleCropConfirm = async () => {
     try {
       const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
@@ -88,14 +108,14 @@ const RegistroPersona = () => {
       console.error(e);
     }
   };
- 
+
   const handleCancel = () => {
     setModalIsOpen(false);
     setTempImage(null);
     setImagePreview(null);
     document.getElementById('image').value = '';
   };
- 
+
   return (
     <div className="registro-campeonato">
       <h2>Registrar Persona</h2>
@@ -108,7 +128,9 @@ const RegistroPersona = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
+            className={errors.nombre ? 'error' : ''}
           />
+          {errors.nombre && <span className="error-message">{errors.nombre}</span>}
         </div>
         <div className="form-group">
           <input
@@ -118,7 +140,9 @@ const RegistroPersona = () => {
             name="apellido"
             value={formData.apellido}
             onChange={handleChange}
+            className={errors.apellido ? 'error' : ''}
           />
+          {errors.apellido && <span className="error-message">{errors.apellido}</span>}
         </div>
         <div className="form-group">
           <input
@@ -128,7 +152,9 @@ const RegistroPersona = () => {
             name="fecha_nacimiento"
             value={formData.fecha_nacimiento}
             onChange={handleChange}
+            className={errors.fecha_nacimiento ? 'error' : ''}
           />
+          {errors.fecha_nacimiento && <span className="error-message">{errors.fecha_nacimiento}</span>}
         </div>
         <div className="form-group">
           <input
@@ -138,7 +164,9 @@ const RegistroPersona = () => {
             name="ci"
             value={formData.ci}
             onChange={handleChange}
+            className={errors.ci ? 'error' : ''}
           />
+          {errors.ci && <span className="error-message">{errors.ci}</span>}
         </div>
         <div className="form-group">
           <input
@@ -148,7 +176,9 @@ const RegistroPersona = () => {
             name="direccion"
             value={formData.direccion}
             onChange={handleChange}
+            className={errors.direccion ? 'error' : ''}
           />
+          {errors.direccion && <span className="error-message">{errors.direccion}</span>}
         </div>
         <div className="form-group">
           <input
@@ -158,18 +188,10 @@ const RegistroPersona = () => {
             name="correo"
             value={formData.correo}
             onChange={handleChange}
+            className={errors.correo ? 'error' : ''}
           />
+          {errors.correo && <span className="error-message">{errors.correo}</span>}
         </div>
-        <div className="form-group">
-          <input
-            type="password"
-            placeholder="Contraseña"
-            id="contrasena"
-            name="contrasena"
-            value={formData.contrasena}
-            onChange={handleChange}
-          />
-        </div>    
         <div className="form-group">
           <input
             type="file"
@@ -192,7 +214,7 @@ const RegistroPersona = () => {
           <button id="RegCampBtn" type="submit">Registrar</button>
         </div>
       </form>
- 
+
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={handleCancel}
@@ -229,5 +251,5 @@ const RegistroPersona = () => {
     </div>
   );
 };
- 
+
 export default RegistroPersona;

@@ -20,6 +20,7 @@ const ListaJugadores = () => {
         console.log("Jugadores recibidos:", response.data); 
         setJugadores(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los jugadores:', error);
       }
     };
@@ -44,6 +45,7 @@ const ListaJugadores = () => {
       setShowConfirm(false);
       setJugadorToDelete(null);
     } catch (error) {
+      toast.error('error')
       console.error('Error al eliminar el jugador:', error);
     }
   };
@@ -54,7 +56,7 @@ const ListaJugadores = () => {
   };
 
   const handleProfileClick = (jugadorId) => {
-    navigate(`/jugadores/perfil/${jugadorId}`);
+    navigate(`/personas/perfil/${jugadorId}`);
   };
 
   const handleAssignJugador = () => {
@@ -80,25 +82,29 @@ const ListaJugadores = () => {
           </tr>
         </thead>
         <tbody>
-        {jugadores.map((jugador) => (
-            <tr key={jugador.jugador_id}>
-            <td className="clubes-lista-td">
-                <img src={jugador.persona_imagen} alt={`${jugador.nombre} ${jugador.apellido}`} className="club-logo" />
-            </td>
-            <td className="clubes-lista-td-nombre">
-                {jugador.nombre} {jugador.apellido}
-            </td>
-            <td className="clubes-lista-td">
-                {new Date(jugador.fecha_nacimiento).toLocaleDateString()}
-            </td>
-            <td className="clubes-lista-td">
-                <button className="club-button perfil-btn" onClick={() => handleProfileClick(jugador.jugador_id)}>Perfil</button>
-                <button className="club-button editar-btn" onClick={() => handleEditClick(jugador.jugador_id)}>Editar</button>
-                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(jugador.jugador_id)}>Eliminar</button>
-            </td>
-            </tr>
-        ))}
-        </tbody>
+  {jugadores.map((jugador) => (
+    <tr key={jugador.jugador_id}>
+      <td className="clubes-lista-td">
+        <img
+          src={jugador.imagen_persona} // Asegúrate de que `imagen_persona` corresponde al campo correcto
+          alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
+          className="club-logo"
+        />
+      </td>
+      <td className="clubes-lista-td-nombre">
+        {jugador.nombre_persona} {jugador.apellido_persona} {/* Asegúrate de usar `nombre_persona` y `apellido_persona` */}
+      </td>
+      <td className="clubes-lista-td">
+        {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString()} {/* Asegúrate de usar `fecha_nacimiento_persona` */}
+      </td>
+      <td className="clubes-lista-td">
+        <button className="club-button perfil-btn" onClick={() => handleProfileClick(jugador.jugador_id)}>
+          Perfil
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
       </table>
 
       <ConfirmModal

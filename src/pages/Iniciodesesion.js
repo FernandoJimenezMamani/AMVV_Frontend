@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/css/Inicio_de_sesion.css';
 import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
+import { toast } from 'react-toastify';
 
 const InicioDeSesion = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       navigate('/sidebar');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      alert('Correo o contraseña incorrectos');
+      toast.warn('Revise sus credenciales')
     }
   };
 

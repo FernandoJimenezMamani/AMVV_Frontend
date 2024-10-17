@@ -18,6 +18,7 @@ const ListaEquipos = () => {
         const response = await axios.get('http://localhost:5002/api/equipo/get_equipo');
         setEquipos(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los equipos:', error);
       }
     };
@@ -46,6 +47,7 @@ const ListaEquipos = () => {
       setShowConfirm(false);
       setEquipoToDelete(null);
     } catch (error) {
+      toast.error('error')
       console.error('Error al eliminar el equipo:', error);
     }
   };

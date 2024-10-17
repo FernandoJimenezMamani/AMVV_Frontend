@@ -41,6 +41,7 @@ const ListaPersonas = () => {
       setShowConfirm(false);
       setPersonaToDelete(null);
     } catch (error) {
+      toast.error('error')
       console.error('Error al eliminar la persona:', error);
     }
   };

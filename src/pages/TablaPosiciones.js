@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import '../assets/css/TablaPosiciones.css'; 
+import { toast } from 'react-toastify';
 
 const ListaEquipos = () => {
   const [equipos, setEquipos] = useState([]);
@@ -14,6 +15,7 @@ const ListaEquipos = () => {
         const response = await axios.get(`http://localhost:5002/api/Campeonatos/get_campeonato_categoria/${campeonatoId}/${categoriaId}`);
         setTitulo(`${response.data.campeonato_nombre} - ${response.data.categoria_nombre}`);
       } catch (error) {
+        toast.error('Error al obtener el título')
         console.error('Error al obtener el título:', error);
       }
     };
@@ -23,6 +25,7 @@ const ListaEquipos = () => {
         const response = await axios.get(`http://localhost:5002/api/Campeonatos/get_campeonato_posiciones/${categoriaId}/${campeonatoId}`);
         setEquipos(response.data);
       } catch (error) {
+        toast.error('Error al obtener los equipos')
         console.error('Error al obtener los equipos:', error);
       }
     };

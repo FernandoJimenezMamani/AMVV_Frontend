@@ -63,8 +63,8 @@ const RegistroCampeonato = () => {
       console.log(response.data);
       toast.success('Registrado con éxito');
     } catch (error) {
+      toast.error('error')
       console.error('Error al crear el campeonato:', error);
-      alert('Error al crear el campeonato');
     }
   };
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import Layout from './components/Layout'; // Navbar público
-import Sidebar from './components/Sidebar'; // Sidebar solo si el usuario está logueado
+import Layout from './components/Layout'; 
+import Sidebar from './components/Sidebar'; 
 import VentanaPrincipal from './pages/Ventanaprincipal';
 import TablaPosiciones from './pages/TablaPosiciones';
 import Login from './pages/Iniciodesesion';
@@ -26,6 +26,8 @@ import RegistrarPersona from './pages/Personas/Registrar';
 import EditarPersona from './pages/Personas/Editar';
 import PerfilPersona from './pages/Personas/Perfil';
 import RegistrarPresidenteClub from './pages/PresidenteClub/Registrar';
+import RegistrarArbitro from './pages/Arbitros/Registrar';
+import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
 import RegistrarLugar from './pages/Complejos/Registro';
@@ -85,7 +87,7 @@ const App = () => {
               <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
               <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
               <Route path="/equipos/indice" element={<ListaEquipo />} />
-              <Route path="/equipos/registrar" element={<RegistrarEquipo />} />
+              <Route path="/equipos/registrar/:clubId" element={<RegistrarEquipo />} />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
               <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
@@ -97,6 +99,8 @@ const App = () => {
               <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
               <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
               <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+              <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
+              <Route path="/arbitro/indice" element={<ListaArbitro />} />
             </Route>
           </Route>
         </Routes>

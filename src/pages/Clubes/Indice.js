@@ -17,6 +17,7 @@ const ListaClubes = () => {
         const response = await axios.get('http://localhost:5002/api/club/get_club');
         setClubes(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los clubes:', error);
       }
     };
@@ -45,6 +46,7 @@ const ListaClubes = () => {
       setShowConfirm(false);
       setClubToDelete(null);
     } catch (error) {
+      toast.error('error')
       console.error('Error al eliminar el club:', error);
     }
   };
@@ -61,7 +63,6 @@ const ListaClubes = () => {
   return (
     <div className="clubes-lista">
       <h2 className="clubes-lista-titulo">Lista de Clubes</h2>
-      <button className="club-button" onClick={handleRegistrarClick}>Registrar Club</button>
       <table className="clubes-lista-tabla">
         <thead className="clubes-lista-thead">
           <tr>

@@ -30,6 +30,7 @@ const EditarEquipo = () => {
           user_id: response.data.user_id
         });
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener el equipo:', error);
       }
     };
@@ -39,6 +40,7 @@ const EditarEquipo = () => {
         const response = await axios.get('http://localhost:5002/api/club/get_club');
         setClubes(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener los clubes:', error);
       }
     };
@@ -48,6 +50,7 @@ const EditarEquipo = () => {
         const response = await axios.get('http://localhost:5002/api/categoria/get_categoria');
         setCategorias(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener las categorías:', error);
       }
     };
@@ -82,8 +85,8 @@ const EditarEquipo = () => {
       toast.success('Editado con éxito');
       navigate('/equipos/indice');
     } catch (error) {
+      toast.error('error')
       console.error('Error al actualizar el equipo:', error);
-      alert('Error al actualizar el equipo');
     }
   };
 

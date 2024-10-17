@@ -26,7 +26,9 @@ const EditarCampeonato = () => {
           nombre: nombre,
           fecha_rango: [moment(fecha_inicio), moment(fecha_fin)]
         });
+        toast.success('Edicion exitosa!')
       } catch (error) {
+        toast.error('error')
         console.error('Error fetching campeonato data:', error);
       }
     };

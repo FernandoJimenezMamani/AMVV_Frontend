@@ -22,6 +22,7 @@ const ListaCategorias = () => {
         const response = await axios.get('http://localhost:5002/api/categoria/get_categoria');
         setCategorias(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener las categorías:', error);
       }
     };

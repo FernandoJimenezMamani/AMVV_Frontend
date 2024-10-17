@@ -8,15 +8,14 @@ const Layout = () => {
     <div className="layout-container">
       <nav>
         <ul>
-          <div className="logo-container">
-            <img src={logo} alt="Logo" />
-            <li>A.M.V.V</li>
-          </div>
-          <li style={{ marginLeft: '110px' }}>
-            <Link to="/">Partidos</Link>
-          </li>
+        <Link to="/" className="logo-link"> {/* Añadimos el Link aquí */}
+            <div className="logo-container">
+              <img src={logo} alt="Logo" />
+              <li>A.M.V.V</li>
+            </div>
+          </Link>
           <li>
-            <Link to="/Campeonatos/Indice">Posiciones</Link>
+            <Link to="/Campeonatos/Indice">Campeonatos</Link>
           </li>
           <li className="search-container">
             <li className="line">|</li>

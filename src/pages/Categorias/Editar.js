@@ -21,6 +21,7 @@ const EditarCategoria = () => {
           user_id: response.data.user_id
         });
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener la categoría:', error);
       }
     };
@@ -42,8 +43,8 @@ const EditarCategoria = () => {
       toast.success('Editado con éxito');
       navigate('/categorias/indice');
     } catch (error) {
+      toast.error('error')
       console.error('Error al actualizar la categoría:', error);
-      alert('Error al actualizar la categoría');
     }
   };
 

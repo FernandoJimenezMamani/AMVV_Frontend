@@ -81,15 +81,6 @@ const Sidebar = () => {
               </div>
             </div>
             <div className="menu-item">
-              <a className="main-link" onClick={() => toggleSection('equipos')}>
-                Equipos
-              </a>
-              <div className={`submenu ${expandedSection === 'equipos' ? 'open' : ''}`}>
-                <Link to="/equipos/Registrar">Registrar</Link>
-                
-              </div>
-            </div>
-            <div className="menu-item">
               <a className="main-link" onClick={() => toggleSection('divisiones')}>
                 Categorias
               </a>
@@ -103,6 +94,15 @@ const Sidebar = () => {
               </a>
               <div className={`submenu ${expandedSection === 'lugares' ? 'open' : ''}`}>
                 <Link to="/complejos/Registro">Registrar complejos</Link>
+              </div>
+            </div>
+            <div className="menu-item">
+              <a className="main-link" onClick={() => toggleSection('arbitros')}>
+                Arbitros
+              </a>
+              <div className={`submenu ${expandedSection === 'arbitros' ? 'open' : ''}`}>
+                <Link to="/Arbitro/Indice">Indice</Link>
+                <Link to="/Arbitro/Registrar">Registrar</Link>
               </div>
             </div>
             <div className="menu-item">

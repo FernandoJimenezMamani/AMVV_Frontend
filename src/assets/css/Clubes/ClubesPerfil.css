@@ -9,19 +9,19 @@
               0 8px 16px rgba(0, 0, 0, 0.2),
               0 -8px 16px rgba(0, 0, 0, 0.2);
 }
- 
+
 .perfil-header {
   display: flex;
   align-items: center;
   margin-bottom: 40px;
   position: relative;
 }
- 
+
 .club-logo-container {
   position: relative;
   display: inline-block;
 }
- 
+
 .club-logo {
   display: block;
   width: 150px;
@@ -33,24 +33,24 @@
   cursor: pointer;
   overflow: hidden;
 }
- 
+
 .club-info {
   flex: 1;
 }
- 
+
 .club-info h2 {
   margin: 0;
   font-size: 36px;
   color: #143E42;
   font-weight: bold;
 }
- 
+
 .club-info p {
   font-size: 18px;
   color: #333;
   margin-top: 10px;
 }
- 
+
 .president-info {
   position: absolute;
   top: 0;
@@ -60,13 +60,13 @@
   color: #143E42;
   font-weight: bold;
 }
- 
+
 .perfil-teams {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
 }
- 
+
 .team-card {
   background-color: #ffffff;
   padding: 20px;
@@ -74,19 +74,19 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
- 
+
 .team-card h3 {
   margin: 0;
   font-size: 24px;
   color: #143E42;
 }
- 
+
 .team-card p {
   font-size: 16px;
   color: #666;
   margin-top: 10px;
 }
- 
+
 .assign-president-button {
   position: absolute;
   top: 10px;
@@ -100,18 +100,20 @@
   font-size: 16px;
   transition: background-color 0.3s ease;
 }
- 
+
 .assign-president-button:hover {
   background-color: #0f2c2e;
 }
- 
-.assign-jugador-container {
+
+.assign-actions-container {
   display: flex;
   justify-content: flex-end;
+  gap: 10px; /* Añade espacio entre los botones */
   margin-top: 20px;
 }
- 
-.assign-jugador-button {
+
+.assign-jugador-button,
+.create-team-button {
   padding: 10px 20px;
   background-color: #143E42;
   color: #fff;
@@ -121,8 +123,8 @@
   font-size: 16px;
   transition: background-color 0.3s ease;
 }
- 
-.assign-jugador-button:hover {
+
+.assign-jugador-button:hover,
+.create-team-button:hover {
   background-color: #0f2c2e;
 }
- 

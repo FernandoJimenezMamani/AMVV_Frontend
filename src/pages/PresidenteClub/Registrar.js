@@ -23,6 +23,7 @@ const RegistrarPresidenteClub = () => {
           setClub(response.data); // Asigna los datos directamente si no es un array
         }
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener detalles del club:', error);
       }
     };
@@ -39,6 +40,7 @@ const RegistrarPresidenteClub = () => {
         const response = await axios.get(`http://localhost:5002/api/persona/search_persona?searchTerm=${term}`);
         setPersonas(response.data);
       } catch (error) {
+        toast.error('error')
         console.error('Error al buscar personas:', error);
       }
     } else {
@@ -59,11 +61,11 @@ const RegistrarPresidenteClub = () => {
         });
         toast.success('Registrado con éxito');
       } catch (error) {
+        toast.error('error')
         console.error('Error al registrar presidente:', error);
-        alert('Hubo un error al registrar el presidente');
       }
     } else {
-      alert('Por favor selecciona una persona');
+      toast.warn('Seleccione un presidente')
     }
   };
  

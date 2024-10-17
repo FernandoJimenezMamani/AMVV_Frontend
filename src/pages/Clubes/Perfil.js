@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate} from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Clubes/ClubesPerfil.css';
 import { toast } from 'react-toastify';
-
+ 
 const PerfilClub = () => {
   const { id } = useParams();
   const [club, setClub] = useState(null);
@@ -33,6 +33,7 @@ const PerfilClub = () => {
           setTeams(teamsInfo);
         }
       } catch (error) {
+        toast.error('error')
         console.error('Error al obtener el club y equipos:', error);
       }
     };
@@ -42,12 +43,17 @@ const PerfilClub = () => {
  
   const handleAssignPresident = () => {
     navigate(`/presidente_club/registrar/${club.club_id}`);
- 
     console.log("Asignar Presidente");
   };
+ 
   const handleListJugador = () => {
     navigate(`/jugadores/indice/${club.club_id}`);
     console.log("Lista de jugadores");
+  };
+ 
+  const handleCreateTeam = () => {
+    navigate(`/equipos/Registrar/${club.club_id}`);
+    console.log("Crear equipo");
   };
  
   if (!club) {
@@ -90,15 +96,17 @@ const PerfilClub = () => {
           <p>No hay equipos disponibles para este club.</p>
         )}
       </div>
-     
-      <div className="assign-jugador-container">
+ 
+      <div className="assign-actions-container">
         <button className="assign-jugador-button" onClick={handleListJugador}>
           Mis Jugadores
         </button>
+        <button className="create-team-button" onClick={handleCreateTeam}>
+          Crear Equipo
+        </button>
       </div>
     </div>
-  );  
+  );
 };
  
 export default PerfilClub;
- 
