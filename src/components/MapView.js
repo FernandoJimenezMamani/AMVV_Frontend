@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -11,15 +11,24 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 });
 
-const MapView = ({ onLocationSelect }) => {
-  const [position, setPosition] = useState(null);
+const MapView = ({ initialLat, initialLng, onLocationSelect, isReadOnly = false }) => {
+  const [position, setPosition] = useState(initialLat && initialLng ? { lat: initialLat, lng: initialLng } : null);
+
+  useEffect(() => {
+    // Si hay valores iniciales, establecer la posición
+    if (initialLat && initialLng) {
+      setPosition({ lat: initialLat, lng: initialLng });
+    }
+  }, [initialLat, initialLng]);
 
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
-        const { lat, lng } = e.latlng;
-        setPosition(e.latlng);
-        onLocationSelect(lat, lng);
+        if (!isReadOnly) {
+          const { lat, lng } = e.latlng;
+          setPosition(e.latlng);
+          onLocationSelect(lat, lng);
+        }
       },
     });
     return position ? <Marker position={position}></Marker> : null;
@@ -27,7 +36,7 @@ const MapView = ({ onLocationSelect }) => {
 
   return (
     <MapContainer
-       center={[-17.3935, -66.1570]}
+      center={position || [-17.3935, -66.1570]} // Centro predeterminado si no hay una posición inicial
       zoom={13}
       style={{ height: '400px', width: '100%' }}
     >

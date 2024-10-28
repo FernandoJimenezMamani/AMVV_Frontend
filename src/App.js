@@ -21,6 +21,7 @@ import RegistrarEquipo from './pages/Equipos/Registrar';
 import EditarEquipo from './pages/Equipos/Editar';
 import RegistrarPartido from './pages/Partidos/Registrar';
 import IndicePartido from './pages/Partidos/Indice';
+import RegistrarResultado from './pages/Partidos/RegistrarResultado';
 import ListaPersona from './pages/Personas/Indice';
 import RegistrarPersona from './pages/Personas/Registrar';
 import EditarPersona from './pages/Personas/Editar';
@@ -31,6 +32,7 @@ import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
 import RegistrarLugar from './pages/Complejos/Registro';
+import PartidoDetalle from './pages/Partidos/PartidoDetalle';
 import './assets/css/tailwind.css';
 
 import Toast from './components/Toast'
@@ -91,7 +93,7 @@ const App = () => {
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
               <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
-              
+              <Route path="/partidos/registrarResultado/:partidoId" element={<RegistrarResultado />} />
               <Route path="/personas/indice" element={<ListaPersona />} />
               <Route path="/personas/registrar" element={<RegistrarPersona />} />
               <Route path="/personas/editar/:id" element={<EditarPersona />} />
@@ -101,6 +103,7 @@ const App = () => {
               <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
               <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
               <Route path="/arbitro/indice" element={<ListaArbitro />} />
+              <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
             </Route>
           </Route>
         </Routes>

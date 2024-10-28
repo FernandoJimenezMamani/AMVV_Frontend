@@ -14,7 +14,7 @@ const PartidosList = () => {
   useEffect(() => {
     const fetchPartidos = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/partidos/select/${categoriaId}`);
+        const response = await axios.get(`http://localhost:5002/api/partidos/select/${categoriaId}/${campeonatoId}`);
         setPartidos(response.data);
       } catch (error) {
         toast.error('error')
@@ -31,6 +31,12 @@ const PartidosList = () => {
 
   const handleVerTabla = () => {
     navigate(`/tablaposiciones/${categoriaId}/${campeonatoId}`);
+  };
+
+  const handlePartidoClick = (partidoId) => {
+    navigate(`/partidos/partidoDetalle/${partidoId}`, {
+      state: { campeonatoId, categoriaId },
+    });
   };
 
   const formatDate = (fecha) => {
@@ -60,40 +66,56 @@ const PartidosList = () => {
   return (
     <div className="all-matches-container">
     <h2 className="all-matches-titulo">Partidos</h2>
-    {hasRole('Presidente') &&(
+    {hasRole('Presidente') && (
       <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
-      Registrar Partido
-    </button>
+        Registrar Partido
+      </button>
     )}
-    
-  
+
     <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
       Ver tabla
     </button>
     <div className="all-matches-grid">
       {partidos.map((partido) => (
-        <div key={partido.id} className="all-matches-card">
+        <div
+          key={partido.id}
+          className="all-matches-card"
+          onClick={() => handlePartidoClick(partido.id)} // Navega a la vista de detalles del partido
+          style={{ cursor: 'pointer' }} // Añade un cursor de mano
+        >
           <div className="all-matches-team-info">
             <div className="all-matches-team">
-              <img src={partido.equipo_local_imagen} alt={partido.equipo_local_nombre} className="all-matches-team-logo"/>
+              <img
+                src={partido.equipo_local_imagen}
+                alt={partido.equipo_local_nombre}
+                className="all-matches-team-logo"
+              />
               <p className="all-matches-team-name">{partido.equipo_local_nombre}</p>
             </div>
             <div className="all-matches-vs">VS</div>
             <div className="all-matches-team">
-              <img src={partido.equipo_visitante_imagen} alt={partido.equipo_visitante_nombre} className="all-matches-team-logo"/>
+              <img
+                src={partido.equipo_visitante_imagen}
+                alt={partido.equipo_visitante_nombre}
+                className="all-matches-team-logo"
+              />
               <p className="all-matches-team-name">{partido.equipo_visitante_nombre}</p>
             </div>
           </div>
           <div className="all-matches-info">
             <p className="all-matches-date">{formatDate(partido.fecha)}</p>
-            <p className="all-matches-time">{new Date(partido.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="all-matches-time">
+              {new Date(partido.fecha).toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </p>
           </div>
         </div>
       ))}
     </div>
   </div>
-  
-  );
+);
 };
 
 export default PartidosList;
