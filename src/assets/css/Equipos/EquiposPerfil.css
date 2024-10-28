@@ -1,0 +1,105 @@
+.perfil-equipo {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 8px 0 16px rgba(0, 0, 0, 0.1),
+                -8px 0 16px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(0, 0, 0, 0.1),
+                0 -8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .perfil-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .equipo-logo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #143E42;
+    margin-right: 20px;
+  }
+  
+  .equipo-info {
+    flex: 1;
+  }
+  
+  .equipo-info h2 {
+    font-size: 36px;
+    color: #143E42;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .equipo-info p {
+    font-size: 18px;
+    color: #666;
+    margin-top: 10px;
+  }
+  
+  .jugadores-list {
+    margin-top: 40px;
+  }
+  
+  .jugadores-list h3 {
+    font-size: 24px;
+    color: #143E42;
+    margin-bottom: 20px;
+  }
+  
+  .jugador-card {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+  }
+  
+  .jugador-imagen {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #143E42;
+    margin-right: 15px;
+  }
+  
+  .jugador-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .jugador-info p {
+    margin: 0;
+    font-size: 18px;
+    color: #143E42;
+  }
+  
+  .jugador-info span {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .volver-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(to bottom, #3D8FA4, #17363E);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .volver-button:hover {
+    background-color: #0f2c2e;
+  }
+  

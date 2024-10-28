@@ -24,7 +24,6 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     try {
       const response = await axios.post('http://localhost:5002/api/sesion/login', formData, { withCredentials: true });
       
-      // Verifica que la respuesta contiene los datos esperados
       const { token, user } = response.data;
       console.log('Datos recibidos del servidor:', response.data);
   
@@ -32,14 +31,13 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
   
       onLoginSuccess(user);
   
-      // Redirigir al componente Sidebar
       navigate('/sidebar');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      toast.warn('Revise sus credenciales')
+      toast.warn('Revise sus credenciales');
     }
   };
-
+  
   return (
     <div className="login-container">
       <div className="login-box">
