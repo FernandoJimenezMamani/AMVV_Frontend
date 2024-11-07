@@ -6,8 +6,10 @@ import Modal from 'react-modal';
 import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';  
 import '../../assets/css/Editar.css';
-import { useSession } from '../../context/SessionContext'; // Asegúrate de que esto esté configurado correctamente en tu proyecto
+import { useSession } from '../../context/SessionContext'; 
 import { toast } from 'react-toastify';
+import { Select } from 'antd'; // Importar Select de antd
+const { Option } = Select;
 
 const EditarPersona = () => {
   const { id } = useParams();
@@ -18,6 +20,7 @@ const EditarPersona = () => {
     ci: '',
     direccion: '',
     user_id: 2,
+    genero: 'V',  // Preseleccionar Varones (V)
     image: null
   });
   const [imagePreview, setImagePreview] = useState(null);
@@ -43,20 +46,20 @@ const EditarPersona = () => {
           id: response.data.id,
           nombre: response.data.nombre,
           apellido: response.data.apellido,
-          fecha_nacimiento: response.data.fecha_nacimiento.split('T')[0], // Para manejar el formato de la fecha
+          fecha_nacimiento: response.data.fecha_nacimiento.split('T')[0], 
           ci: response.data.ci,
           direccion: response.data.direccion,
+          genero: response.data.genero || 'V',  // Usar el género de la persona o preseleccionar "V"
           user_id: response.data.user_id
         });
         if (response.data.persona_imagen) {
           setImagePreview(response.data.persona_imagen);
         }
       } catch (error) {
-        toast.error('error')
+        toast.error('Error al obtener la persona');
         console.error('Error al obtener la persona:', error);
       }
     };
- 
     fetchPersona();
   }, [id]);
  
@@ -82,19 +85,17 @@ const EditarPersona = () => {
       const formDataToSend = new FormData();
       formDataToSend.append('image', croppedImage);
  
-      const response = await axios.put(`http://localhost:5002/api/persona/update_persona_image/${id}`, formDataToSend, {
+      await axios.put(`http://localhost:5002/api/persona/update_persona_image/${id}`, formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
  
-      toast.success('Editado con éxito');
- 
+      toast.success('Imagen actualizada con éxito');
       setModalIsOpen(false);
     } catch (e) {
-      toast.error('error')
+      toast.error('Error al actualizar la imagen');
       console.error('Error al recortar la imagen:', e);
-
     }
   };
  
@@ -111,6 +112,14 @@ const EditarPersona = () => {
       [e.target.name]: e.target.value
     });
   };
+
+  // Manejo del cambio del género
+  const handleGeneroChange = (value) => {
+    setFormData({
+      ...formData,
+      genero: value
+    });
+  };
  
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
@@ -121,7 +130,8 @@ const EditarPersona = () => {
       fecha_nacimiento: formData.fecha_nacimiento,
       ci: formData.ci,
       direccion: formData.direccion,
-      user_id: 1 // Usar la variable de sesión correspondiente
+      genero: formData.genero,  // Enviar género seleccionado
+      user_id: 1 
     };
  
     try {
@@ -130,11 +140,11 @@ const EditarPersona = () => {
           'Content-Type': 'application/json'
         }
       });
-      alert('Persona actualizada exitosamente');
+      toast.success('Persona actualizada exitosamente');
       navigate('/personas/indice');
     } catch (error) {
       console.error('Error al actualizar la persona:', error);
-      alert('Error al actualizar la persona');
+      toast.error('Error al actualizar la persona');
     }
   };
  
@@ -142,7 +152,7 @@ const EditarPersona = () => {
     e.preventDefault();
  
     if (newPassword !== confirmPassword) {
-      alert('La nueva contraseña y la confirmación de la contraseña no coinciden');
+      alert('La nueva contraseña y la confirmación no coinciden');
       return;
     }
  
@@ -158,21 +168,18 @@ const EditarPersona = () => {
           'Content-Type': 'application/json'
         }
       });
-      alert('Contraseña actualizada exitosamente');
+      toast.success('Contraseña actualizada exitosamente');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error) {
       console.error('Error al cambiar la contraseña:', error);
-      alert('Error al cambiar la contraseña');
+      toast.error('Error al cambiar la contraseña');
     }
   };
  
- 
   return (
     <div className="editar-persona">
-
-     
       {/* Sección para editar la foto de perfil */}
       <div className="editar-seccion">
         <h3>Editar Foto de Perfil</h3>
@@ -248,6 +255,22 @@ const EditarPersona = () => {
               rows="4"
             />
           </div>
+
+          {/* Select para género */}
+          <label className="label-edit">Género</label>
+          <div className="form-group">
+            <Select
+              id="genero"
+              name="genero"
+              value={formData.genero}
+              onChange={handleGeneroChange}
+              style={{ width: '100%' }}
+            >
+              <Option value="V">Hombre</Option>
+              <Option value="D">Mujer</Option>
+            </Select>
+          </div>
+
           <div className="form-group">
             <button id="edit-profile-btn" type="submit">Guardar Cambios</button>
           </div>

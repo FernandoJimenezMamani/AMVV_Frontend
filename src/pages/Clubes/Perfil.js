@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Clubes/ClubesPerfil.css';
 import { toast } from 'react-toastify';
- 
+import { useEffect, useState } from 'react';
+
 const PerfilClub = () => {
   const { id } = useParams();
   const [club, setClub] = useState(null);
   const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     const fetchClubAndTeams = async () => {
       try {
@@ -29,37 +29,42 @@ const PerfilClub = () => {
             equipo_nombre: item.equipo_nombre,
             categoria_nombre: item.categoria_nombre,
           }));
- 
+
           setTeams(teamsInfo);
         }
       } catch (error) {
-        toast.error('error')
+        toast.error('Error al obtener el club y equipos');
         console.error('Error al obtener el club y equipos:', error);
       }
     };
- 
+
     fetchClubAndTeams();
   }, [id]);
- 
+
   const handleAssignPresident = () => {
     navigate(`/presidente_club/registrar/${club.club_id}`);
     console.log("Asignar Presidente");
   };
- 
+
   const handleListJugador = () => {
     navigate(`/jugadores/indice/${club.club_id}`);
     console.log("Lista de jugadores");
   };
- 
+
   const handleCreateTeam = () => {
     navigate(`/equipos/Registrar/${club.club_id}`);
     console.log("Crear equipo");
   };
- 
+
+  // Redirigir al perfil del equipo
+  const handleTeamClick = (equipoId) => {
+    navigate(`/equipos/perfil/${equipoId}`);
+  };
+
   if (!club) {
     return <div>Cargando...</div>;
   }
- 
+
   return (
     <div className="perfil-club">
       <div className="perfil-header">
@@ -74,7 +79,7 @@ const PerfilClub = () => {
           <h2>{club.nombre}</h2>
           <p>{club.descripcion}</p>
         </div>
- 
+
         {club.presidente_asignado === 'N' ? (
           <button className="assign-president-button" onClick={handleAssignPresident}>
             Asignar Presidente
@@ -83,11 +88,16 @@ const PerfilClub = () => {
           <p className="president-info">Presidente: {club.presidente_nombre}</p>
         )}
       </div>
- 
+
       <div className="perfil-teams">
         {teams.length > 0 ? (
           teams.map((team) => (
-            <div key={team.equipo_id} className="team-card">
+            <div
+              key={team.equipo_id}
+              className="team-card"
+              onClick={() => handleTeamClick(team.equipo_id)} // Redirigir al perfil del equipo
+              style={{ cursor: 'pointer' }} // Añadir cursor de pointer para indicar que es clickeable
+            >
               <h3>{team.equipo_nombre}</h3>
               <p>Categoría: {team.categoria_nombre}</p>
             </div>
@@ -96,7 +106,7 @@ const PerfilClub = () => {
           <p>No hay equipos disponibles para este club.</p>
         )}
       </div>
- 
+
       <div className="assign-actions-container">
         <button className="assign-jugador-button" onClick={handleListJugador}>
           Mis Jugadores
@@ -108,5 +118,5 @@ const PerfilClub = () => {
     </div>
   );
 };
- 
+
 export default PerfilClub;

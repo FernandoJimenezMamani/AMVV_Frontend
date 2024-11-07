@@ -14,11 +14,14 @@ import RegistrarClub from './pages/Clubes/Registrar';
 import EditarClub from './pages/Clubes/Editar';
 import PerfilClub from './pages/Clubes/Perfil';
 import ListaCategorias from './pages/Categorias/Indice';
+import ListaCategorias2 from './pages/Categorias/Indice2';
 import RegistrarCategoria from './pages/Categorias/Registrar';
 import EditarCategoria from './pages/Categorias/Editar';
 import ListaEquipo from './pages/Equipos/Indice';
 import RegistrarEquipo from './pages/Equipos/Registrar';
 import EditarEquipo from './pages/Equipos/Editar';
+import PerfilEquipo from './pages/Equipos/Perfil';
+import RegistrarJugadorEquipo from './pages/Equipos/JugadorEquipo';
 import RegistrarPartido from './pages/Partidos/Registrar';
 import IndicePartido from './pages/Partidos/Indice';
 import RegistrarResultado from './pages/Partidos/RegistrarResultado';
@@ -31,10 +34,13 @@ import RegistrarArbitro from './pages/Arbitros/Registrar';
 import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
+import ListaJugadorAll from './pages/Jugadores/IndiceGeneral';
 import RegistrarLugar from './pages/Complejos/Registro';
 import PartidoDetalle from './pages/Partidos/PartidoDetalle';
+import ListaTraspaso from './pages/Traspasos/Indice';
+import ListaTraspasoClub from './pages/Traspasos/IndiceClub';
+import DetalleTraspaso from './pages/Traspasos/Detalle';
 import './assets/css/tailwind.css';
-
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
 
@@ -86,11 +92,15 @@ const App = () => {
               <Route path="/clubes/editar/:id" element={<EditarClub />} />
               <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
               
+              <Route path="/categorias/lista" element={<ListaCategorias2 />} />
               <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
               <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
               <Route path="/equipos/indice" element={<ListaEquipo />} />
               <Route path="/equipos/registrar/:clubId" element={<RegistrarEquipo />} />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
+              <Route path="/equipos/perfil/:id" element={<PerfilEquipo />} />
+              <Route path="/equipos/registrar_jugador_equipo/:id" element={<RegistrarJugadorEquipo />} />
+
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
               <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
               <Route path="/partidos/registrarResultado/:partidoId" element={<RegistrarResultado />} />
@@ -101,9 +111,14 @@ const App = () => {
               <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
               <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
               <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+              <Route path="/jugadores/indice" element={<ListaJugadorAll/>} />
               <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
               <Route path="/arbitro/indice" element={<ListaArbitro />} />
               <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
+
+              <Route path="/traspasos/indice" element={<ListaTraspaso />} />
+              <Route path="/traspasos/indice-club" element={<ListaTraspasoClub />} />
+              <Route path="/traspasos/detalle/:solicitudId" element={<DetalleTraspaso />} />
             </Route>
           </Route>
         </Routes>

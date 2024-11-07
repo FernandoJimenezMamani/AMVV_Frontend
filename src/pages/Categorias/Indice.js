@@ -62,7 +62,7 @@ const ListaCategorias = () => {
         <div className="categorias-column">
           <h3>Varones</h3>
           <div className="categorias-list">
-            {filterCategorias('MY', 'M').map((categoria) => (
+            {filterCategorias('MY', 'V').map((categoria) => (
               <div 
                 key={categoria.id} 
                 className="categoria-item-man"
@@ -77,7 +77,7 @@ const ListaCategorias = () => {
         <div className="categorias-column">
           <h3>Damas</h3>
           <div className="categorias-list">
-            {filterCategorias('MY', 'F').map((categoria) => (
+            {filterCategorias('MY', 'D').map((categoria) => (
               <div 
                 key={categoria.id} 
                 className="categoria-item-women"
@@ -101,7 +101,7 @@ const ListaCategorias = () => {
         <div className="categorias-column">
           <h3>Varones</h3>
           <div className="categorias-list">
-            {filterCategorias('MN', 'M').map((categoria) => (
+            {filterCategorias('MN', 'V').map((categoria) => (
               <div 
                 key={categoria.id} 
                 className="categoria-item-man"
@@ -116,7 +116,7 @@ const ListaCategorias = () => {
         <div className="categorias-column">
           <h3>Damas</h3>
           <div className="categorias-list">
-            {filterCategorias('MN', 'F').map((categoria) => (
+            {filterCategorias('MN', 'D').map((categoria) => (
               <div 
                 key={categoria.id} 
                 className="categoria-item-women"

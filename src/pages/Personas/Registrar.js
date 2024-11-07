@@ -6,6 +6,8 @@ import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';
 import '../../assets/css/Registro.css';
 import { toast } from 'react-toastify';
+import { Select } from 'antd'; // Asegúrate de importar 'Select' de 'antd'
+const { Option } = Select;
 
 const RegistroPersona = () => {
   const [formData, setFormData] = useState({
@@ -14,7 +16,8 @@ const RegistroPersona = () => {
     fecha_nacimiento: '',
     ci: '',
     direccion: '',
-    correo: ''
+    correo: '',
+    genero: 'V'  // Inicializamos con "V" (Varones)
   });
 
   const [errors, setErrors] = useState({});
@@ -27,6 +30,7 @@ const RegistroPersona = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
+  // Manejo del cambio del input para los campos de texto
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -38,6 +42,19 @@ const RegistroPersona = () => {
     }));
   };
 
+  // Manejo del cambio en el Select del género
+  const handleGeneroChange = (value) => {
+    setFormData({
+      ...formData,
+      genero: value
+    });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      genero: ''
+    }));
+  };
+
+  // Validación del formulario
   const validateForm = () => {
     const newErrors = {};
     if (!formData.nombre) newErrors.nombre = 'El campo nombre es obligatorio';
@@ -49,6 +66,7 @@ const RegistroPersona = () => {
     return newErrors;
   };
 
+  // Manejo del envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -65,6 +83,7 @@ const RegistroPersona = () => {
     data.append('ci', formData.ci);
     data.append('direccion', formData.direccion);
     data.append('correo', formData.correo);
+    data.append('genero', formData.genero);  // Incluimos el género en los datos
     if (croppedImage) {
       data.append('image', croppedImage);
     } else if (image) {
@@ -84,6 +103,7 @@ const RegistroPersona = () => {
     }
   };
 
+  // Manejo del cambio de imagen
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -192,6 +212,23 @@ const RegistroPersona = () => {
           />
           {errors.correo && <span className="error-message">{errors.correo}</span>}
         </div>
+
+        {/* Select para género */}
+        <div className="select-container">
+          <Select
+            id="genero"
+            name="genero"
+            value={formData.genero}
+            onChange={handleGeneroChange}
+            placeholder="Seleccione Género"
+            style={{ width: '100%' }}
+          >
+            <Option value="V">Varones</Option>
+            <Option value="D">Damas</Option>
+          </Select>
+          {errors.genero && <span className="error-message">{errors.genero}</span>}
+        </div>
+
         <div className="form-group">
           <input
             type="file"
