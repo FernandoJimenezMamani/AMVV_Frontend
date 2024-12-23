@@ -56,29 +56,54 @@ const ListaPersonas = () => {
   };
 
   return (
-    <div className="clubes-lista">
-      <h2 className="clubes-lista-titulo">Lista de Personas</h2>
-      <table className="clubes-lista-tabla">
-        <thead className="clubes-lista-thead">
+    <div className="table-container">
+      <h2 className="table-title">Lista de Personas</h2>
+      <table className="table-layout">
+        <thead className="table-head">
           <tr>
             <th></th>
             <th>Foto</th>
-            <th className="clubes-lista-th">Nombre del Jugador</th>
-            <th className="clubes-lista-th">Fecha de Nacimiento</th>
-            <th className="clubes-lista-th">Acción</th>
+            <th className="table-th">Nombre del Jugador</th>
+            <th className="table-th">Fecha de Nacimiento</th>
+            <th className="table-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {personas.map((p) => (
-            <tr key={p.id}>
+            <tr key={p.id} className="table-row">
               <td></td>
-              <td className="clubes-lista-td"><img src={p.persona_imagen} alt={`${p.nombre} ${p.apellido}`} className="club-logo" /></td>
-              <td className="clubes-lista-td-nombre">{p.nombre} {p.apellido}</td>
-              <td className="clubes-lista-td">{new Date(p.fecha_nacimiento).toLocaleDateString()}</td>
-              <td className="clubes-lista-td">
-                <button className="club-button perfil-btn" onClick={() => handleProfileClick(p.id)}>Perfil</button>
-                <button className="club-button editar-btn" onClick={() => handleEditClick(p.id)}>Editar</button>
-                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(p.id)}>Eliminar</button>
+              <td className="table-td">
+                <img
+                  src={p.persona_imagen}
+                  alt={`${p.nombre} ${p.apellido}`}
+                  className="table-logo"
+                />
+              </td>
+              <td className="table-td table-td-name">
+                {p.nombre} {p.apellido}
+              </td>
+              <td className="table-td">
+                {new Date(p.fecha_nacimiento).toLocaleDateString()}
+              </td>
+              <td className="table-td">
+                <button
+                  className="table-button button-view"
+                  onClick={() => handleProfileClick(p.id)}
+                >
+                  Perfil
+                </button>
+                <button
+                  className="table-button button-edit"
+                  onClick={() => handleEditClick(p.id)}
+                >
+                  Editar
+                </button>
+                <button
+                  className="table-button button-delete"
+                  onClick={() => handleDeleteClick(p.id)}
+                >
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
@@ -92,6 +117,7 @@ const ListaPersonas = () => {
         message="¿Seguro que quieres eliminar esta persona?"
       />
     </div>
+
   );
 };
 

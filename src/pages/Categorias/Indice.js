@@ -49,7 +49,7 @@ const ListaCategorias = () => {
 
   return (
     <div className="categorias-container">
-      <h2 className="categorias-titulo">Lista de Categorías</h2>
+      <h2 className="categorias-titulo">Lista de Categoasdasdrías</h2>
 
       <button 
         className="division-button" 

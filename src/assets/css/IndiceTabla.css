@@ -1,136 +1,135 @@
-.clubes-lista {
+.table-container {
   padding: 20px;
-  background-color: transparent !important; 
+  background-color: transparent !important;
   border-radius: 28px;
   box-shadow: 
-  8px 0 16px rgba(0, 0, 0, 0.2), 
-  -8px 0 16px rgba(0, 0, 0, 0.2), 
-  0 8px 16px rgba(0, 0, 0, 0.2), 
-  0 -8px 16px rgba(0, 0, 0, 0.2);
-  
+    8px 0 16px rgba(0, 0, 0, 0.2), 
+    -8px 0 16px rgba(0, 0, 0, 0.2), 
+    0 8px 16px rgba(0, 0, 0, 0.2), 
+    0 -8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.clubes-lista-titulo {
+.table-title {
   text-align: center;
-  font-size:45px !important;
+  font-size: 45px !important;
   margin-bottom: 5px !important;
-  color: #143E42; 
-  font-weight:bold;
+  color: #143E42;
+  font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-.clubes-lista-tabla {
+.table-row {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  border-radius: 8px;
+}
+
+.table-layout {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-.clubes-lista-thead {
+.table-head {
   background: linear-gradient(to bottom, #507788, #141E22);
-  color: #fff; 
-  border-radius:45px !important;
+  color: #fff;
+  border-radius: 8px !important;
 }
 
-.clubes-lista-th, .clubes-lista-td {
-  padding: 12px 15px;
-  text-align: left;
+.table-th, .table-td {
+  padding: 8px 12px;
+  text-align: center;
+  font-size: 1em;
+  font-weight: bold;
   border-bottom: 1px solid #ddd;
 }
 
-.clubes-lista-th {
-  font-size: 1.2em;
-  text-align: center
-}
-
-.clubes-lista-thead th:first-child {
+.table-th:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.clubes-lista-thead th:last-child {
+.table-th:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
-.clubes-lista-td {
-  vertical-align: middle;
+
+.table-td {
+  padding: 10px 12px;
   text-align: center;
-  font-weight:bold;
+  background-color: white;
+  box-shadow: none; 
 }
 
-.clubes-lista-td-nombre {
-  vertical-align: middle;
-  text-align: center;
-  font-weight:bold;
-  font-size:17px;
+.table-td-name {
+  font-size: 17px;
+  font-weight: bold;
 }
 
-
-.club-logo {
+.table-logo {
   width: 50px;
   height: 50px;
-  border-radius: 50%; 
+  border-radius: 50%;
 }
 
-
-.club-button {
-  padding: 10px 15px;
-  margin: 5px;
+.table-button {
+  padding: 8px 12px;
+  margin: 3px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-size: 0.9em;
   transition: background-color 0.3s ease, transform 0.2s;
 }
 
-.perfil-btn {
-  background-color: #579FA6; 
+.button-view {
+  background-color: #579FA6;
   color: #fff;
 }
 
-.editar-btn {
-  background-color: #9DAC42 !important; 
+.button-edit {
+  background-color: #9DAC42 !important;
   color: #fff;
 }
 
-.eliminar-btn {
+.button-delete {
   background-color: #762727 !important;
   color: #fff;
 }
 
-.club-button:hover {
+.table-button:hover {
   transform: scale(1.05);
 }
 
-.perfil-btn:hover {
-  background-color: #0056b3; 
+.button-view:hover {
+  background-color: #0056b3;
 }
 
-.editar-btn:hover {
-  background-color: #e0a800; 
+.button-edit:hover {
+  background-color: #e0a800;
 }
 
-.eliminar-btn:hover {
-  background-color: #c82333; 
+.button-delete:hover {
+  background-color: #c82333;
 }
 
 @media (max-width: 768px) {
-  .clubes-lista-th, .clubes-lista-td {
+  .table-th, .table-td {
     font-size: 0.9em;
   }
 
-  .club-logo {
+  .table-logo {
     width: 40px;
     height: 40px;
   }
 
-  .club-button {
-    padding: 8px 12px;
+  .table-button {
+    padding: 6px 8px;
+    font-size: 0.8em;
   }
 }
 
-
-/* Estilos de modal confirmacion de eliminar registro */
-
-.confirm-modal {
+/* Estilos del modal */
+.modal-container {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -143,12 +142,12 @@
   text-align: center;
 }
 
-.confirm-modal p {
+.modal-container p {
   font-size: 18px;
   margin-bottom: 20px;
 }
 
-.confirm-btn, .cancel-btn {
+.modal-button, .modal-cancel-button {
   padding: 10px 20px;
   margin: 0 10px;
   border: none;
@@ -156,17 +155,17 @@
   cursor: pointer;
 }
 
-.confirm-btn {
-  background: linear-gradient(to bottom, #507788, #141E22); /* Green color */
+.modal-button {
+  background: linear-gradient(to bottom, #507788, #141E22);
   color: white;
 }
 
-.cancel-btn {
-  background: linear-gradient(to bottom, #507788, #141E22); /* Red color */
+.modal-cancel-button {
+  background: linear-gradient(to bottom, #762727, #141E22);
   color: white;
 }
 
-.confirm-btn:hover, .cancel-btn:hover {
+.modal-button:hover, .modal-cancel-button:hover {
   transform: scale(1.05);
 }
 

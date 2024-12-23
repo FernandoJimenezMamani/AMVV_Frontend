@@ -37,10 +37,12 @@ const SubmitResultados = () => {
           const equipoIdSeleccionado = equipoSeleccionado || equipos[0].equipo_id;
           setEquipoSeleccionado(equipoIdSeleccionado);
 
-          const jugadoresResponse = await fetch(`http://localhost:5002/api/jugador/getJugadoresByEquipo/${equipoIdSeleccionado}`);
+          const jugadoresResponse = await fetch(`http://localhost:5002/api/partidos/get_jugadores/${equipoIdSeleccionado}`);
           const jugadoresData = await jugadoresResponse.json();
           setJugadores(jugadoresData);
+          console.log(jugadoresData,'hola vv');
         }
+
       } catch (error) {
         console.error('Error al obtener los equipos y jugadores:', error);
       }
@@ -228,7 +230,7 @@ const SubmitResultados = () => {
       equipoId: equipoSeleccionado,
       equipoNombre: equipo.equipo_nombre,
       jugadorId: jugadorSeleccionado,
-      jugadorNombre: `${jugador.nombre_persona} ${jugador.apellido_persona}`,
+      jugadorNombre: `${jugador.jugador_nombre} ${jugador.jugador_apellido}`,
       tipoTarjeta,
     };
 
@@ -435,7 +437,7 @@ const SubmitResultados = () => {
               <option value="">Seleccione un jugador</option>
               {jugadores.map((jugador) => (
                 <option key={jugador.jugador_id} value={jugador.jugador_id}>
-                  {jugador.nombre_persona} {jugador.apellido_persona}
+                  {jugador.jugador_nombre} {jugador.jugador_apellido}
                 </option>
               ))}
             </select>

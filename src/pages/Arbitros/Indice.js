@@ -54,32 +54,46 @@ const ListaArbitros = () => {
   };
 
   return (
-    <div className="clubes-lista">
-      <h2 className="clubes-lista-titulo">Lista de Árbitros</h2>
-      <table className="clubes-lista-tabla">
-        <thead className="clubes-lista-thead">
+    <div className="table-container">
+      <h2 className="table-title">Lista de Árbitros</h2>
+      <table className="table-layout">
+        <thead className="table-head">
           <tr>
             <th>Foto</th>
-            <th className="clubes-lista-th">Nombre del Árbitro</th>
-            <th className="clubes-lista-th">Fecha de Nacimiento</th>
-            <th className="clubes-lista-th">Acción</th>
+            <th className="table-th">Nombre del Árbitro</th>
+            <th className="table-th">Fecha de Nacimiento</th>
+            <th className="table-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {arbitros.map((arbitro) => (
-            <tr key={arbitro.id}>
-              <td className="clubes-lista-td">
-                <img src={arbitro.persona_imagen} alt={`${arbitro.nombre} ${arbitro.apellido}`} className="club-logo" />
+            <tr key={arbitro.id} className="table-row">
+              <td className="table-td">
+                <img
+                  src={arbitro.persona_imagen}
+                  alt={`${arbitro.nombre} ${arbitro.apellido}`}
+                  className="table-logo"
+                />
               </td>
-              <td className="clubes-lista-td-nombre">
+              <td className="table-td table-td-name">
                 {arbitro.nombre} {arbitro.apellido}
               </td>
-              <td className="clubes-lista-td">
+              <td className="table-td">
                 {new Date(arbitro.fecha_nacimiento).toLocaleDateString()}
               </td>
-              <td className="clubes-lista-td">
-                <button className="club-button editar-btn" onClick={() => handleEditClick(arbitro.id)}>Editar</button>
-                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(arbitro.id)}>Eliminar</button>
+              <td className="table-td">
+                <button
+                  className="table-button button-edit"
+                  onClick={() => handleEditClick(arbitro.id)}
+                >
+                  Editar
+                </button>
+                <button
+                  className="table-button button-delete"
+                  onClick={() => handleDeleteClick(arbitro.id)}
+                >
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}
@@ -93,6 +107,7 @@ const ListaArbitros = () => {
         message="¿Seguro que quieres eliminar este árbitro?"
       />
     </div>
+
   );
 };
 

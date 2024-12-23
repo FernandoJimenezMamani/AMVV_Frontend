@@ -57,36 +57,51 @@ const ListaCategorias = () => {
   };
 
   return (
-    <div className="clubes-lista">
-      <h2 className="clubes-lista-titulo">Lista de Categorías</h2>
-      <table className="clubes-lista-tabla">
-        <thead className="clubes-lista-thead">
-          <tr>
-            <th>Nombre</th>
-            <th className="clubes-lista-th">Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categorias.map((categoria) => (
-            <tr key={categoria.id}>
-              <td>{categoria.nombre}</td>
-              <td className="clubes-lista-td">
-                <button className="club-button editar-btn" onClick={() => handleEditClick(categoria.id)}>Editar</button>
-                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(categoria.id)}>Eliminar</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="table-container">
+  <h2 className="table-title">Lista de Categorías</h2>
+  <table className="table-layout">
+    <thead className="table-head">
+      <tr>
+        <th>Nombre</th>
+        <th className="table-th">Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {categorias.map((categoria) => (
+        <tr key={categoria.id} className="table-row">
+          <td className="table-td table-td-name">{categoria.nombre}</td>
+          <td className="table-td">
+            <button
+              className="table-button button-edit"
+              onClick={() => handleEditClick(categoria.id)}
+            >
+              Editar
+            </button>
+            <button
+              className="table-button button-delete"
+              onClick={() => handleDeleteClick(categoria.id)}
+            >
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
 
-      {showConfirm && (
-        <div className="confirm-modal">
-          <p>¿Seguro que quieres eliminar esta categoría?</p>
-          <button className="confirm-btn" onClick={handleConfirmDelete}>Sí</button>
-          <button className="cancel-btn" onClick={handleCancelDelete}>No</button>
-        </div>
-      )}
+  {showConfirm && (
+    <div className="modal-container">
+      <p>¿Seguro que quieres eliminar esta categoría?</p>
+      <button className="modal-button" onClick={handleConfirmDelete}>
+        Sí
+      </button>
+      <button className="modal-cancel-button" onClick={handleCancelDelete}>
+        No
+      </button>
     </div>
+  )}
+</div>
+
   );
 };
 

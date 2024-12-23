@@ -74,43 +74,49 @@ const ListaJugadoresAll = () => {
   };
 
   return (
-    <div className="clubes-lista">
-      <h2 className="clubes-lista-titulo">Lista de Todos los Jugadores</h2>
+    <div className="table-container">
+      <h2 className="table-title">Lista de Todos los Jugadores</h2>
 
-      <table className="clubes-lista-tabla">
-        <thead className="clubes-lista-thead">
+      <table className="table-layout">
+        <thead className="table-head">
           <tr>
             <th>Foto</th>
-            <th className="clubes-lista-th">Nombre del Jugador</th>
-            <th className="clubes-lista-th">Fecha de Nacimiento</th>
-            <th className="clubes-lista-th">Club</th>
-            <th className="clubes-lista-th">Acción</th>
+            <th className="table-th">Nombre del Jugador</th>
+            <th className="table-th">Fecha de Nacimiento</th>
+            <th className="table-th">Club</th>
+            <th className="table-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {jugadores.map((jugador) => (
-            <tr key={jugador.jugador_id}>
-              <td className="clubes-lista-td">
+            <tr key={jugador.jugador_id} className="table-row">
+              <td className="table-td">
                 <img
                   src={jugador.imagen_persona}
                   alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
-                  className="club-logo"
+                  className="table-logo"
                 />
               </td>
-              <td className="clubes-lista-td-nombre">
+              <td className="table-td table-td-name">
                 {jugador.nombre_persona} {jugador.apellido_persona}
               </td>
-              <td className="clubes-lista-td">
+              <td className="table-td">
                 {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString()}
               </td>
-              <td className="clubes-lista-td">
+              <td className="table-td">
                 {jugador.nombre_club || 'Sin Club'}
               </td>
-              <td className="clubes-lista-td">
-                <button className="club-button perfil-btn" onClick={() => handleProfileClick(jugador.jugador_id)}>
+              <td className="table-td">
+                <button
+                  className="table-button button-view"
+                  onClick={() => handleProfileClick(jugador.jugador_id)}
+                >
                   Perfil
                 </button>
-                <button className="club-button perfil-btn" onClick={() => handleFicharClick(jugador.jugador_id)}>
+                <button
+                  className="table-button button-assign"
+                  onClick={() => handleFicharClick(jugador.jugador_id)}
+                >
                   Fichar Jugador
                 </button>
               </td>
@@ -126,6 +132,7 @@ const ListaJugadoresAll = () => {
         message="¿Seguro que quieres fichar a este jugador?"
       />
     </div>
+
   );
 };
 

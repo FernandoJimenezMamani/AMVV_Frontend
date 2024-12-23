@@ -61,27 +61,30 @@ const ListaClubes = () => {
   };
 
   return (
-    <div className="clubes-lista">
-      <h2 className="clubes-lista-titulo">Lista de Clubes</h2>
-      <table className="clubes-lista-tabla">
-        <thead className="clubes-lista-thead">
+    <div className="table-container">
+      <h2 className="table-title">Lista de Clubes</h2>
+      <button className="table-add-button" >+1 club</button>
+      <table className="table-layout">
+        <thead className="table-head">
           <tr>
             <th></th>
             <th>Logo</th>
-            <th className="clubes-lista-th">Nombre</th>
-            <th className="clubes-lista-th">Acción</th>
+            <th className="table-th">Nombre</th>
+            <th className="table-th">Acción</th>
           </tr>
         </thead>
         <tbody>
           {clubes.map((club) => (
-            <tr key={club.id}>
+            <tr key={club.id} className="table-row">
               <td></td>
-              <td className="clubes-lista-td"><img src={club.club_imagen} alt={`${club.nombre} logo`} className="club-logo" /></td>
-              <td className="clubes-lista-td-nombre">{club.nombre}</td>
-              <td className="clubes-lista-td">
-                <button className="club-button perfil-btn" onClick={() => handleProfileClick(club.id)}>Perfil</button>
-                <button className="club-button editar-btn" onClick={() => handleEditClick(club.id)}>Editar</button>
-                <button className="club-button eliminar-btn" onClick={() => handleDeleteClick(club.id)}>Eliminar</button>
+              <td className="table-td">
+                <img src={club.club_imagen} alt={`${club.nombre} logo`} className="table-logo" />
+              </td>
+              <td className="table-td table-td-name">{club.nombre}</td>
+              <td className="table-td">
+                <button className="table-button button-view" onClick={() => handleProfileClick(club.id)}>Perfil</button>
+                <button className="table-button button-edit" onClick={() => handleEditClick(club.id)}>Editar</button>
+                <button className="table-button button-delete" onClick={() => handleDeleteClick(club.id)}>Eliminar</button>
               </td>
             </tr>
           ))}
@@ -95,6 +98,7 @@ const ListaClubes = () => {
         message="¿Seguro que quieres eliminar este club?"
       />
     </div>
+
   );
 };
 
