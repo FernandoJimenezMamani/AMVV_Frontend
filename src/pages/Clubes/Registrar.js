@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cropper from 'react-easy-crop';
 import Modal from 'react-modal';
-import Slider from '@mui/material/Slider';
-import { getCroppedImg } from '../RecortarImagen.js';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import './registroModal.css';
+import '../../assets/css/registroModal.css';
+import ImageCropperModal from '../../components/ImageCropperModal';
 
 Modal.setAppElement('#root'); // Necesario para accesibilidad
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const RegistroClub = () => {
+const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -87,53 +86,35 @@ const RegistroClub = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5002/api/club/post_club', data, {
+      const response = await axios.post(`${API_BASE_URL}/club/post_club`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       console.log(response.data);
       toast.success('Registrado con éxito');
-      closeFormModal(); // Cerrar modal
-      navigate('/clubes/indice');
+      onClose(); 
+      onClubCreated();
     } catch (error) {
       toast.error('Error al registrar');
       console.error('Error al crear el club:', error);
     }
   };
 
-  const handleCropConfirm = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
-      setCroppedImage(croppedImage);
-      setImage(URL.createObjectURL(croppedImage));
-      setImagePreview(URL.createObjectURL(croppedImage));
-      setModalIsOpen(false);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleCancel = () => {
-    setModalIsOpen(false);
-    setTempImage(null);
-    setImagePreview(null);
-    document.getElementById('image').value = '';
+  const handleCropConfirm = (cropped) => {
+    setCroppedImage(cropped);
+    setImagePreview(URL.createObjectURL(cropped));
   };
 
   return (
     <div>
-      {/* Botón para abrir el modal */}
-      <button className="table-add-button" onClick={openFormModal}>+1 club</button>
-
-      {/* Modal principal para el formulario */}
       <Modal
-        isOpen={formModalIsOpen}
+        isOpen={isOpen} 
         onRequestClose={closeFormModal}
         contentLabel="Registrar Club"
         className="modal"
         overlayClassName="overlay"
         
       >
-        <h2>Registrar Club</h2>
+        <h2 className="modal-title">Registrar Club</h2>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="form-group">
             <input
@@ -156,56 +137,46 @@ const RegistroClub = () => {
             />
           </div>
           <div className="form-group">
-            <input
-              type="file"
-              id="image"
-              name="image"
-              onChange={handleImageChange}
-              className="file-input"
-            />
-            <label htmlFor="image" className="file-label">
-              <span className="file-name">
-                {imagePreview ? "Archivo seleccionado" : "Sin archivos seleccionados"}
-              </span>
-            </label>
-          </div>
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleImageChange}
+            className="file-input"
+          />
+          <label htmlFor="image" className={`file-label ${imagePreview ? 'has-file' : ''}`}>
+            <span className="file-name">
+              {imagePreview ? "Archivo seleccionado" : "Sin archivos seleccionados"}
+            </span>
+          </label>
+
+          {/* Vista previa de la imagen */}
+          {imagePreview && (
+            <div className="image-preview-container">
+              <img src={imagePreview} alt="Vista previa" className="image-preview" />
+            </div>
+          )}
+        </div>
+
 
           {/* Botones lado a lado */}
           <div className="form-buttons">
-            <button type="submit" className="button button-primary">Registrar</button>
-            <button type="button" className="button button-cancel" onClick={closeFormModal}>
+          <button type="button" className="button button-cancel" onClick={onClose}>
               Cancelar
             </button>
+            <button type="submit" className="button button-primary">Registrar</button>
+            
           </div>
         </form>
       </Modal>
 
       {/* Modal para recortar la imagen */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={handleCancel}
-        contentLabel="Crop Image"
-        className="modal"
-        overlayClassName="overlay"
-      >
-        <h2>Edita la imagen</h2>
-        <div className="crop-container">
-          <Cropper
-            image={imagePreview}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
-        </div>
-        <Slider value={zoom} min={1} max={3} step={0.1} onChange={(e, zoom) => setZoom(zoom)} />
-        <div className="buttons">
-          <button onClick={handleCancel}>Cancelar</button>
-          <button onClick={handleCropConfirm}>Aplicar</button>
-        </div>
-      </Modal>
+      <ImageCropperModal
+          isOpen={modalIsOpen}
+          onClose={() => setModalIsOpen(false)}
+          image={imagePreview}
+          onCropConfirm={handleCropConfirm}
+        />
     </div>
   );
 };

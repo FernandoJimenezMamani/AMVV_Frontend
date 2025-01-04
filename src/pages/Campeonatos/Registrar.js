@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { DatePicker, Modal } from 'antd';
+import { DatePicker } from 'antd';
 import moment from 'moment';
-import '../../assets/css/Registro.css'; 
+import Modal from 'react-modal';
+import '../../assets/css/registroModal.css';
 import { toast } from 'react-toastify';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+Modal.setAppElement('#root'); // Configuración importante para accesibilidad
 
 const { RangePicker } = DatePicker;
 
-const RegistroCampeonato = () => {
+const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     fecha_rango: [moment(), moment().add(1, 'days')]
   });
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     if (formData.fecha_rango && formData.fecha_rango.length === 2) {
@@ -47,50 +50,45 @@ const RegistroCampeonato = () => {
     });
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    setIsModalVisible(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const [fecha_inicio, fecha_fin] = formData.fecha_rango;
-      const response = await axios.post('http://localhost:5002/api/Campeonatos/insert', {
+      await axios.post(`${API_BASE_URL}/Campeonatos/insert`, {
         nombre: formData.nombre,
         fecha_inicio: fecha_inicio.toISOString(),
         fecha_fin: fecha_fin.toISOString()
       });
-      console.log(response.data);
-      toast.success('Registrado con éxito');
+      toast.success('Campeonato registrado con éxito');
+      onClose();  // Cerrar el modal después de registrar
+      onCampCreated();
     } catch (error) {
-      toast.error('error')
+      toast.error('Error al registrar el campeonato');
       console.error('Error al crear el campeonato:', error);
     }
   };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    showModal();
-  };
-
   return (
-    <div className="registro-campeonato">
-      <h2>Registrar Campeonato</h2>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Registrar Campeonato"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Registrar Campeonato</h2>
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <RangePicker
-            required
-            className="custom-range-picker"
-            showTime
-            value={formData.fecha_rango}
-            onChange={handleDateChange}
-            format="YYYY-MM-DD HH:mm:ss"
-            placeholder={['Fecha de inicio', 'Fecha de fin']}
-          />
+        <RangePicker
+          required
+          className="custom-range-picker input-field"
+          value={formData.fecha_rango}
+          onChange={handleDateChange}
+          format="YYYY-MM-DD"
+          placeholder={['Fecha de inicio', 'Fecha de fin']}
+        />
+
         </div>
         <div className="form-group">
           <input
@@ -100,22 +98,19 @@ const RegistroCampeonato = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
+            className="input-field"
           />
         </div>
-        <div className="form-group">
-          <button id="RegCampBtn" type="submit">Registrar</button>
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Registrar
+          </button>
         </div>
       </form>
-      <Modal
-        title="Confirmación"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        className="custom-modal"
-      >
-        <p>¿Estás seguro de que deseas crear este registro?</p>
-      </Modal>
-    </div>
+    </Modal>
   );
 };
 

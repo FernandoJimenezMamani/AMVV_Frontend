@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Editar.css';
+import '../../assets/css/registroModal.css'; 
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
+import Modal from 'react-modal';
 
 const { Option } = Select;
 
-const EditarCategoria = () => {
-  const { id } = useParams();
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     genero: 'V', // valor predeterminado
@@ -22,15 +24,17 @@ const EditarCategoria = () => {
 
   useEffect(() => {
     const fetchCategoria = async () => {
+      if (!categoriaId) return;
       try {
-        const response = await axios.get(`http://localhost:5002/api/categoria/get_categoriaId/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/categoria/get_categoriaId/${categoriaId}`);
+        console.log(formData, 'parea ver nomas')
         setFormData({
           nombre: response.data.nombre,
           genero: response.data.genero,
           division: response.data.division,
-          edad_minima: response.data.edad_minima || '',
-          edad_maxima: response.data.edad_maxima || '',
-          costo_traspaso: response.data.costo_traspaso || '',
+          edad_minima: response.data.edad_minima ,
+          edad_maxima: response.data.edad_maxima ,
+          costo_traspaso: response.data.costo_traspaso ,
           user_id: response.data.user_id
         });
       } catch (error) {
@@ -40,7 +44,7 @@ const EditarCategoria = () => {
     };
 
     fetchCategoria();
-  }, [id]);
+  }, [categoriaId]);
 
   const handleChange = (e) => {
     setFormData({
@@ -59,9 +63,10 @@ const EditarCategoria = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5002/api/categoria/update_categoria/${id}`, formData);
+      await axios.put(`${API_BASE_URL}/categoria/update_categoria/${categoriaId}`, formData);
       toast.success('Editado con éxito');
-      navigate('/categorias/indice');
+      onClose();
+      onCategoriaUpdated();
     } catch (error) {
       toast.error('Error al actualizar la categoría');
       console.error('Error al actualizar la categoría:', error);
@@ -69,96 +74,101 @@ const EditarCategoria = () => {
   };
 
   return (
-    <div className="editar-club">
-      <h2>Editar Categoría</h2>
-      <form onSubmit={handleSubmit}>
-        <label className="label-edit">Nombre de la Categoría</label>
-        <div className="form-group">
-          <input
-            type="text"
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            placeholder="Ingrese el nombre de la categoría"
-          />
-        </div>
+    <Modal
+    isOpen={isOpen}
+    onRequestClose={onClose}
+    contentLabel="Editar Categoría"
+    className="modal"
+    overlayClassName="overlay"
+  >
+    <h2 className="modal-title">Editar Categoría</h2>
 
-        {/* Select para Género usando antd */}
-        <div className="form-group">
-          <label className="label-edit">Género</label>
-          <Select
-            id="genero"
-            name="genero"
-            value={formData.genero}
-            onChange={(value) => handleSelectChange('genero', value)}
-            style={{ width: '100%' }}
-          >
-            <Option value="V">Varones</Option>
-            <Option value="D">Damas</Option>
-            <Option value="M">Mixto</Option>
-          </Select>
-        </div>
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <input
+          type="text"
+          id="nombre"
+          name="nombre"
+          value={formData.nombre}
+          onChange={handleChange}
+          placeholder="Ingrese el nombre de la categoría"
+          className="input-field"
+        />
+      </div>
 
-        {/* Select para División usando antd */}
-        <div className="form-group">
-          <label className="label-edit">División</label>
-          <Select
-            id="division"
-            name="division"
-            value={formData.division}
-            onChange={(value) => handleSelectChange('division', value)}
-            style={{ width: '100%' }}
-          >
-            <Option value="MY">Mayores</Option>
-            <Option value="MN">Menores</Option>
-          </Select>
-        </div>
+      <div className="select-container">
+        <Select
+          id="genero"
+          name="genero"
+          value={formData.genero}
+          onChange={(value) => handleSelectChange('genero', value)}
+          style={{ width: '100%' }}
+        >
+          <Option value="V">Varones</Option>
+          <Option value="D">Damas</Option>
+          <Option value="M">Mixto</Option>
+        </Select>
+      </div>
 
-        {/* Input para Edad Mínima */}
-        <div className="form-group">
-          <label className="label-edit">Edad Mínima</label>
-          <input
-            type="number"
-            id="edad_minima"
-            name="edad_minima"
-            value={formData.edad_minima}
-            onChange={handleChange}
-            placeholder="Edad mínima (opcional)"
-          />
-        </div>
+      <div className="select-container">
+        <Select
+          id="division"
+          name="division"
+          value={formData.division}
+          onChange={(value) => handleSelectChange('division', value)}
+          style={{ width: '100%' }}
+        >
+          <Option value="MY">Mayores</Option>
+          <Option value="MN">Menores</Option>
+        </Select>
+      </div>
 
-        {/* Input para Edad Máxima */}
-        <div className="form-group">
-          <label className="label-edit">Edad Máxima</label>
-          <input
-            type="number"
-            id="edad_maxima"
-            name="edad_maxima"
-            value={formData.edad_maxima}
-            onChange={handleChange}
-            placeholder="Edad máxima (opcional)"
-          />
-        </div>
+      <div className="form-group">
+        <input
+          type="number"
+          id="edad_minima"
+          name="edad_minima"
+          value={formData.edad_minima}
+          onChange={handleChange}
+          placeholder="Edad mínima (opcional)"
+          className="input-field"
+        />
+      </div>
 
-        {/* Input para Costo de Traspaso */}
-        <div className="form-group">
-          <label className="label-edit">Costo de Traspaso</label>
-          <input
-            type="number"
-            id="costo_traspaso"
-            name="costo_traspaso"
-            value={formData.costo_traspaso}
-            onChange={handleChange}
-            placeholder="Costo de traspaso"
-          />
-        </div>
+      <div className="form-group">
+        <input
+          type="number"
+          id="edad_maxima"
+          name="edad_maxima"
+          value={formData.edad_maxima}
+          onChange={handleChange}
+          placeholder="Edad máxima (opcional)"
+          className="input-field"
+        />
+      </div>
 
-        <div className="form-group">
-          <button id="edit-club-btn" type="submit">Guardar Cambios</button>
-        </div>
-      </form>
-    </div>
+      <div className="form-group">
+        <input
+          type="number"
+          id="costo_traspaso"
+          name="costo_traspaso"
+          value={formData.costo_traspaso}
+          onChange={handleChange}
+          placeholder="Costo de traspaso"
+          className="input-field"
+        />
+      </div>
+
+      <div className="form-buttons">
+        <button type="button" className="button button-cancel" onClick={onClose}>
+          Cancelar
+        </button>
+        <button type="submit" className="button button-primary">
+          Guardar Cambios
+        </button>
+      </div>
+    </form>
+  </Modal>
   );
 };
 

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { DatePicker, Modal } from 'antd';
+import { DatePicker } from 'antd';
+import Modal from 'react-modal';
 import moment from 'moment';
-import '../../assets/css/Registro.css';  
+import '../../assets/css/registroModal.css'; 
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const { RangePicker } = DatePicker;
 
-const EditarCampeonato = () => {
-  const { id } = useParams();
+const EditarCampeonato = ({isOpen, onClose,campId}) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nombre: '',
@@ -19,22 +20,22 @@ const EditarCampeonato = () => {
 
   useEffect(() => {
     const fetchCampeonato = async () => {
+      if (!campId) return;  // Evita ejecutar si el campId es null o undefined
       try {
-        const response = await axios.get(`http://localhost:5002/api/Campeonatos/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/Campeonatos/${campId}`);
         const { nombre, fecha_inicio, fecha_fin } = response.data;
         setFormData({
           nombre: nombre,
           fecha_rango: [moment(fecha_inicio), moment(fecha_fin)]
         });
-        toast.success('Edicion exitosa!')
       } catch (error) {
-        toast.error('error')
+        toast.error('Error al obtener los datos del campeonato');
         console.error('Error fetching campeonato data:', error);
       }
     };
-
     fetchCampeonato();
-  }, [id]);
+  }, [campId]);
+  
 
   useEffect(() => {
     if (formData.fecha_rango && formData.fecha_rango.length === 2) {
@@ -81,8 +82,8 @@ const EditarCampeonato = () => {
       const normalizedNombre = formData.nombre.replace(/\s+/g, '').toUpperCase();
 
       // Check if the championship name already exists
-      const checkNameResult = await axios.get('http://localhost:5002/api/Campeonatos/check-name', {
-        params: { nombre: normalizedNombre, excludeId: id }
+      const checkNameResult = await axios.get(`${API_BASE_URL}/Campeonatos/check-name`, {
+        params: { nombre: normalizedNombre, excludeId: campId }
       });
 
       if (checkNameResult.data.exists) {
@@ -90,7 +91,7 @@ const EditarCampeonato = () => {
         return;
       }
 
-      const response = await axios.put(`http://localhost:5002/api/Campeonatos/edit/${id}`, {
+      const response = await axios.put(`${API_BASE_URL}/Campeonatos/edit/${campId}`, {
         nombre: formData.nombre,
         fecha_inicio: fecha_inicio.toISOString(),
         fecha_fin: fecha_fin.toISOString()
@@ -114,20 +115,27 @@ const EditarCampeonato = () => {
   };
 
   return (
-    <div className="registro-campeonato">
-      <h2>Editar Campeonato</h2>
-      <form onSubmit={handleSubmit}>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Editar Campeonato"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Editar Campeonato</h2>
+
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <RangePicker
             required
-            className="custom-range-picker"
-            showTime
+            className="input-field custom-range-picker"
             value={formData.fecha_rango}
             onChange={handleDateChange}
-            format="YYYY-MM-DD HH:mm:ss"
+            format="YYYY-MM-DD"
             placeholder={['Fecha de inicio', 'Fecha de fin']}
           />
         </div>
+
         <div className="form-group">
           <input
             type="text"
@@ -136,22 +144,20 @@ const EditarCampeonato = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
+            className="input-field"
           />
         </div>
-        <div className="form-group">
-          <button id="RegCampBtn" type="submit">Guardar Cambios</button>
+
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Guardar Cambios
+          </button>
         </div>
       </form>
-      <Modal
-        title="Confirmación"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        className="custom-modal"
-      >
-        <p>¿Estás seguro de que deseas guardar los cambios?</p>
-      </Modal>
-    </div>
+    </Modal>
   );
 };
 

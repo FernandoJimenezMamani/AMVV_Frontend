@@ -1,56 +1,58 @@
+/* ========== Estilos Generales de la Tabla ========== */
 .table-container {
   padding: 20px;
-  background-color: transparent !important;
-  border-radius: 28px;
-  box-shadow: 
-    8px 0 16px rgba(0, 0, 0, 0.2), 
-    -8px 0 16px rgba(0, 0, 0, 0.2), 
-    0 8px 16px rgba(0, 0, 0, 0.2), 
-    0 -8px 16px rgba(0, 0, 0, 0.2);
+  width: 95%;
+  margin: auto;
 }
 
 .table-title {
-  text-align: center;
+  text-align: left;
   font-size: 45px !important;
   margin-bottom: 5px !important;
   color: #143E42;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-.table-row {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-  border-radius: 8px;
+  margin-left: auto;
 }
 
 .table-layout {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 
+    4px 0 8px rgba(0, 0, 0, 0.2),  /* Sombra derecha */
+    -4px 0 8px rgba(0, 0, 0, 0.2), /* Sombra izquierda */
+    0 4px 8px rgba(0, 0, 0, 0.2),  /* Sombra abajo */
+    0 -4px 8px rgba(0, 0, 0, 0.1); /* Sombra arriba */
+}
+
+.table-layout tr:last-child td:first-child {
+  border-bottom-left-radius: 10px !important;
+}
+
+.table-layout tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
 }
 
 .table-head {
   background: linear-gradient(to bottom, #507788, #141E22);
   color: #fff;
   border-radius: 8px !important;
+  height: 60px;
 }
 
-.table-th, .table-td {
-  padding: 8px 12px;
+.table-th {
   text-align: center;
-  font-size: 1em;
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
+  font-size: 14px;
 }
 
 .table-th:first-child {
   border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
 }
 
 .table-th:last-child {
   border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
 }
 
 .table-td {
@@ -58,19 +60,17 @@
   text-align: center;
   background-color: white;
   box-shadow: none; 
-}
-
-.table-td-name {
-  font-size: 17px;
-  font-weight: bold;
+  border-bottom: 1px solid #ddd;
 }
 
 .table-logo {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  margin-left: 30px;  
 }
 
+/* ========== Estilos para Botones ========== */
 .table-button {
   padding: 8px 12px;
   margin: 3px;
@@ -79,6 +79,10 @@
   cursor: pointer;
   font-size: 0.9em;
   transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.table-button:hover {
+  transform: scale(1.05);
 }
 
 .button-view {
@@ -96,10 +100,6 @@
   color: #fff;
 }
 
-.table-button:hover {
-  transform: scale(1.05);
-}
-
 .button-view:hover {
   background-color: #0056b3;
 }
@@ -112,23 +112,35 @@
   background-color: #c82333;
 }
 
-@media (max-width: 768px) {
-  .table-th, .table-td {
-    font-size: 0.9em;
-  }
-
-  .table-logo {
-    width: 40px;
-    height: 40px;
-  }
-
-  .table-button {
-    padding: 6px 8px;
-    font-size: 0.8em;
-  }
+/* ========== Botón de Añadir Nuevo Registro ========== */
+.table-add-button {
+  background-color: #3D8FA4;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos del modal */
+.table-add-button:hover {
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.table-add-button:active {
+  background-color: #2C5D6E;
+  transform: translateY(1px);
+}
+
+/* ========== Estilos para el Modal ========== */
 .modal-container {
   position: fixed;
   top: 50%;
@@ -177,4 +189,21 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
+}
+
+/* ========== Responsividad ========== */
+@media (max-width: 768px) {
+  .table-th, .table-td {
+    font-size: 0.9em;
+  }
+
+  .table-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .table-button {
+    padding: 6px 8px;
+    font-size: 0.8em;
+  }
 }

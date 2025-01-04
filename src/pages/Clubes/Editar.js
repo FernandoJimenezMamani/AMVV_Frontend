@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Cropper from 'react-easy-crop';
 import Modal from 'react-modal';
-import Slider from '@mui/material/Slider';
-import { getCroppedImg } from '../RecortarImagen.js';  
-import '../../assets/css/Editar.css';
+import '../../assets/css/registroModal.css';
 import { toast } from 'react-toastify';
+import ImageCropperModal from '../../components/ImageCropperModal';
 
-const EditarClub = () => {
-  const { id } = useParams();
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const EditarClub = ({ isOpen, onClose, clubId ,onClubUpdated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -18,77 +17,74 @@ const EditarClub = () => {
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [tempImage, setTempImage] = useState(null);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-  
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchClub = async () => {
+      if (!clubId) return; 
       try {
-        const response = await axios.get(`http://localhost:5002/api/club/get_club/${id}`);
-        setFormData({
-          nombre: response.data.nombre,
-          descripcion: response.data.descripcion,
-          user_id: response.data.user_id
-        });
-        if (response.data.club_imagen) {
-          setImagePreview(response.data.club_imagen);
+        const response = await axios.get(`${API_BASE_URL}/club/get_club/${clubId}`);
+        console.log('Response data:', response.data);
+        
+        const newFormData = {
+          nombre: response.data[0]?.nombre ,
+          descripcion: response.data[0]?.descripcion ,
+          user_id: response.data[0]?.user_id
+        };
+        
+        
+        setFormData(newFormData);
+        console.log('FormData after setting:', newFormData);
+  
+        if (response.data[0]?.club_imagen) {
+          setImagePreview(response.data[0].club_imagen);
         }
+        
       } catch (error) {
-        toast.error('error')
+        toast.error('Error al obtener el club');
         console.error('Error al obtener el club:', error);
       }
     };
-
+  
     fetchClub();
-  }, [id]);
+  }, [clubId]);
+  
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setTempImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImagePreview(URL.createObjectURL(file)); // Vista previa temporal
       setModalIsOpen(true);
     }
   };
 
-  const onCropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
+  const handleCropConfirm = (cropped) => {
+    setCroppedImage(cropped);
+    setImagePreview(URL.createObjectURL(cropped));
   };
 
   const handleUpdateImage = async () => {
+    if (!croppedImage) {
+      toast.error('Por favor, recorta la imagen antes de continuar.');
+      return;
+    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append('image', croppedImage);
+
     try {
-      const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
-      setCroppedImage(croppedImage);
-      setImagePreview(URL.createObjectURL(croppedImage));
-  
-      const formDataToSend = new FormData();
-      formDataToSend.append('image', croppedImage);
-  
-      const response = await axios.put(`http://localhost:5002/api/club/update_club_image/${id}`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      await axios.put(`${API_BASE_URL}/club/update_club_image/${clubId}`, formDataToSend, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
-  
-      toast.success('Editado con éxito');
-  
+
       setModalIsOpen(false);
     } catch (e) {
-      toast.error('error')
-      console.error('Error al recortar la imagen:', e);
+      toast.error('Error al actualizar la imagen');
+      console.error('Error al actualizar la imagen:', e);
     }
-  };
-
-  const handleCancel = () => {
-    setModalIsOpen(false);
-    setTempImage(null);
-    setImagePreview(null);
-    document.getElementById('fileInput').value = '';
   };
 
   const handleChange = (e) => {
@@ -107,114 +103,111 @@ const EditarClub = () => {
 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-  
+
+    if (tempImage && !croppedImage) {
+      toast.error('Por favor, recorta la imagen antes de guardar.');
+      return;
+    }
+
     const dataToSend = {
       nombre: formData.nombre,
       descripcion: formData.descripcion,
-      user_id: 1 // Usar la variable de sesión correspondiente
+      user_id: 1
     };
-  
+
     try {
-      await axios.put(`http://localhost:5002/api/club/update_club/${id}`, dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      await axios.put(`${API_BASE_URL}/club/update_club/${clubId}`, dataToSend, {
+        headers: { 'Content-Type': 'application/json' }
       });
-      alert('Club actualizado exitosamente');
-      navigate('/clubes/indice');
+
+      // Si hay una imagen recortada, actualízala después de guardar
+      if (croppedImage) {
+        await handleUpdateImage();
+      }
+
+      toast.success('Club actualizado exitosamente');
+      onClose();
+      onClubUpdated();
     } catch (error) {
+      toast.error('Error al actualizar el club');
       console.error('Error al actualizar el club:', error);
-      alert('Error al actualizar el club');
     }
   };
-
-
+  
   return (
-    <div className="editar-club">
-      <h2>Editar Club</h2>
-      
-      {/* Sección para editar la foto de perfil */}
-      <div className="editar-seccion">
-        <h3>Editar Foto de Perfil</h3>
+    <div>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Editar Club"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Editar Club</h2>
+
+      <form onSubmit={handleSubmitProfile} encType="multipart/form-data">
         <div className="form-group">
-          <input 
-            type="file" 
-            id="fileInput" 
-            onChange={handleImageChange} 
-            accept="image/jpeg, image/png, image/gif"
+          <input
+            type="text"
+            placeholder="Nombre"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            className="input-field"
           />
-          {imagePreview && <img src={imagePreview} alt="Vista previa de la imagen" className="image-preview" />}
         </div>
-        <button id="edit-image-btn" onClick={handleUpdateImage}>Guardar Imagen</button>
-      </div>
 
-      {/* Sección para editar los ajustes del perfil */}
-      <div className="editar-seccion">
-        <h3>Ajustes de Perfil</h3>
-        <form onSubmit={handleSubmitProfile}>
-          <label className="label-edit">Nombre del Club</label>
-          <div className="form-group">
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              placeholder="Ingrese el nombre del club"
-            />
-          </div>
-          <label className="label-edit">Descripción</label>
-          <div className="form-group">
-            <textarea
-              id="descripcion"
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
-              placeholder="Ingrese la descripción del club"
-              rows="4"
-            />
-          </div>
-          <div className="form-group">
-            <button id="edit-profile-btn" type="submit">Guardar Cambios</button>
-          </div>
-        </form>
-      </div>
+        <div className="form-group">
+          <textarea
+            placeholder="Descripción"
+            name="descripcion"
+            value={formData.descripcion}
+            onChange={handleChange}
+            className="input-field"
+          />
+        </div>
 
-      {/* Modal para recortar la imagen */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={handleCancel}
-        contentLabel="Recortar Imagen"
-        className="modal"
-        overlayClassName="overlay"
-      >
-        <h2>Edita la imagen</h2>
-        <div className="crop-container">
-          <Cropper
-            image={imagePreview}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
+        <div className="form-group">
+          <input
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleImageChange}
+            className="file-input"
           />
+          <label htmlFor="image" className={`file-label ${imagePreview ? 'has-file' : ''}`}>
+            <span className="file-name">
+              {imagePreview ? "Archivo seleccionado" : "Sin archivos seleccionados"}
+            </span>
+          </label>
         </div>
-        <div className="controls">
-          <Slider
-            value={zoom}
-            min={1}
-            max={3}
-            step={0.1}
-            onChange={(e, zoom) => setZoom(zoom)}
-          />
+
+        {imagePreview && (
+          <div className="image-preview-container">
+            <img src={imagePreview} alt="Vista previa" className="image-preview" />
+          </div>
+        )}
+
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Guardar Cambios
+          </button>
         </div>
-        <div className="buttons">
-          <button className="bottonsImageCancel" onClick={handleCancel}>Cancelar</button>
-          <button className="bottonsImage" onClick={handleUpdateImage}>Actualizar Imagen</button>
-        </div>
-      </Modal>
+      </form>
+    </Modal>
+
+    <ImageCropperModal
+          isOpen={modalIsOpen}
+          onClose={() => setModalIsOpen(false)}
+          image={imagePreview}
+          onCropConfirm={handleCropConfirm}
+        />
     </div>
+    
+    
   );
 };
 

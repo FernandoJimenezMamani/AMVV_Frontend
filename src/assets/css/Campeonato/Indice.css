@@ -1,9 +1,22 @@
 .campeonatos-container {
   display: flex;
-  flex-direction: column; /* Alinea los elementos en una columna */
-  align-items: center; /* Centra el contenido */
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
   padding: 20px;
+}
+
+.button-container {
+  margin-bottom: 30px;
+}
+
+.cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .campeonatos-lista-titulo {
@@ -14,20 +27,15 @@
 }
 
 .campeonato-card {
-  background: linear-gradient(to bottom, #507788, #141E22);
+  background: linear-gradient(to bottom, #507788, #141e22);
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
   width: 300px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin: 40px;
-  transition: transform 0.1s, opacity 0.1s;
-  position: relative;
-}
-
-.campeonato-card:hover {
-  transform: scale(1.05);
-  opacity: 0.8;
+  flex: 1 1 calc(30% - 20px);
+  max-width: 300px;
+  position: relative;  
 }
 
 .campeonato-nombre {
@@ -43,39 +51,91 @@
 }
 
 .campeonato-buttons {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  display: flex;
+  position: relative;  /* Cambiar a relative */
+  bottom: 0;  /* Eliminar bottom absoluto */
+  left: 0;
+  opacity: 1;
+  justify-content: center;
   gap: 10px;
-  opacity: 0;
-  transition: opacity 0.1s;
-  
+  margin-top: 20px;
 }
 
-.campeonato-card:hover .campeonato-buttons {
-  opacity: 1;
-}
 
 .campeonato-buttons .buttonex {
-  padding: 10px 15px;
+  padding: 12px 24px;  /* Tamaño uniforme */
   border: none;
-  border-radius: 5px; 
+  border-radius: 8px;
   background-color: #3D8FA4;
   color: white;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.1s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
 }
 
 .campeonato-buttons .buttonex:hover {
-  opacity: 1;
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);  /* Aumentar sombra */
+  transform: translateY(-2px);  /* Efecto de elevación */
 }
 
-.campeonato-card:hover .campeonato-fecha {
-  color: transparent;
+.campeonato-buttons .buttonex:active {
+  background-color: #2C5D6E;
+  transform: translateY(1px);  /* Simulación de presión */
 }
 
-.buttonex:hover {
-  padding: 9px 14px;
+.campeonato-buttons .button-view {
+  background-color: #3D8FA4;  /* Azul */
+  color: white;
+}
+
+.campeonato-buttons .button-view:hover {
+  background-color: #35748C;  /* Azul más oscuro */
+}
+
+.campeonato-buttons .button-edit {
+  background-color: #E8A02B;  /* Amarillo/Naranja */
+  color: white;
+}
+
+.campeonato-buttons .button-edit:hover {
+  background-color: #D88C1A;  /* Naranja más oscuro */
+}
+
+.campeonato-buttons .button-delete {
+  background-color: #D9534F;  /* Rojo */
+  color: white;
+}
+
+.campeonato-buttons .button-delete:hover {
+  background-color: #C9302C;  /* Rojo más oscuro */
+}
+
+.campeonato-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+  .campeonato-card {
+    flex: 1 1 calc(45% - 20px);  /* En pantallas medianas, 2 tarjetas por fila */
+  }
+}
+
+@media (max-width: 480px) {
+  .campeonato-card {
+    flex: 1 1 100%;  /* En pantallas pequeñas, 1 tarjeta por fila */
+  }
+
+  .campeonatos-lista-titulo {
+    font-size: 1.6em;
+    margin-top: 30px; /* Espacio adicional debajo del título */
+  }
+  
 }

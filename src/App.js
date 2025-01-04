@@ -14,7 +14,7 @@ import RegistrarClub from './pages/Clubes/Registrar';
 import EditarClub from './pages/Clubes/Editar';
 import PerfilClub from './pages/Clubes/Perfil';
 import ListaCategorias from './pages/Categorias/Indice';
-import ListaCategorias2 from './pages/Categorias/Indice2';
+import ListaCategorias2 from './pages/Categorias/IndiceTable';
 import RegistrarCategoria from './pages/Categorias/Registrar';
 import EditarCategoria from './pages/Categorias/Editar';
 import ListaEquipo from './pages/Equipos/Indice';

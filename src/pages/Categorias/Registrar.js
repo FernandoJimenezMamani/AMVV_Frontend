@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../../assets/css/Registro.css';
+import '../../assets/css/registroModal.css'; 
+import Modal from 'react-modal';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
 
 const { Option } = Select;
 
-const RegistroCategoria = () => {
+Modal.setAppElement('#root');
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const RegistroCategoria = ({ isOpen, onClose, onCategoriaCreated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     genero: 'V', // valor predeterminado
@@ -62,9 +65,11 @@ const RegistroCategoria = () => {
 
     try {
       console.log(formData); // Agregar esta línea antes de hacer la petición
-      const response = await axios.post('http://localhost:5002/api/categoria/post_categoria', formData);
+      const response = await axios.post(`${API_BASE_URL}/categoria/post_categoria`, formData);
       console.log(response.data);
       toast.success('Registrado con éxito');
+      onClose(); 
+      onCategoriaCreated();
     } catch (error) {
       toast.error('Error al registrar');
       console.error('Error al crear la categoría:', error);
@@ -86,8 +91,14 @@ const RegistroCategoria = () => {
   };
 
   return (
-    <div className="registro-campeonato">
-      <h2>Registrar Categoría</h2>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Registrar Categoría"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Registrar Categoría</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <input
@@ -97,12 +108,11 @@ const RegistroCategoria = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
-            className={errors.nombre ? 'error' : ''}
+            className="input-field"
           />
           {errors.nombre && <span className="error-message">{errors.nombre}</span>}
         </div>
 
-        {/* Select para Género usando antd */}
         <div className="select-container">
           <Select
             id="genero"
@@ -118,7 +128,6 @@ const RegistroCategoria = () => {
           </Select>
         </div>
 
-        {/* Select para División usando antd */}
         <div className="select-container">
           <Select
             id="division"
@@ -132,8 +141,6 @@ const RegistroCategoria = () => {
             <Option value="MN">Menores</Option>
           </Select>
         </div>
-
-        {/* Input para Edad Mínima */}
         <div className="form-group">
           <input
             type="number"
@@ -142,12 +149,11 @@ const RegistroCategoria = () => {
             name="edad_minima"
             value={formData.edad_minima}
             onChange={handleChange}
-            className={errors.edad_minima ? 'error' : ''}
+            className="input-field"
           />
           {errors.edad_minima && <span className="error-message">{errors.edad_minima}</span>}
         </div>
 
-        {/* Input para Edad Máxima */}
         <div className="form-group">
           <input
             type="number"
@@ -156,12 +162,11 @@ const RegistroCategoria = () => {
             name="edad_maxima"
             value={formData.edad_maxima}
             onChange={handleChange}
-            className={errors.edad_maxima ? 'error' : ''}
+            className="input-field"
           />
           {errors.edad_maxima && <span className="error-message">{errors.edad_maxima}</span>}
         </div>
 
-        {/* Input para Costo de Traspaso */}
         <div className="form-group">
           <input
             type="number"
@@ -170,16 +175,21 @@ const RegistroCategoria = () => {
             name="costo_traspaso"
             value={formData.costo_traspaso}
             onChange={handleChange}
-            className={errors.costo_traspaso ? 'error' : ''}
+            className="input-field"
           />
           {errors.costo_traspaso && <span className="error-message">{errors.costo_traspaso}</span>}
         </div>
 
-        <div className="form-group">
-          <button id="RegCampBtn" type="submit">Registrar</button>
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Registrar
+          </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
 
