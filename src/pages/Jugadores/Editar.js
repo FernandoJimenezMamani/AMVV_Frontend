@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { toast } from 'react-toastify';
-import '../../assets/css/registroModal.css';
 import ImageCropperModal from '../../components/ImageCropperModal';
+import '../../assets/css/registroModal.css';
+import { toast } from 'react-toastify';
 import { Select } from 'antd';
-import ImageIcon from '@mui/icons-material/Image';
-import roleNames from '../../constants/roles';
+import roleNames from '../../constants/roles'
 
 const { Option } = Select;
-
-Modal.setAppElement('#root');
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
+const EditarJugador = ({ isOpen, onClose, jugadorId, onJugadorUpdated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -21,53 +18,66 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
     ci: '',
     direccion: '',
     correo: '',
-    genero: 'V', // Valor inicial por defecto
-    roles: [roleNames.Arbitro], // Solo el rol de Árbitro
+    genero: 'V',
+    roles: [],
     club_jugador_id: null,
     club_presidente_id: null,
     club_delegado_id: null,
+    image: null,
   });
-
-  const [errors, setErrors] = useState({});
-  const [image, setImage] = useState(null);
-  const [tempImage, setTempImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [tempImage, setTempImage] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-  const fileInputRef = React.createRef();
+  const [clubes, setClubes] = useState([]);
+  const fileInputRef = useRef(null);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [e.target.name]: '',
-    }));
-  };
+  useEffect(() => {
+    const fetchJugador = async () => {
+      if (!jugadorId) return;
+      try {
+        const response = await axios.get(`${API_BASE_URL}/jugador/get_jugadorById/${jugadorId}`);
+        const rolesArray = Array.isArray(response.data.roles)
+        ? response.data.roles
+        : response.data.roles.split(',').map((role) => role.trim());
+        
+        setFormData({
+          nombre: response.data.nombre,
+          apellido: response.data.apellido,
+          fecha_nacimiento: response.data.fecha_nacimiento.split('T')[0],
+          ci: response.data.ci,
+          direccion: response.data.direccion,
+          correo: response.data.correo,
+          genero: response.data.genero,
+          roles:rolesArray,
+          club_jugador_id: response.data.club_jugador,
+          club_presidente_id: response.data.club_presidente,
+          club_delegado_id: response.data.club_presidente,
+          image: response.data.persona_imagen,
+        });
+        if (response.data.persona_imagen) {
+          setImagePreview(response.data.persona_imagen);
+        }
+      } catch (error) {
+        toast.error('Error al obtener los datos del jugador');
+        console.error('Error al obtener los datos del jugador:', error);
+      }
+    };
+    fetchJugador();
+  }, [jugadorId]);
 
-  const handleGeneroChange = (value) => {
-    setFormData({
-      ...formData,
-      genero: value,
-    });
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      genero: '',
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.nombre) newErrors.nombre = 'El campo nombre es obligatorio';
-    if (!formData.apellido) newErrors.apellido = 'El campo apellido es obligatorio';
-    if (!formData.fecha_nacimiento) newErrors.fecha_nacimiento = 'El campo fecha de nacimiento es obligatorio';
-    if (!formData.ci) newErrors.ci = 'El campo cédula de identidad es obligatorio';
-    if (!formData.direccion) newErrors.direccion = 'El campo dirección es obligatorio';
-    if (!formData.correo) newErrors.correo = 'El campo correo es obligatorio';
-    return newErrors;
-  };
+  useEffect(() => {
+    const fetchClubes = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/club/get_club`);
+        setClubes(response.data);
+      } catch (error) {
+        toast.error('Error al obtener los clubes');
+        console.error('Error al obtener los clubes:', error);
+      }
+    };
+    fetchClubes();
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -75,11 +85,6 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
-
-      // Reinicia el valor del input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
   };
 
@@ -88,96 +93,82 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
     setImagePreview(URL.createObjectURL(cropped));
   };
 
-  const resetForm = () => {
+  const handleChange = (e) => {
     setFormData({
-      nombre: '',
-      apellido: '',
-      fecha_nacimiento: '',
-      ci: '',
-      direccion: '',
-      correo: '',
-      genero: 'V',
-      roles: [roleNames.Arbitro],
-      club_jugador_id: null,
-      club_presidente_id: null,
-      club_delegado_id: null,
+      ...formData,
+      [e.target.name]: e.target.value,
     });
-    setErrors({});
-    setImage(null);
-    setTempImage(null);
-    setImagePreview(null);
-    setCroppedImage(null);
   };
 
-  const handleSubmit = async (e) => {
+  const handleGeneroChange = (value) => {
+    setFormData({
+      ...formData,
+      genero: value,
+    });
+  };
+
+  const handleClubChange = (value) => {
+    setFormData({
+      ...formData,
+      club_jugador_id: value,
+    });
+  };
+
+  const handleSubmitProfile = async (e) => {
     e.preventDefault();
 
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      return;
-    }
+    const formDataToSend = new FormData();
 
-    const data = new FormData();
-    data.append('nombre', formData.nombre);
-    data.append('apellido', formData.apellido);
-    data.append('fecha_nacimiento', formData.fecha_nacimiento);
-    data.append('ci', formData.ci);
-    data.append('direccion', formData.direccion);
-    data.append('correo', formData.correo);
-    data.append('genero', formData.genero);
-    data.append('roles', JSON.stringify(formData.roles));
-
-    // Campos de clubes enviados como null
-    data.append('club_jugador_id', formData.club_jugador_id);
-    data.append('club_presidente_id', formData.club_presidente_id);
-    data.append('club_delegado_id', formData.club_delegado_id);
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
 
     if (croppedImage) {
-      data.append('image', croppedImage);
-    } else if (image) {
-      data.append('image', image);
+      formDataToSend.append('image', croppedImage, 'profile_image.jpg');
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/persona/post_persona`, data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      await axios.put(`${API_BASE_URL}/persona/update_persona_with_roles/${jugadorId}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      console.log('Datos enviados al backend:', Object.fromEntries(data.entries()));
-      toast.success('Árbitro registrado con éxito');
-      resetForm();
-      onPersonaCreated();
+      toast.success('Jugador actualizado exitosamente');
       onClose();
+      onJugadorUpdated();
     } catch (error) {
-      toast.error('Error al registrar árbitro');
-      console.error('Error al crear árbitro:', error);
+      console.error('Error al actualizar el jugador:', error);
+      toast.error('Error al actualizar el jugador');
     }
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      contentLabel="Registrar Árbitro"
+      contentLabel="Editar Jugador"
       className="modal"
       overlayClassName="overlay"
     >
-      <h2 className="modal-title">Registrar Árbitro</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="form-group">
+      <h2 className="modal-title">Editar Jugador</h2>
+      <form onSubmit={handleSubmitProfile}>
+        <div className="form-group" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
           <input
             type="file"
-            id="image"
             ref={fileInputRef}
-            name="image"
             onChange={handleImageChange}
             className="file-input"
+            style={{ display: 'none' }}
           />
           <label htmlFor="image" className="custom-file-upload">
             {imagePreview ? (
               <img src={imagePreview} alt="Vista previa" className="image-preview" />
             ) : (
-              <span className="upload-text">Seleccionar foto para árbitro <ImageIcon /></span>
+              <span className="upload-text">Seleccionar foto</span>
             )}
           </label>
         </div>
@@ -185,10 +176,10 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Nombre"
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
+            placeholder="Nombre"
             className="input-field-u"
           />
         </div>
@@ -196,10 +187,10 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
         <div className="form-group">
           <input
             type="text"
-            placeholder="Apellido"
             name="apellido"
             value={formData.apellido}
             onChange={handleChange}
+            placeholder="Apellido"
             className="input-field-u"
           />
         </div>
@@ -262,12 +253,28 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
           />
         </div>
 
+        <div className="select-container-u">
+          <Select
+            placeholder="Selecciona Club para Jugador"
+            value={formData.club_jugador_id}
+            onChange={handleClubChange}
+            style={{ width: '100%' }}
+            className="custom-ant-select-u"
+          >
+            {clubes.map((club) => (
+              <Option key={club.id} value={club.id}>
+                {club.nombre}
+              </Option>
+            ))}
+          </Select>
+        </div>
+
         <div className="form-buttons">
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
           <button type="submit" className="button button-primary">
-            Registrar
+            Guardar Cambios
           </button>
         </div>
       </form>
@@ -282,4 +289,4 @@ const RegistroArbitro = ({ isOpen, onClose, onPersonaCreated }) => {
   );
 };
 
-export default RegistroArbitro;
+export default EditarJugador;

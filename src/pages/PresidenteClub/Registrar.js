@@ -1,135 +1,299 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import '../../assets/css/Registro.css';
+import Modal from 'react-modal';
 import { toast } from 'react-toastify';
+import '../../assets/css/registroModal.css';
+import ImageCropperModal from '../../components/ImageCropperModal';
+import { Select } from 'antd';
+import ImageIcon from '@mui/icons-material/Image';
+import roleNames from '../../constants/roles'
+const { Option } = Select;
 
-const RegistrarPresidenteClub = () => {
-  const { id } = useParams();
-  const [club, setClub] = useState(null);
-  const [personas, setPersonas] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPersona, setSelectedPersona] = useState(null);
- 
+Modal.setAppElement('#root'); // Necesario para accesibilidad
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const RegistroPresidente = ({ isOpen, onClose, onPresidenteCreated }) => {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    apellido: '',
+    fecha_nacimiento: '',
+    ci: '',
+    direccion: '',
+    correo: '',
+    genero: 'V', // Valor inicial por defecto
+    roles: [roleNames.PresidenteClub],
+    club_presidente_id: null,
+  });
+
+  const [errors, setErrors] = useState({});
+  const [image, setImage] = useState(null);
+  const [tempImage, setTempImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [clubesPresidente, setClubesPresidente] = useState([]);
+  const [croppedImage, setCroppedImage] = useState(null);
+  const [loadingClubesPresidente, setLoadingClubesPresidente] = useState(true);
+  const fileInputRef = React.createRef();
+
   useEffect(() => {
-    // Obtener detalles del club
-    const fetchClub = async () => {
+    // Carga de clubes específicos para presidente
+    const fetchClubesPresidente = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/club/get_club/${id}`);
-        console.log('datos xd', response)
-        if (Array.isArray(response.data) && response.data.length > 0) {
-          setClub(response.data[0]); // Accede al primer elemento del array
-        } else {
-          setClub(response.data); // Asigna los datos directamente si no es un array
-        }
+        const response = await axios.get(`${API_BASE_URL}/club/get_clubWithoutPresident`);
+        setClubesPresidente(response.data);
+        setLoadingClubesPresidente(false);
       } catch (error) {
-        toast.error('error')
-        console.error('Error al obtener detalles del club:', error);
+        toast.error('Error al obtener los clubes para presidente');
+        console.error('Error al obtener los clubes para presidente:', error);
       }
     };
- 
-    fetchClub();
-  }, [id]);
- 
-  const handleSearch = async (e) => {
-    const term = e.target.value;
-    setSearchTerm(term);
- 
-    if (term.length >= 3) { // Iniciar búsqueda solo si hay al menos 3 letras
-      try {
-        const response = await axios.get(`http://localhost:5002/api/persona/search_persona?searchTerm=${term}`);
-        setPersonas(response.data);
-      } catch (error) {
-        toast.error('error')
-        console.error('Error al buscar personas:', error);
+
+    fetchClubesPresidente();
+  }, []);
+
+  const resetForm = () => {
+    setFormData({
+      nombre: '',
+      apellido: '',
+      fecha_nacimiento: '',
+      ci: '',
+      direccion: '',
+      correo: '',
+      genero: 'V',
+      roles: [roleNames.PresidenteClub],
+      club_presidente_id: null,
+    });
+    setErrors({});
+    setImage(null);
+    setTempImage(null);
+    setImagePreview(null);
+    setCroppedImage(null);
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nombre) newErrors.nombre = 'El campo nombre es obligatorio';
+    if (!formData.apellido) newErrors.apellido = 'El campo apellido es obligatorio';
+    if (!formData.fecha_nacimiento) newErrors.fecha_nacimiento = 'El campo fecha de nacimiento es obligatorio';
+    if (!formData.ci) newErrors.ci = 'El campo cédula de identidad es obligatorio';
+    if (!formData.direccion) newErrors.direccion = 'El campo dirección es obligatorio';
+    if (!formData.correo) newErrors.correo = 'El campo correo es obligatorio';
+    if (!formData.club_presidente_id) newErrors.club_presidente_id = 'Debe seleccionar un club';
+    return newErrors;
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: '',
+    }));
+  };
+
+  const handleClubChange = (value) => {
+    setFormData({
+      ...formData,
+      club_presidente_id: value,
+    });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      club_presidente_id: '',
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setTempImage(file);
+      setImagePreview(URL.createObjectURL(file));
+      setModalIsOpen(true);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
       }
-    } else {
-      setPersonas([]); // Limpia la lista si el término es menor a 3 letras
     }
   };
- 
-  const handleSelectPersona = (persona) => {
-    setSelectedPersona(persona);
+
+  const handleCropConfirm = (cropped) => {
+    setCroppedImage(cropped);
+    setImagePreview(URL.createObjectURL(cropped));
   };
- 
-  const handleSubmit = async () => {
-    if (selectedPersona) {
-      try {
-        await axios.post('http://localhost:5002/api/presidente_club/post_presidente_club', {
-          club_id: id,
-          persona_id: selectedPersona.id,
-        });
-        toast.success('Registrado con éxito');
-      } catch (error) {
-        toast.error('error')
-        console.error('Error al registrar presidente:', error);
-      }
-    } else {
-      toast.warn('Seleccione un presidente')
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+
+    const data = new FormData();
+    data.append('nombre', formData.nombre);
+    data.append('apellido', formData.apellido);
+    data.append('fecha_nacimiento', formData.fecha_nacimiento);
+    data.append('ci', formData.ci);
+    data.append('direccion', formData.direccion);
+    data.append('correo', formData.correo);
+    data.append('genero', formData.genero);
+    data.append('roles', JSON.stringify(formData.roles));
+    data.append('club_presidente_id', formData.club_presidente_id);
+
+    if (croppedImage) {
+      data.append('image', croppedImage);
+    } else if (image) {
+      data.append('image', image);
+    }
+
+    try {
+      await axios.post(`${API_BASE_URL}/persona/post_persona`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      toast.success('Jugador registrado con éxito');
+      onClose();
+      resetForm();
+      onPresidenteCreated();
+    } catch (error) {
+      toast.error('Error al registrar jugador');
+      console.error('Error al registrar jugador:', error);
     }
   };
- 
+
   return (
-    <div className="registro-campeonato">
-  {club ? (
-    <div className="form-group">
-      <div className="header-container">
-        <img
-          src={club.club_imagen}
-          alt={`${club.nombre} logo`}
-          className="club-logo"
-        />
-        <h2>Registrar Presidente para {club.nombre}</h2>
-      </div>
-     
-      <div className="content-container">
-        <div className="search-container">
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Registrar Jugador"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Registrar Presidente de Club</h2>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <div className="form-group">
+          <input
+            type="file"
+            id="image"
+            ref={fileInputRef}
+            name="image"
+            onChange={handleImageChange}
+            className="file-input"
+          />
+          <label htmlFor="image" className="custom-file-upload">
+            {imagePreview ? (
+              <img src={imagePreview} alt="Vista previa" className="image-preview" />
+            ) : (
+              <span className="upload-text">Seleccionar foto <ImageIcon /></span>
+            )}
+          </label>
+        </div>
+
+        <div className="form-group">
           <input
             type="text"
-            placeholder="Buscar persona"
-            value={searchTerm}
-            onChange={handleSearch}
+            placeholder="Nombre"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            className="input-field-u"
           />
-          {searchTerm.length >= 3 && (
-            <div className="form-group">
-            <ul>
-              {personas.map((persona) => (
-                <li key={persona.id} onClick={() => handleSelectPersona(persona)}>
-                  {persona.nombre} {persona.apellido}
-                </li>
-              ))}
-            </ul>
-            </div>
-          )}
+          {errors.nombre && <span className="error-message">{errors.nombre}</span>}
         </div>
- 
-        {/* Mostrar detalles de la persona seleccionada */}
-        {selectedPersona && (
-          <div className="persona-seleccionada">
-            <div className="form-group">
-              <img
-                src={selectedPersona.persona_imagen}
-                alt={`${selectedPersona.nombre} imagen`}
-                className="image-preview"
-              />
-            </div>
-            <h3>Detalles</h3>
-            <p><strong>Nombre:</strong> {selectedPersona.nombre} {selectedPersona.apellido}</p>
-            <p><strong>CI:</strong> {selectedPersona.ci}</p>
-            <p><strong>Correo:</strong> {selectedPersona.correo}</p>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Apellido"
+            name="apellido"
+            value={formData.apellido}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+          {errors.apellido && <span className="error-message">{errors.apellido}</span>}
+        </div>
+
+        <div className="form-group">
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={formData.fecha_nacimiento}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+          {errors.fecha_nacimiento && <span className="error-message">{errors.fecha_nacimiento}</span>}
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Cédula de Identidad"
+            name="ci"
+            value={formData.ci}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+          {errors.ci && <span className="error-message">{errors.ci}</span>}
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Dirección"
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+          {errors.direccion && <span className="error-message">{errors.direccion}</span>}
+        </div>
+
+        <div className="form-group">
+          <input
+            type="email"
+            placeholder="Correo"
+            name="correo"
+            value={formData.correo}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+          {errors.correo && <span className="error-message">{errors.correo}</span>}
+        </div>
+
+        <div className="select-container-u">
+            <Select
+              placeholder="Selecciona Club para Presidente"
+              onChange={(value) => handleClubChange(value, roleNames.PresidenteClub)}
+              style={{ width: '100%' }}
+              className="custom-ant-select-u"
+              loading={loadingClubesPresidente}
+            >
+              {clubesPresidente.map((club) => (
+                <Option key={club.id} value={club.id}>
+                  {club.nombre}
+                </Option>
+              ))}
+            </Select>
           </div>
-        )}
-      </div>
- 
-      <div className="form-group">
-        <button id="RegCampBtn" onClick={handleSubmit}>Asignar Presidente</button>
-      </div>
-    </div>
-  ) : (
-    <p>Cargando información del club...</p>
-  )}
-</div>
+
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Registrar
+          </button>
+        </div>
+      </form>
+
+      <ImageCropperModal
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        image={imagePreview}
+        onCropConfirm={handleCropConfirm}
+      />
+    </Modal>
   );
 };
- 
-export default RegistrarPresidenteClub;
+
+export default RegistroPresidente;

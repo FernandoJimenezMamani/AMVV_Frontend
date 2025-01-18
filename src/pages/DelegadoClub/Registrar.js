@@ -12,7 +12,7 @@ const { Option } = Select;
 Modal.setAppElement('#root'); // Necesario para accesibilidad
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
+const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -21,8 +21,8 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
     direccion: '',
     correo: '',
     genero: 'V', // Valor inicial por defecto
-    roles: [roleNames.Jugador],
-    club_jugador_id: null,
+    roles: [roleNames.DelegadoClub],
+    club_delegado_id: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -30,8 +30,11 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
   const [tempImage, setTempImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [clubes, setClubes] = useState([]);
+  const [clubesPresidente, setClubesPresidente] = useState([]);
   const [croppedImage, setCroppedImage] = useState(null);
+  const [loadingClubesPresidente, setLoadingClubesPresidente] = useState(true);
+  const [clubes, setClubes] = useState([]);
+  const [loadingClubes, setLoadingClubes] = useState(true);
   const fileInputRef = React.createRef();
 
   useEffect(() => {
@@ -39,6 +42,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
       try {
         const response = await axios.get(`${API_BASE_URL}/club/get_club`);
         setClubes(response.data);
+        setLoadingClubes(false);
       } catch (error) {
         toast.error('Error al obtener los clubes');
         console.error('Error al obtener los clubes:', error);
@@ -57,8 +61,8 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
       direccion: '',
       correo: '',
       genero: 'V',
-      roles: [roleNames.Jugador],
-      club_jugador_id: null,
+      roles: [roleNames.DelegadoClub],
+      club_delegado_id: null,
     });
     setErrors({});
     setImage(null);
@@ -75,7 +79,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
     if (!formData.ci) newErrors.ci = 'El campo cédula de identidad es obligatorio';
     if (!formData.direccion) newErrors.direccion = 'El campo dirección es obligatorio';
     if (!formData.correo) newErrors.correo = 'El campo correo es obligatorio';
-    if (!formData.club_jugador_id) newErrors.club_jugador_id = 'Debe seleccionar un club';
+    if (!formData.club_delegado_id) newErrors.club_delegado_id = 'Debe seleccionar un club';
     return newErrors;
   };
 
@@ -93,11 +97,11 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
   const handleClubChange = (value) => {
     setFormData({
       ...formData,
-      club_jugador_id: value,
+      club_delegado_id: value,
     });
     setErrors((prevErrors) => ({
       ...prevErrors,
-      club_jugador_id: '',
+      club_delegado_id: '',
     }));
   };
 
@@ -136,7 +140,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
     data.append('correo', formData.correo);
     data.append('genero', formData.genero);
     data.append('roles', JSON.stringify(formData.roles));
-    data.append('club_jugador_id', formData.club_jugador_id);
+    data.append('club_delegado_id', formData.club_delegado_id);
 
     if (croppedImage) {
       data.append('image', croppedImage);
@@ -151,7 +155,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
       toast.success('Jugador registrado con éxito');
       onClose();
       resetForm();
-      onJugadorCreated();
+      onDelegadoCreated();
     } catch (error) {
       toast.error('Error al registrar jugador');
       console.error('Error al registrar jugador:', error);
@@ -166,7 +170,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
       className="modal"
       overlayClassName="overlay"
     >
-      <h2 className="modal-title">Registrar Jugador</h2>
+      <h2 className="modal-title">Registrar Presidente de Club</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <input
@@ -258,20 +262,19 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
         </div>
 
         <div className="select-container-u">
-          <Select
-            placeholder="Selecciona Club para Jugador"
-            onChange={handleClubChange}
-            style={{ width: '100%' }}
-            className="custom-ant-select-u"
-          >
-            {clubes.map((club) => (
-              <Option key={club.id} value={club.id}>
-                {club.nombre}
-              </Option>
-            ))}
-          </Select>
-          {errors.club_jugador_id && <span className="error-message">{errors.club_jugador_id}</span>}
-        </div>
+            <Select
+              placeholder="Selecciona Club para Delegado"
+              onChange={(value) => handleClubChange(value, roleNames.DelegadoClub)}
+              style={{ width: '100%' }}
+              className="custom-ant-select-u"
+            >
+              {clubes.map((club) => (
+                <Option key={club.id} value={club.id}>
+                  {club.nombre}
+                </Option>
+              ))}
+            </Select>
+          </div>
 
         <div className="form-buttons">
           <button type="button" className="button button-cancel" onClick={onClose}>
@@ -293,4 +296,4 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
   );
 };
 
-export default RegistroJugador;
+export default RegistroDelegado;

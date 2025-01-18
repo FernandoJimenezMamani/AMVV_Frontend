@@ -95,12 +95,12 @@ const ListaCategorias = () => {
     <table className="table-layout">
       <thead className="table-head">
         <tr>
-          <th>Nombre</th>
-          <th>Genero</th>
-          <th>División</th>
-          <th>Edad Minima</th>
-          <th>Edad Maxima</th>
-          <th>Costo de traspaso</th>
+          <th className="table-th">Nombre</th>
+          <th className="table-th">Genero</th>
+          <th className="table-th">División</th>
+          <th className="table-th">Edad Minima</th>
+          <th className="table-th">Edad Maxima</th>
+          <th className="table-th">Costo de traspaso</th>
           <th className="table-th">Acción</th>
         </tr>
       </thead>

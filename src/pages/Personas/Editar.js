@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import Cropper from 'react-easy-crop';
 import Modal from 'react-modal';
-import Slider from '@mui/material/Slider';
 import { getCroppedImg } from '../RecortarImagen.js';  
-import '../../assets/css/Editar.css';
+import ImageCropperModal from '../../components/ImageCropperModal';
+import '../../assets/css/registroModal.css';
 import { useSession } from '../../context/SessionContext'; 
 import { toast } from 'react-toastify';
-import { Select } from 'antd'; // Importar Select de antd
-const { Option } = Select;
+import { Select } from 'antd'; 
+import roleNames from '../../constants/roles'
 
-const EditarPersona = () => {
+const { Option } = Select;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     nombre: '',
@@ -20,9 +22,13 @@ const EditarPersona = () => {
     ci: '',
     direccion: '',
     user_id: 2,
-    genero: 'V',  // Preseleccionar Varones (V)
+    genero: 'V',  
+    roles: [],
+    club_jugador_id: null,
+    club_presidente_id: null,
+    club_delegado_id: null,
     image: null
-  });
+  }); 
   const [imagePreview, setImagePreview] = useState(null);
   const [tempImage, setTempImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -30,18 +36,28 @@ const EditarPersona = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
- 
+  const [clubesPresidente, setClubesPresidente] = useState([]);
+  const [loadingClubesPresidente, setLoadingClubesPresidente] = useState(true);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const fileInputRef = useRef(null);
+  const [clubes, setClubes] = useState([]);
+  const [loadingClubes, setLoadingClubes] = useState(true);
+  const [disabledRoles, setDisabledRoles] = useState([]);
  
-  const { user } = useSession(); // Obtener el usuario actual desde el contexto
+  const { user } = useSession(); 
   const navigate = useNavigate();
  
   useEffect(() => {
     const fetchPersona = async () => {
+      if (!personaId) return; 
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/get_personaById/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/persona/get_personaById/${personaId}`);
+        const rolesArray = Array.isArray(response.data.roles)
+        ? response.data.roles // Ya es un array
+        : response.data.roles.split(',').map((role) => role.trim());
+
         setFormData({
           id: response.data.id,
           nombre: response.data.nombre,
@@ -49,9 +65,17 @@ const EditarPersona = () => {
           fecha_nacimiento: response.data.fecha_nacimiento.split('T')[0], 
           ci: response.data.ci,
           direccion: response.data.direccion,
-          genero: response.data.genero || 'V',  // Usar el género de la persona o preseleccionar "V"
-          user_id: response.data.user_id
+          genero: response.data.genero ,  // Usar el género de la persona o preseleccionar "V"
+          user_id: response.data.user_id,
+          correo: response.data.correo,
+          roles: rolesArray,
+          club_jugador_id: response.data.club_jugador,
+          club_presidente_id: response.data.club_presidente,
+          club_delegado_id: response.data.club_presidente,
+          image: response.data.persona_imagen
+
         });
+        
         if (response.data.persona_imagen) {
           setImagePreview(response.data.persona_imagen);
         }
@@ -61,7 +85,7 @@ const EditarPersona = () => {
       }
     };
     fetchPersona();
-  }, [id]);
+  }, [personaId]);
  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -71,39 +95,43 @@ const EditarPersona = () => {
       setModalIsOpen(true);
     }
   };
+
+  useEffect(() => {
+    const fetchClubes = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/club/get_club`);
+        
+        setClubes(response.data);
+        console.log(clubes,'clubes obtenidos')
+        setLoadingClubes(false);
+      } catch (error) {
+        toast.error('Error al obtener los clubes');
+        console.error('Error al obtener los clubes:', error);
+      }
+    };
+
+    fetchClubes();
+  }, []);
+
+  useEffect(() => {
+    // Carga de clubes específicos para presidente
+    const fetchClubesPresidente = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/club/get_clubWithoutPresident`);
+        setClubesPresidente(response.data);
+        setLoadingClubesPresidente(false);
+      } catch (error) {
+        toast.error('Error al obtener los clubes para presidente');
+        console.error('Error al obtener los clubes para presidente:', error);
+      }
+    };
+
+    fetchClubesPresidente();
+  }, []);
  
-  const onCropComplete = (croppedArea, croppedAreaPixels) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
- 
-  const handleUpdateImage = async () => {
-    try {
-      const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
-      setCroppedImage(croppedImage);
-      setImagePreview(URL.createObjectURL(croppedImage));
- 
-      const formDataToSend = new FormData();
-      formDataToSend.append('image', croppedImage);
- 
-      await axios.put(`http://localhost:5002/api/persona/update_persona_image/${id}`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
- 
-      toast.success('Imagen actualizada con éxito');
-      setModalIsOpen(false);
-    } catch (e) {
-      toast.error('Error al actualizar la imagen');
-      console.error('Error al recortar la imagen:', e);
-    }
-  };
- 
-  const handleCancel = () => {
-    setModalIsOpen(false);
-    setTempImage(null);
-    setImagePreview(null);
-    document.getElementById('fileInput').value = '';
+  const handleCropConfirm = (cropped) => {
+    setCroppedImage(cropped);
+    setImagePreview(URL.createObjectURL(cropped));
   };
  
   const handleChange = (e) => {
@@ -120,243 +148,301 @@ const EditarPersona = () => {
       genero: value
     });
   };
+
+  const handleClubChange = (value, role) => {
+    if (role === roleNames.PresidenteClub) {
+      const selectedClub = clubesPresidente.find((club) => club.id === value);
+      if (selectedClub.presidente_asignado === 'S') {
+        toast.error('Este club ya tiene un presidente asignado.');
+        return; // No actualiza el estado si el club tiene presidente
+      }
+      setFormData({ ...formData, club_presidente_id: value });
+    } else if (role === roleNames.Jugador) {
+      setFormData({ ...formData, club_jugador_id: value });
+    } else if (role === roleNames.DelegadoClub) {
+      setFormData({ ...formData, club_delegado_id: value });
+    }
+  };
  
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
- 
-    const dataToSend = {
-      nombre: formData.nombre,
-      apellido: formData.apellido,
-      fecha_nacimiento: formData.fecha_nacimiento,
-      ci: formData.ci,
-      direccion: formData.direccion,
-      genero: formData.genero,  // Enviar género seleccionado
-      user_id: 1 
-    };
- 
+  
+    const formDataToSend = new FormData();
+  
+    // Añadir campos de texto al formData
+    Object.keys(formData).forEach((key) => {
+      // Solo agrega JSON.stringify si los roles no son un array
+      if (key === "roles" && Array.isArray(formData[key])) {
+        formDataToSend.append(key, formData[key].join(", ")); // Convierte a una cadena separada por comas
+      } else {
+        formDataToSend.append(key, formData[key]);
+      }
+    });
+    
+  
+    // Añadir imagen recortada al formData si existe
+    if (croppedImage) {
+      formDataToSend.append("image", croppedImage, "profile_image.jpg");
+    }
+  
+    // Mostrar los datos que se enviarán
+    for (let [key, value] of formDataToSend.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
     try {
-      await axios.put(`http://localhost:5002/api/persona/update_persona/${id}`, dataToSend, {
+      await axios.put(`${API_BASE_URL}/persona/update_persona_with_roles/${personaId}`, formDataToSend, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
-      toast.success('Persona actualizada exitosamente');
-      navigate('/personas/indice');
+  
+      toast.success("Persona actualizada exitosamente");
+      onClose();
+      onPersonaUpdated();
     } catch (error) {
-      console.error('Error al actualizar la persona:', error);
-      toast.error('Error al actualizar la persona');
+      console.error("Error al actualizar la persona:", error);
+      toast.error("Error al actualizar la persona");
     }
   };
- 
-  const handleSubmitPasswordChange = async (e) => {
-    e.preventDefault();
- 
-    if (newPassword !== confirmPassword) {
-      alert('La nueva contraseña y la confirmación no coinciden');
-      return;
-    }
- 
-    const dataToSend = {
-      currentPassword,
-      newPassword,
-      confirmPassword
-    };
- 
-    try {
-      await axios.put('http://localhost:5002/api/sesion/change-password', dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      toast.success('Contraseña actualizada exitosamente');
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (error) {
-      console.error('Error al cambiar la contraseña:', error);
-      toast.error('Error al cambiar la contraseña');
-    }
+  
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
   };
+
+  const handleRoleChange = (selectedRoles) => {
+    let updatedRoles = [...selectedRoles];
+  
+    // Si selecciona Presidente de Club, elimina Delegado de Club
+    if (updatedRoles.includes(roleNames.PresidenteClub)) {
+      updatedRoles = updatedRoles.filter((role) => role !== roleNames.DelegadoClub);
+      setDisabledRoles([roleNames.DelegadoClub]); // Deshabilita Delegado de Club
+    }
+    // Si selecciona Delegado de Club, elimina Presidente de Club
+    else if (updatedRoles.includes(roleNames.DelegadoClub)) {
+      updatedRoles = updatedRoles.filter((role) => role !== roleNames.PresidenteClub);
+      setDisabledRoles([roleNames.PresidenteClub]); // Deshabilita Presidente de Club
+    } else {
+      // Si ninguno está seleccionado, habilita ambas opciones
+      setDisabledRoles([]);
+    }
+  
+    setFormData({
+      ...formData,
+      roles: updatedRoles,
+    });
+  };
+  
  
   return (
-    <div className="editar-persona">
-      {/* Sección para editar la foto de perfil */}
-      <div className="editar-seccion">
-        <h3>Editar Foto de Perfil</h3>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Editar Persona"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Editar Persona</h2>
+
+      <form onSubmit={handleSubmitProfile}>
+        <div className="form-group" onClick={handleImageClick} style={{ cursor: 'pointer' }}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            className="file-input"
+            style={{ display: 'none' }}  // Ocultar el input
+          />
+          <label htmlFor="image" className="custom-file-upload">
+            {imagePreview ? (
+              <img src={imagePreview} alt="Vista previa" className="image-preview" />
+            ) : (
+              <span className="upload-text">Seleccionar foto para usuario</span>
+            )}
+          </label>
+        </div>
         <div className="form-group">
           <input
-            className="file-inputP"
-            type="file"
-            id="fileInput"
-            onChange={handleImageChange}
-            accept="image/jpeg, image/png, image/gif"
+            type="text"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            placeholder="Nombre"
+            className="input-field-u"
           />
-          {imagePreview && <img src={imagePreview} alt="Vista previa de la imagen" className="image-preview" />}
         </div>
-        <button id="edit-image-btn" onClick={handleUpdateImage}>Guardar Imagen</button>
-      </div>
- 
-      {/* Sección para editar los ajustes del perfil */}
-      <div className="editar-seccion">
-        <h3>Ajustes de Perfil</h3>
-        <form onSubmit={handleSubmitProfile}>
-          <label className="label-edit">Nombre</label>
-          <div className="form-group">
-            <input
-              type="text"
-              id="nombre"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              placeholder="Ingrese el nombre"
-            />
-          </div>
-          <label className="label-edit">Apellido</label>
-          <div className="form-group">
-            <input
-              type="text"
-              id="apellido"
-              name="apellido"
-              value={formData.apellido}
-              onChange={handleChange}
-              placeholder="Ingrese el apellido"
-            />
-          </div>
-          <label className="label-edit">Fecha de Nacimiento</label>
-          <div className="form-group">
-            <input
-              type="date"
-              id="fecha_nacimiento"
-              name="fecha_nacimiento"
-              value={formData.fecha_nacimiento}
-              onChange={handleChange}
-              placeholder="Seleccione la fecha de nacimiento"
-            />
-          </div>
-          <label className="label-edit">CI</label>
-          <div className="form-group">
-            <input
-              type="text"
-              id="ci"
-              name="ci"
-              value={formData.ci}
-              onChange={handleChange}
-              placeholder="Ingrese el CI"
-            />
-          </div>
-          <label className="label-edit">Dirección</label>
-          <div className="form-group">
-            <textarea
-              id="direccion"
-              name="direccion"
-              value={formData.direccion}
-              onChange={handleChange}
-              placeholder="Ingrese la dirección"
-              rows="4"
-            />
-          </div>
 
-          {/* Select para género */}
-          <label className="label-edit">Género</label>
-          <div className="form-group">
+        <div className="form-group">
+          <input
+            type="text"
+            name="apellido"
+            value={formData.apellido}
+            onChange={handleChange}
+            placeholder="Apellido"
+            className="input-field-u"
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={formData.fecha_nacimiento}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Cédula de Identidad"
+            name="ci"
+            value={formData.ci}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+        </div>
+        <div className="form-group">
+          <input
+            type="text"
+            placeholder="Dirección"
+            name="direccion"
+            value={formData.direccion}
+            onChange={handleChange}
+            className="input-field-u"
+          />
+        </div>
+         {/* Select para género */}
+         <div className="select-container-u">
+                  <Select
+                    id="genero"
+                    name="genero"
+                    value={formData.genero}
+                    onChange={handleGeneroChange}
+                    placeholder="Seleccione Género"
+                    className={`custom-ant-select-u`}
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="V">Varon</Option>
+                    <Option value="D">Dama</Option>
+                  </Select>
+                </div>
+                <div className="form-group">
+                  <input
+                    type="email"
+                    placeholder="Correo"
+                    name="correo"
+                    value={formData.correo}
+                    onChange={handleChange}
+                    className="input-field-u"
+                  />
+                </div>                 
+                <div  className="select-container-u">
+        <Select
+          mode="multiple"
+          placeholder="Selecciona Roles"
+          value={formData.roles}
+          onChange={handleRoleChange}
+          onSelect={() => document.activeElement.blur()}  // Cierra el menú después de seleccionar
+          style={{ width: '100%' }}
+          className={`custom-ant-select-u`}
+        >
+          <Option value={(roleNames.Arbitro)}>Árbitro</Option>
+          <Option value={(roleNames.Jugador)}>Jugador</Option>
+          <Option
+            value={roleNames.PresidenteClub}
+            disabled={disabledRoles.includes(roleNames.PresidenteClub)}
+          >
+            Presidente de club
+          </Option>
+          <Option
+            value={roleNames.DelegadoClub}
+            disabled={disabledRoles.includes(roleNames.DelegadoClub)}
+          >
+            Delegado de club
+          </Option>
+          <Option value={(roleNames.Tesorero)}>Tesorero</Option>
+          <Option value={(roleNames.PresidenteArbitro)}>Presidente de arbitros</Option>
+        </Select>
+        </div>
+
+        {formData.roles.includes(roleNames.Jugador) && (
+          <div className="select-container-u">
             <Select
-              id="genero"
-              name="genero"
-              value={formData.genero}
-              onChange={handleGeneroChange}
+              placeholder="Selecciona Club para jugador"
+              value={formData.club_jugador_id}
+              onChange={(value) => handleClubChange(value, roleNames.Jugador)}
               style={{ width: '100%' }}
+              className={`custom-ant-select-u`}
             >
-              <Option value="V">Hombre</Option>
-              <Option value="D">Mujer</Option>
+              {clubes.map((club) => (
+                <Option key={club.id} value={club.id}>
+                  {club.nombre}
+                </Option>
+              ))}
             </Select>
           </div>
+        )}
 
-          <div className="form-group">
-            <button id="edit-profile-btn" type="submit">Guardar Cambios</button>
+        {formData.roles.includes(roleNames.PresidenteClub) && (
+            <div className="select-container-u">
+              <Select
+                placeholder="Selecciona Club para Presidente"
+                value={formData.club_presidente_id}
+                onChange={(value) => handleClubChange(value,  roleNames.PresidenteClub)}
+                style={{ width: '100%' }}
+                className="custom-ant-select-u"
+                >
+               {clubes.map((club) => (
+                <Option
+                key={club.id}
+                value={club.id}
+                disabled={club.presidente_asignado === 'S'} 
+              >
+                {club.nombre}
+              </Option>
+            ))}
+            </Select>
           </div>
-        </form>
-      </div>
- 
-      {/* Solo mostrar "Ajustes de Sesión" si el usuario autenticado es el dueño del perfil */}
-      {user && formData.id === user.id && (
-        <div className="editar-seccion">
-          <h3>Ajustes de Sesión </h3>
-          <form onSubmit={handleSubmitPasswordChange}>
-            <label className="label-edit">Contraseña Actual</label>
-            <div className="form-group">
-              <input
-                type="password"
-                id="currentPassword"
-                name="currentPassword"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Ingrese la contraseña actual"
-              />
-            </div>
-            <label className="label-edit">Nueva Contraseña</label>
-            <div className="form-group">
-              <input
-                type="password"
-                id="newPassword"
-                name="newPassword"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Ingrese la nueva contraseña"
-              />
-            </div>
-            <label className="label-edit">Confirmar Nueva Contraseña</label>
-            <div className="form-group">
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirme la nueva contraseña"
-              />
-            </div>
-            <div className="form-group">
-              <button id="change-password-btn" type="submit">Cambiar Contraseña</button>
-            </div>
-          </form>
+        )}
+
+        {formData.roles.includes(roleNames.DelegadoClub) && (
+            <div className="select-container-u">
+              <Select
+                placeholder="Selecciona Club para Presidente"
+                value={formData.club_presidente_id}
+                onChange={(value) => handleClubChange(value, roleNames.DelegadoClub)}
+                style={{ width: '100%' }}
+                className="custom-ant-select-u"
+
+                >
+               {clubes.map((club) => (
+               <Option key={club.id} value={club.id}>
+               {club.nombre}
+              </Option>
+            ))}
+            </Select>
+          </div>
+        )}
+
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Guardar Cambios
+          </button>
         </div>
-      )}
- 
-      {/* Modal para recortar la imagen */}
-      <Modal
+      </form>
+
+      <ImageCropperModal
         isOpen={modalIsOpen}
-        onRequestClose={handleCancel}
-        contentLabel="Recortar Imagen"
-        className="modal"
-        overlayClassName="overlay"
-      >
-        <h2>Edita la imagen</h2>
-        <div className="crop-container">
-          <Cropper
-            image={imagePreview}
-            crop={crop}
-            zoom={zoom}
-            aspect={1}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete}
-          />
-        </div>
-        <div className="controls">
-          <Slider
-            value={zoom}
-            min={1}
-            max={3}
-            step={0.1}
-            onChange={(e, zoom) => setZoom(zoom)}
-          />
-        </div>
-        <div className="buttons">
-          <button className="bottonsImageCancel" onClick={handleCancel}>Cancelar</button>
-          <button className="bottonsImage" onClick={handleUpdateImage}>Actualizar Imagen</button>
-        </div>
-      </Modal>
-    </div>
+        onClose={() => setModalIsOpen(false)}
+        image={imagePreview}
+        onCropConfirm={handleCropConfirm}
+      />
+    </Modal>
   );
 };
  

@@ -27,6 +27,7 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [formModalIsOpen, setFormModalIsOpen] = useState(false); // Nuevo modal para el formulario
   const navigate = useNavigate();
+  const fileInputRef = React.createRef();  
 
   // Función para abrir el modal del formulario
   const openFormModal = () => setFormModalIsOpen(true);
@@ -60,6 +61,11 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
+  
+      // Reinicia el valor del input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -141,9 +147,11 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
             type="file"
             id="image"
             name="image"
+            ref={fileInputRef}  // Usa la referencia aquí
             onChange={handleImageChange}
             className="file-input"
           />
+
           <label htmlFor="image" className={`file-label ${imagePreview ? 'has-file' : ''}`}>
             <span className="file-name">
               {imagePreview ? "Archivo seleccionado" : "Sin archivos seleccionados"}

@@ -30,11 +30,14 @@ import RegistrarPersona from './pages/Personas/Registrar';
 import EditarPersona from './pages/Personas/Editar';
 import PerfilPersona from './pages/Personas/Perfil';
 import RegistrarPresidenteClub from './pages/PresidenteClub/Registrar';
+import ListaPresidenteClub from './pages/PresidenteClub/Indice';
+import ListaDelegadoClub from './pages/DelegadoClub/Indice';
 import RegistrarArbitro from './pages/Arbitros/Registrar';
 import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
 import ListaJugador from './pages/Jugadores/Indice';
 import ListaJugadorAll from './pages/Jugadores/IndiceGeneral';
+import ListaLugar from './pages/Complejos/Indice';
 import RegistrarLugar from './pages/Complejos/Registro';
 import PartidoDetalle from './pages/Partidos/PartidoDetalle';
 import ListaTraspaso from './pages/Traspasos/Indice';
@@ -100,7 +103,7 @@ const App = () => {
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
               <Route path="/equipos/perfil/:id" element={<PerfilEquipo />} />
               <Route path="/equipos/registrar_jugador_equipo/:id" element={<RegistrarJugadorEquipo />} />
-
+              <Route path="/complejos/indice" element={<ListaLugar />} />
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
               <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
               <Route path="/partidos/registrarResultado/:partidoId" element={<RegistrarResultado />} />
@@ -108,7 +111,9 @@ const App = () => {
               <Route path="/personas/registrar" element={<RegistrarPersona />} />
               <Route path="/personas/editar/:id" element={<EditarPersona />} />
               <Route path="/personas/Perfil/:id" element={<PerfilPersona />} />
-              <Route path="/presidente_club/registrar/:id" element={<RegistrarPresidenteClub />} />
+              <Route path="/presidenteClub/registrar/:id" element={<RegistrarPresidenteClub />} />
+              <Route path="/presidenteClub/indice" element={<ListaPresidenteClub />} />
+              <Route path="/delegadoClub/indice" element={<ListaDelegadoClub />} />
               <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
               <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
               <Route path="/jugadores/indice" element={<ListaJugadorAll/>} />

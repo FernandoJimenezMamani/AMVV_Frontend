@@ -3,6 +3,12 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import '../assets/css/Sidebar.css';
 import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
+import defaultUserIcon from '../assets/img/user-icon.webp';
+import HomeIcon from '@mui/icons-material/Home';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
+import PersonIcon from '@mui/icons-material/Person';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 
 const Sidebar = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -13,6 +19,7 @@ const Sidebar = () => {
   const { user, logout } = useSession();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const sidebarRef = useRef(null);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed);
@@ -23,8 +30,8 @@ const Sidebar = () => {
   };
 
   const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
+    setExpandedSection((prevSection) => (prevSection === section ? null : section));
+  };  
 
   const toggleDropdown = () => {
     setDropdownVisible(!isDropdownVisible);
@@ -41,13 +48,17 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownVisible(false);
+      // Verificar si el clic fue fuera del sidebar o fuera del menú flotante
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)
+      ) {
+        setExpandedSection(null); // Cierra el menú flotante
       }
     };
-
+  
     document.addEventListener('mousedown', handleClickOutside);
-
+  
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
@@ -58,7 +69,7 @@ const Sidebar = () => {
   };
 
   return (
-        <div className="sidebar-layout">
+    <div className="sidebar-layout" >
       {isMobileMenuOpen && (
         <div
           className={`overlay ${isMobileMenuOpen ? 'show' : 'none'}`}
@@ -76,6 +87,7 @@ const Sidebar = () => {
 
       {/* Sidebar principal */}
       <div
+      ref={sidebarRef} 
         className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''} ${
           isMobileMenuOpen ? 'open' : 'close'
         }`}
@@ -99,7 +111,7 @@ const Sidebar = () => {
         {!isSidebarCollapsed && (
           <div className="sidebar-header user-avatar-container">
             <img
-              src={user?.imagen}
+              src={user?.imagen ? user.imagen: defaultUserIcon}
               alt="Usuario"
               className="sidebar-logo user-avatar"
             />
@@ -107,7 +119,7 @@ const Sidebar = () => {
         )}
 
         {/* Contenedor del contenido con scroll interno */}
-        <div className="sidebar-content">
+        <div className={`sidebar-content ${expandedSection ? 'menu-open' : ''}`}>
           {/* Información del usuario */}
           {!isSidebarCollapsed && (
             <div className="user-info-container">
@@ -119,79 +131,61 @@ const Sidebar = () => {
           {/* Menú de opciones */}
           {!isSidebarCollapsed && (
             <div className="menu-container">
-              {hasRole('Presidente') && (
                 <div className="menu-item">
-                  <a className="main-link" onClick={() => toggleSection('campeonatos')}>
-                    Campeonatos
+                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
+                    <HomeIcon/>    Inicio
                   </a>
                   <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
                     <Link to="/Campeonatos/Indice">Indice</Link>
                     <Link to="/Campeonatos/Registrar">Registrar</Link>
                   </div>
                 </div>
-              )}
-
               <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('clubes')}>
-                  Clubes
+                <a className={`main-link ${expandedSection === 'asociacion' ? 'active' : ''}`} onClick={() => toggleSection('asociacion')} ref={sidebarRef}>
+                    <SportsVolleyballIcon/> Asociacion
                 </a>
-                <div className={`submenu ${expandedSection === 'clubes' ? 'open' : ''}`}>
+                <div className={`submenu ${expandedSection === 'asociacion' ? 'open' : ''}`}>
+                  <Link to="/Campeonatos/Indice">Campeonatos</Link>
                   <Link to="/clubes/indice">Clubes</Link>
+                  <Link to="/categorias/Lista">Categorias</Link>
+                  <Link to="/complejos/Indice">Complejos</Link>
                 </div>
               </div>
-
               <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('divisiones')}>
-                  Categorias
+                <a className={`main-link ${expandedSection === 'usuarios' ? 'active' : ''}`} onClick={() => toggleSection('usuarios')} ref={sidebarRef}>
+                    <PersonIcon/> Miembros
                 </a>
-                <div className={`submenu ${expandedSection === 'divisiones' ? 'open' : ''}`}>
-                  <Link to="/categorias/Lista">Indice</Link>
-                  <Link to="/categorias/Registrar">Registrar</Link>
+                <div className={`submenu ${expandedSection === 'usuarios' ? 'open' : ''}`}>
+                  <Link to="/Arbitro/Indice">Arbitros</Link>
+                  <Link to="/Jugadores/Indice">Jugadores</Link>
+                  <Link to="/PresidenteClub/Indice">Presidentes</Link>
+                  <Link to="/DelegadoClub/Indice">Delegados</Link>
+                  <Link to="/Personas/Indice">Usuarios</Link>
                 </div>
               </div>
-
               <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('lugares')}>
-                  Complejos
-                </a>
-                <div className={`submenu ${expandedSection === 'lugares' ? 'open' : ''}`}>
-                  <Link to="/complejos/Registro">Registrar complejos</Link>
+                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
+                      <ChangeCircleIcon/> Traspasos
+                  </a>
+                  <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
+                    <Link to="/Campeonatos/Indice">Indice</Link>
+                    <Link to="/Campeonatos/Registrar">Registrar</Link>
+                  </div>
                 </div>
-              </div>
 
-              <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('arbitros')}>
-                  Arbitros
-                </a>
-                <div className={`submenu ${expandedSection === 'arbitros' ? 'open' : ''}`}>
-                  <Link to="/Arbitro/Indice">Indice</Link>
-                  <Link to="/Arbitro/Registrar">Registrar</Link>
+                <div className="menu-item">
+                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
+                      <MonetizationOnIcon/> Pagos
+                  </a>
+                  <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
+                    <Link to="/Campeonatos/Indice">Indice</Link>
+                    <Link to="/Campeonatos/Registrar">Registrar</Link>
+                  </div>
                 </div>
-              </div>
-
-              <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('personas')}>
-                  Personas
-                </a>
-                <div className={`submenu ${expandedSection === 'personas' ? 'open' : ''}`}>
-                  <Link to="/Personas/Indice">Indice</Link>
-                  <Link to="/Personas/Registrar">Registrar</Link>
-                </div>
-              </div>
-
-              <div className="menu-item">
-                <a className="main-link" onClick={() => toggleSection('jugadores')}>
-                  Jugadores
-                </a>
-                <div className={`submenu ${expandedSection === 'jugadores' ? 'open' : ''}`}>
-                  <Link to="/Jugadores/Indice">Indice</Link>
-                </div>
-              </div>
             </div>
           )}
-
           {/* Botón Mi cuenta */}
-          <div className="mi-cuenta-container">
+          <div className="mi-cuenta-container ">
             <button className="mi-cuenta-btn" onClick={() => handleProfileClick(user.id)}>
               <i className="fas fa-user-circle"></i> Mi cuenta
             </button>

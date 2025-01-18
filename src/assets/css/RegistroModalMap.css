@@ -1,0 +1,84 @@
+.map-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  max-width: 80%;
+  height: auto;
+  padding: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden; /* Evitar desbordamiento */
+}
+
+.map-title {
+  font-size: 20px;
+  color: #185564;
+  text-align: center;
+  margin: 15px 0;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.map-container {
+  height: 400px;
+  width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.address-display {
+  margin: 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ddd;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+  white-space: normal; /* Permitir que el texto se divida en varias líneas */
+  word-wrap: break-word; /* Romper palabras largas */
+}
+
+.form-buttons {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #ddd;
+  background-color: #fff;
+}
+
+.button-cancel {
+  background-color: #a94442;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.button-cancel:hover {
+  background-color: #8b3a36;
+}
+
+.map-modal .leaflet-container {
+  height: 400px;
+  border-radius: 0;
+}
+
+@media (max-width: 768px) {
+  .map-modal {
+      width: 90%;
+      height: auto;
+  }
+
+  .map-container {
+      height: 300px;
+  }
+
+  .map-modal .leaflet-container {
+      height: 300px;
+  }
+}

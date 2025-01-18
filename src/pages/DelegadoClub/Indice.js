@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../../components/ConfirmModal';
 import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
-import RegistroPersona from './Registrar';
-import EditarPersona from './Editar';
+import RegistroDelegado from './Registrar';
+import EditarDelegado from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -17,32 +17,32 @@ const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const ListaPersonas = () => {
-  const [personas, setPersonas] = useState([]);
-  const [filteredPersonas, setFilteredPersonas] = useState([]);
+const ListaDelegadoClub = () => {
+  const [presidentes, setPresidentes] = useState([]);
+  const [filteredPresidentes, setFilteredPresidentes] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [personaToDelete, setPersonaToDelete] = useState(null);
+  const [presidenteToDelete, setPersonaToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);  // Controla la apertura del modal de edición
-  const [selectedPersonaId, setSelectedPersonaId] = useState(null);
+  const [selectedPresidenteId, setSelectedPresidenteId] = useState(null);
   const [filterRole, setFilterRole] = useState('No filtrar');
   const [filterState, setFilterState] = useState('No filtrar');
-  const [searchName, setSearchName] = useState('');
+  const [searchPresidente, setSearchPresidente] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPersonas();
+    fetchPresidentes();
   }, []);
 
   useEffect(() => {
     applyFilters();
-  }, [filterRole, filterState, searchName, personas]);
+  }, [filterRole, filterState, searchPresidente, presidentes]);
 
-  const fetchPersonas = async () => {
+  const fetchPresidentes = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/persona/get_persona`);
+      const res = await axios.get(`${API_BASE_URL}/presidente_club/get_delegado_club`);
       
-      setPersonas(res.data);
+      setPresidentes(res.data);
 
     } catch (error) {
       console.error('Error al obtener las personas:', error);
@@ -50,7 +50,7 @@ const ListaPersonas = () => {
   };
 
   const applyFilters = () => {
-    let filtered = [...personas];
+    let filtered = [...presidentes];
 
     // Filtrar por rol
     if (filterRole !== 'No filtrar') {
@@ -67,25 +67,25 @@ const ListaPersonas = () => {
     }
 
     // Filtrar por nombre
-    if (searchName) {
+    if (searchPresidente) {
       filtered = filtered.filter((p) =>
         `${p.nombre} ${p.apellido}`
           .toLowerCase()
-          .includes(searchName.toLowerCase())
+          .includes(searchPresidente.toLowerCase())
       );
     }
 
-    setFilteredPersonas(filtered);
+    setFilteredPresidentes(filtered);
   };
 
   const handleEditClick = (personaId) => {
-    setSelectedPersonaId(personaId);  // Guarda el id de persona seleccionado
+    setSelectedPresidenteId(personaId);  // Guarda el id de persona seleccionado
     setShowEditModal(true);
   };
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setSelectedPersonaId(null);  // Resetea el id seleccionado
+    setSelectedPresidenteId(null);  // Resetea el id seleccionado
   };
 
   const handleRegistrarClick = () => {
@@ -105,9 +105,9 @@ const ListaPersonas = () => {
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1; // Cambiar esto si necesitas un valor dinámico
-      await axios.put(`${API_BASE_URL}/persona/delete_persona/${personaToDelete}`, { user_id });
+      await axios.put(`${API_BASE_URL}/persona/delete_persona/${presidenteToDelete}`, { user_id });
       toast.success('Usuario desactivado exitosamente');
-      fetchPersonas();
+      fetchPresidentes();
       setShowConfirm(false); // Cierra el modal
       setPersonaToDelete(null); // Limpia el ID almacenado
     } catch (error) {
@@ -122,7 +122,7 @@ const ListaPersonas = () => {
       // Lógica para activar al usuario
       await axios.put(`${API_BASE_URL}/persona/activatePersona/${id}`);
       toast.success('Usuario activado exitosamente');
-      fetchPersonas(); // Actualiza la lista de usuarios
+      fetchPresidentes(); // Actualiza la lista de usuarios
     } catch (error) {
       toast.error('Error al activar el usuario');
       console.error('Error al activar usuario:', error);
@@ -140,25 +140,9 @@ const ListaPersonas = () => {
 
   return (
     <div className="table-container">
-      <h2 className="table-title">Lista de Usuarios</h2>
+      <h2 className="table-title">Lista de Delegados de Clubes</h2>
       <div className="table-filters">
-      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Usuario</button>
-      <Select
-            className="filter-select"
-            placeholder="Filtrar por rol"
-            value={filterRole}
-            onChange={(value) => setFilterRole(value)}
-            style={{ width: 180, marginRight: 10 }}
-          >
-            <Option value="No filtrar">No filtrar</Option>
-            <Option value="Jugador">Jugador</Option>
-            <Option value="PresidenteClub">Presidente de Club</Option>
-            <Option value="DelegadoClub">Delegado de Club</Option>
-            <Option value="Arbitro">Árbitro</Option>
-            <Option value="Tesorero">Tesorero</Option>
-            <Option value="PresidenteArbitro">Presidente de Arbitros</Option>
-       </Select>
-
+      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Delegado</button>
        <Select
             className="filter-select"
             placeholder="Filtrar por estado"
@@ -174,22 +158,22 @@ const ListaPersonas = () => {
           <input
             type="text"
             placeholder="Buscar por nombre"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
+            value={searchPresidente}
+            onChange={(e) => setSearchPresidente(e.target.value)}
             className="search-box"
           />
       </div>
       
-      <RegistroPersona
+      <RegistroDelegado
         isOpen={showFormModal}
         onClose={handleCloseModal}
-        onPersonaCreated={fetchPersonas} 
+        onDelegadoCreated={fetchPresidentes} 
       />
-      <EditarPersona
+      <EditarDelegado
         isOpen={showEditModal}
         onClose={handleCloseEditModal}
-        personaId={selectedPersonaId}  // Pasamos el id como prop
-        onPersonaUpdated={fetchPersonas} 
+        delegadoId={selectedPresidenteId}  // Pasamos el id como prop
+        onDelegadoUpdated={fetchPresidentes} 
       />
       <table className="table-layout">
         <thead className="table-head">
@@ -199,12 +183,12 @@ const ListaPersonas = () => {
             <th className="table-th-p">Fecha de Nacimiento</th>
             <th className="table-th-p">C.I</th>
             <th className="table-th-p">Correo</th>
-            <th className="table-th-p">Rol</th>
+            <th className="table-th-p">Club</th>
             <th className="table-th-p">Acción</th>
           </tr>
         </thead>
         <tbody>
-          {filteredPersonas.map((p) => (
+          {filteredPresidentes.map((p) => (
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
@@ -228,10 +212,7 @@ const ListaPersonas = () => {
                 {p.correo}
               </td>
               <td className="table-td-p">
-                {p.roles.split(', ').map((role, index) => (
-                  
-                  <div key={index}>{role}</div>
-                ))}
+                {p.nombre_club}
               </td>
               <td className="table-td-p">
 
@@ -280,4 +261,4 @@ const ListaPersonas = () => {
   );
 };
 
-export default ListaPersonas;
+export default ListaDelegadoClub;

@@ -7,6 +7,7 @@ import { DatePicker, Select } from 'antd';
 import { toast } from 'react-toastify';
 
 const { Option } = Select;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PartidoForm = () => {
   const { campeonatoId, categoriaId } = useParams();
@@ -25,7 +26,7 @@ const PartidoForm = () => {
   useEffect(() => {
     const fetchEquipos = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/equipo/get_equipoCategoria/${categoriaId}`);
+        const response = await axios.get(`${API_BASE_URL}/equipo/get_equipoCategoria/${categoriaId}`);
         console.log("Equipos fetched:", response.data);
         setEquipos(response.data || []);
       } catch (err) {
@@ -37,7 +38,7 @@ const PartidoForm = () => {
 
     const fetchLugares = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/lugar/select');
+        const response = await axios.get(`${API_BASE_URL}/lugar/select`);
         console.log("Lugares fetched:", response.data);
         setLugares(response.data || []);
       } catch (error) {
@@ -87,7 +88,7 @@ const PartidoForm = () => {
     });
 
     try {
-      const response = await axios.post('http://localhost:5002/api/partidos/insert', {
+      const response = await axios.post(`${API_BASE_URL}/partidos/insert`, {
         campeonato_id: parseInt(campeonatoId, 10),
         equipo_local_id: equipoLocalId,
         equipo_visitante_id: equipoVisitanteId,

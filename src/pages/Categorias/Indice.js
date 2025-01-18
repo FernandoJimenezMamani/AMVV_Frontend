@@ -3,6 +3,11 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import '../../assets/css/Categoria/Indice.css'; 
 import { toast } from 'react-toastify';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
+import WomanIcon from '@mui/icons-material/Woman';
+import ManIcon from '@mui/icons-material/Man';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);
@@ -11,7 +16,6 @@ const ListaCategorias = () => {
   const navigate = useNavigate();
   console.log('campeonatoId:', campeonatoId);
 
-  // Check if campeonatoId is being retrieved
   useEffect(() => {
     console.log('campeonatoId in ListaCategorias:', campeonatoId);
   }, [campeonatoId]);
@@ -19,7 +23,7 @@ const ListaCategorias = () => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/categoria/get_categoria');
+        const response = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
         setCategorias(response.data);
       } catch (error) {
         toast.error('error')
@@ -49,7 +53,7 @@ const ListaCategorias = () => {
 
   return (
     <div className="categorias-container">
-      <h2 className="categorias-titulo">Lista de Categoasdasdrías</h2>
+      <h2 className="categorias-titulo">Lista de Categorías</h2>
 
       <button 
         className="division-button" 
@@ -60,7 +64,7 @@ const ListaCategorias = () => {
 
       <div className={`division-categorias ${selectedDivision === 'MY' ? 'show' : ''}`}>
         <div className="categorias-column">
-          <h3>Varones</h3>
+          <h3>Varones <ManIcon/></h3>
           <div className="categorias-list">
             {filterCategorias('MY', 'V').map((categoria) => (
               <div 
@@ -68,14 +72,14 @@ const ListaCategorias = () => {
                 className="categoria-item-man"
                 onClick={() => handleCategorySelect(categoria.id)}  // Handle category select
               >
-                {categoria.nombre}
+                {categoria.nombre} <SportsVolleyballIcon/>
               </div>
             ))}
           </div>
         </div>
 
         <div className="categorias-column">
-          <h3>Damas</h3>
+          <h3>Damas <WomanIcon/></h3>
           <div className="categorias-list">
             {filterCategorias('MY', 'D').map((categoria) => (
               <div 
@@ -83,7 +87,7 @@ const ListaCategorias = () => {
                 className="categoria-item-women"
                 onClick={() => handleCategorySelect(categoria.id)}  // Handle category select
               >
-                {categoria.nombre}
+                {categoria.nombre} <SportsVolleyballIcon/>
               </div>
             ))}
           </div>
@@ -99,7 +103,7 @@ const ListaCategorias = () => {
 
       <div className={`division-categorias ${selectedDivision === 'MN' ? 'show' : ''}`}>
         <div className="categorias-column">
-          <h3>Varones</h3>
+          <h3>Varones <ManIcon/></h3>
           <div className="categorias-list">
             {filterCategorias('MN', 'V').map((categoria) => (
               <div 
@@ -107,14 +111,14 @@ const ListaCategorias = () => {
                 className="categoria-item-man"
                 onClick={() => handleCategorySelect(categoria.id)}  // Handle category select
               >
-                {categoria.nombre}
+                {categoria.nombre} <SportsVolleyballIcon/>
               </div>
             ))}
           </div>
         </div>
 
         <div className="categorias-column">
-          <h3>Damas</h3>
+          <h3>Damas <WomanIcon/></h3>
           <div className="categorias-list">
             {filterCategorias('MN', 'D').map((categoria) => (
               <div 
@@ -122,7 +126,7 @@ const ListaCategorias = () => {
                 className="categoria-item-women"
                 onClick={() => handleCategorySelect(categoria.id)}  // Handle category select
               >
-                {categoria.nombre}
+                {categoria.nombre} <SportsVolleyballIcon/>
               </div>
             ))}
           </div>

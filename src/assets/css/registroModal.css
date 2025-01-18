@@ -79,7 +79,7 @@
     width: 500px !important;
     height: 60px !important;
     padding: 10px 12px;
-    font-size: 16px !important;
+    font-size: 15px !important;
     border: 1px solid #ccc;  
     border-radius: 5px; 
     outline: none;
@@ -102,12 +102,118 @@
     border-color: red;
   }
   
-  
+  .error-select {
+    border: 1px solid red !important;
+  }
   
   .error-message {
     color: red;
     font-size: 12px;
     margin-top: 5px;
+  }
+
+  /*INPUTS PARA USUARIOS FORM*/
+
+  .input-field-u {
+    width: 100%;
+    max-width: none; 
+    width: 500px !important;
+    height: 50px !important;
+    padding: 10px 12px;
+    font-size: 15px !important;
+    border: 1px solid #ccc;  
+    border-radius: 5px; 
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-weight: 100;
+  }
+
+  .input-field-u::placeholder {
+    color: #bbb;  
+    font-size: 15px !important;
+  }
+
+  
+  .input-field-u:focus {
+    border-color: #3D8FA4;
+    outline: none;
+    box-shadow: 0 0 4px rgba(61, 143, 164, 0.5);
+  }
+  
+  .input-field-u.error {
+    border-color: red;
+  }
+
+  /*Select para form usuario*/
+
+  .select-container-u {
+    width: 100%;
+    max-width: none;
+    width: 500px !important;
+    margin-bottom: 35px;
+  }
+  
+  .custom-ant-select-u {
+    width: 100% !important;
+    height: 50px !important;
+    font-size: 16px !important;
+    border: 1px  #ccc !important;
+    border-radius: 10px !important;
+    outline: none !important;
+    transition: border-color 0.3s, box-shadow 0.3s !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .custom-ant-select-selector-u {
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+    font-size: 16px !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .custom-ant-select-placeholder-u {
+    color: #bbb !important;
+    font-size: 15px !important;
+  }
+  
+  .custom-ant-select-u.custom-ant-select-focused-u .custom-ant-select-selector-u {
+    border-color: #3D8FA4 !important;
+    box-shadow: 0 0 4px rgba(61, 143, 164, 0.5) !important;
+  }
+  
+  .custom-ant-select-item-u {
+    font-size: 16px !important;
+  }
+  
+  .custom-ant-select-error-u .custom-ant-select-selector-u {
+    border-color: red !important;
+  }
+  
+/*File inpout pasa usuarios form*/
+  .custom-file-upload {
+    width: 500px;
+    height: 180px;
+    border: 2px dashed #cccccc;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #666666;
+    font-size: 16px;
+    text-align: center;
+    overflow: hidden;
+  }
+  
+  .custom-file-upload:hover {
+    border-color: #007bff;
+  }
+  
+  .upload-text {
+    padding: 10px;
   }
 
   /*file inputs*/

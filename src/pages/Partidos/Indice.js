@@ -5,6 +5,8 @@ import '../../assets/css/Partidos/IndicePartido.css';
 import { toast } from 'react-toastify';
 import { useSession } from '../../context/SessionContext';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const PartidosList = () => {
   const { campeonatoId, categoriaId } = useParams();
   const [partidos, setPartidos] = useState([]);
@@ -14,7 +16,7 @@ const PartidosList = () => {
   useEffect(() => {
     const fetchPartidos = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/partidos/select/${categoriaId}/${campeonatoId}`);
+        const response = await axios.get(`${API_BASE_URL}/partidos/select/${categoriaId}/${campeonatoId}`);
         setPartidos(response.data);
       } catch (error) {
         toast.error('error')
@@ -66,11 +68,9 @@ const PartidosList = () => {
   return (
     <div className="all-matches-container">
     <h2 className="all-matches-titulo">Partidos</h2>
-    {hasRole('Presidente') && (
       <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
         Registrar Partido
       </button>
-    )}
 
     <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
       Ver tabla
