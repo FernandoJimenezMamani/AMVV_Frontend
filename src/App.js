@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import VentanaPrincipal from './pages/Ventanaprincipal';
 import TablaPosiciones from './pages/TablaPosiciones';
 import Login from './pages/Iniciodesesion';
+import ResetPassword from './pages/ResetPassword';
 import RegistroCampeonato from './pages/Campeonatos/Registrar';
 import IndiceCampeonato from './pages/Campeonatos/Indice';
 import EditarCampeonato from './pages/Campeonatos/Editar';
@@ -72,7 +73,8 @@ const App = () => {
           {/* Rutas públicas */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/sidebar" element={<Sidebar />} />
- 
+          <Route path="/reset-password" element={<ResetPassword />} />
+
           <Route path="/" element={<ConditionalLayout />}>
           <Route index element={<VentanaPrincipal />} />
           <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />

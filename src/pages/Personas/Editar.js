@@ -20,7 +20,7 @@ const EditarPersona = () => {
     ci: '',
     direccion: '',
     user_id: 2,
-    genero: 'V',  // Preseleccionar Varones (V)
+    genero: 'V', // Preseleccionar Varones (V)
     image: null
   });
   const [imagePreview, setImagePreview] = useState(null);
@@ -30,18 +30,25 @@ const EditarPersona = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
- 
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
- 
+
   const { user } = useSession(); // Obtener el usuario actual desde el contexto
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     const fetchPersona = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/get_personaById/${id}`);
+        const response = await axios.get(
+          `http://localhost:5002/api/persona/get_personaById/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`, // Enviar el token en los headers
+            },
+          }
+        );
         setFormData({
           id: response.data.id,
           nombre: response.data.nombre,
@@ -49,7 +56,7 @@ const EditarPersona = () => {
           fecha_nacimiento: response.data.fecha_nacimiento.split('T')[0], 
           ci: response.data.ci,
           direccion: response.data.direccion,
-          genero: response.data.genero || 'V',  // Usar el género de la persona o preseleccionar "V"
+          genero: response.data.genero || 'V', // Usar el género de la persona o preseleccionar "V"
           user_id: response.data.user_id
         });
         if (response.data.persona_imagen) {
@@ -61,8 +68,8 @@ const EditarPersona = () => {
       }
     };
     fetchPersona();
-  }, [id]);
- 
+  }, [id, user.token]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -71,26 +78,31 @@ const EditarPersona = () => {
       setModalIsOpen(true);
     }
   };
- 
+
   const onCropComplete = (croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
- 
+
   const handleUpdateImage = async () => {
     try {
       const croppedImage = await getCroppedImg(imagePreview, croppedAreaPixels, 200, 200);
       setCroppedImage(croppedImage);
       setImagePreview(URL.createObjectURL(croppedImage));
- 
+
       const formDataToSend = new FormData();
       formDataToSend.append('image', croppedImage);
- 
-      await axios.put(`http://localhost:5002/api/persona/update_persona_image/${id}`, formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+
+      await axios.put(
+        `http://localhost:5002/api/persona/update_persona_image/${id}`,
+        formDataToSend,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${user.token}`, // Enviar el token en los headers
+          },
         }
-      });
- 
+      );
+
       toast.success('Imagen actualizada con éxito');
       setModalIsOpen(false);
     } catch (e) {
@@ -98,14 +110,14 @@ const EditarPersona = () => {
       console.error('Error al recortar la imagen:', e);
     }
   };
- 
+
   const handleCancel = () => {
     setModalIsOpen(false);
     setTempImage(null);
     setImagePreview(null);
     document.getElementById('fileInput').value = '';
   };
- 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -113,33 +125,37 @@ const EditarPersona = () => {
     });
   };
 
-  // Manejo del cambio del género
   const handleGeneroChange = (value) => {
     setFormData({
       ...formData,
       genero: value
     });
   };
- 
+
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
- 
+
     const dataToSend = {
       nombre: formData.nombre,
       apellido: formData.apellido,
       fecha_nacimiento: formData.fecha_nacimiento,
       ci: formData.ci,
       direccion: formData.direccion,
-      genero: formData.genero,  // Enviar género seleccionado
-      user_id: 1 
+      genero: formData.genero, 
+      user_id: formData.user_id,
     };
- 
+
     try {
-      await axios.put(`http://localhost:5002/api/persona/update_persona/${id}`, dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
+      await axios.put(
+        `http://localhost:5002/api/persona/update_persona/${id}`,
+        dataToSend,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`, // Enviar el token en los headers
+          },
         }
-      });
+      );
       toast.success('Persona actualizada exitosamente');
       navigate('/personas/indice');
     } catch (error) {
@@ -147,27 +163,32 @@ const EditarPersona = () => {
       toast.error('Error al actualizar la persona');
     }
   };
- 
+
   const handleSubmitPasswordChange = async (e) => {
     e.preventDefault();
- 
+
     if (newPassword !== confirmPassword) {
       alert('La nueva contraseña y la confirmación no coinciden');
       return;
     }
- 
+
     const dataToSend = {
       currentPassword,
       newPassword,
-      confirmPassword
+      confirmPassword,
     };
- 
+
     try {
-      await axios.put('http://localhost:5002/api/sesion/change-password', dataToSend, {
-        headers: {
-          'Content-Type': 'application/json'
+      await axios.put(
+        'http://localhost:5002/api/sesion/change-password',
+        dataToSend,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${user.token}`, // Enviar el token en los headers
+          },
         }
-      });
+      );
       toast.success('Contraseña actualizada exitosamente');
       setCurrentPassword('');
       setNewPassword('');
