@@ -11,13 +11,15 @@ export const useSession = () => {
 export const SessionProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [tokenData, setTokenData] = useState(null); 
+  const [tokenData, setTokenData] = useState(null);
+  const [activeRole, setActiveRole] = useState(null); // Nuevo estado para el rol activo
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token') || Cookies.get('token');
     const storedUser = sessionStorage.getItem('user');
+    const storedRole = sessionStorage.getItem('activeRole');
 
-    console.log('Usuario almacenado:', storedUser);  
+    console.log('Usuario almacenado:', storedUser);
     console.log('Token almacenado:', storedToken);
 
     if (storedToken && storedUser) {
@@ -31,6 +33,7 @@ export const SessionProvider = ({ children }) => {
           setToken(storedToken);
           setUser(JSON.parse(storedUser));
           setTokenData(decoded);
+          setActiveRole(storedRole ? JSON.parse(storedRole) : decoded.rol); // Recuperar rol activo o usar el predeterminado
         }
       } catch (error) {
         console.error('Error al decodificar el token:', error);
@@ -45,46 +48,48 @@ export const SessionProvider = ({ children }) => {
       console.error('Token no proporcionado en login');
       return;
     }
-  
+
     try {
       const decoded = jwtDecode(token);
       console.log('Datos decodificados del token en login:', decoded);
-  
+
       setToken(token);
       sessionStorage.setItem('token', token);
-  
+
       setUser(decoded);
       sessionStorage.setItem('user', JSON.stringify(decoded));
-  
-      // Guardar clubJugador_id y clubPresidente_id si están disponibles
-      if (decoded.clubJugador) {
-        sessionStorage.setItem('clubJugador_id', decoded.clubJugador.id);
-        console.log("clubJugador_id almacenado:", decoded.clubJugador.id);
-      }
-      if (decoded.clubPresidente) {
-        sessionStorage.setItem('clubPresidente_id', decoded.clubPresidente.id);
-        console.log("clubPresidente_id almacenado:", decoded.clubPresidente.id);
-      }
-      
-  
+
+      // Guardar el rol activo inicial
+      const defaultRole = decoded.rol;
+      setActiveRole(defaultRole);
+      sessionStorage.setItem('activeRole', JSON.stringify(defaultRole));
+
       Cookies.set('token', token, { expires: 1 });
     } catch (error) {
       console.error('Error al decodificar el token:', error);
     }
-  };  
+  };
 
   const logout = () => {
     setUser(null);
     setToken(null);
     setTokenData(null);
+    setActiveRole(null); // Limpiar rol activo
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('activeRole'); // Limpiar rol del almacenamiento
     Cookies.remove('token'); // Remover la cookie también
   };
-  
+
+  const updateRole = (newRole) => {
+    setActiveRole(newRole);
+    sessionStorage.setItem('activeRole', JSON.stringify(newRole));
+  };
 
   return (
-    <SessionContext.Provider value={{ user, token, tokenData, login, logout }}>
+    <SessionContext.Provider
+      value={{ user, token, tokenData, activeRole, login, logout, updateRole }}
+    >
       {children}
     </SessionContext.Provider>
   );

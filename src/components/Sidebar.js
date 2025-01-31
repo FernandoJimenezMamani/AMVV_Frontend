@@ -123,9 +123,15 @@ const Sidebar = () => {
           {/* Información del usuario */}
           {!isSidebarCollapsed && (
             <div className="user-info-container">
-              <div className="user-name">{user?.nombre}</div>
-              <div className="user-role">{user?.roles?.join(', ')}</div>
+            <div className="user-name">
+              {user?.nombre} {user?.apellido}
             </div>
+            <div className="user-role">
+              {user?.rol?.nombre || 'Sin rol'}
+              
+            </div>
+          </div>
+          
           )}
 
           {/* Menú de opciones */}

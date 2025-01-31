@@ -48,7 +48,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
  
   const { user } = useSession(); 
   const navigate = useNavigate();
- 
+
   useEffect(() => {
     const fetchPersona = async () => {
       if (!personaId) return; 
@@ -133,7 +133,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
     setCroppedImage(cropped);
     setImagePreview(URL.createObjectURL(cropped));
   };
- 
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -141,7 +141,6 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
     });
   };
 
-  // Manejo del cambio del género
   const handleGeneroChange = (value) => {
     setFormData({
       ...formData,
