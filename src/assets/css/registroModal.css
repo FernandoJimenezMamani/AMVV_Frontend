@@ -24,6 +24,10 @@
   text-transform: uppercase; /* Convertir a mayúsculas */
   margin-left: auto;
   margin-right: auto;
+  max-width: 90%;           /* Limita el ancho máximo */
+  word-wrap: break-word;    /* Ajusta el texto si es muy largo */
+  white-space: normal;      /* Permite ajustar a múltiples líneas */
+  overflow-wrap: break-word; 
 }
   
   .overlay {
@@ -347,7 +351,77 @@
     box-shadow: 0 0 8px rgba(61, 143, 164, 0.5) !important;
   }
   
+  /*datepicker timepicekr*/
+  /* General styles for DatePicker and TimePicker */
+
+  .input-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Espaciado entre grupos */
+    justify-content: space-between;
+  }
   
+  .input-group {
+    display: flex;
+    flex-direction: row; /* Alinea el DatePicker y TimePicker horizontalmente */
+    align-items: center; /* Centra verticalmente los pickers */
+    gap: 10px; /* Espaciado entre el DatePicker y el TimePicker */
+    width: 100%; /* Asegura que el grupo ocupe todo el ancho disponible */
+  }
+  
+.custom-picker {
+  width: 100%; /* Ajusta al ancho del contenedor */
+  height: 50px; /* Altura personalizada */
+  font-family: 'Arial', sans-serif; /* Fuente personalizada */
+  font-size: 14px; /* Tamaño de fuente */
+  color: #333; /* Color del texto */
+  border: 1px solid #ccc; /* Borde delgado */
+  border-radius: 5px; /* Bordes redondeados */
+  padding: 0 10px; /* Espaciado interno */
+  box-sizing: border-box; /* Incluye padding en el tamaño total */
+  background-color: #fff; /* Fondo blanco */
+  flex: 1; /* Ambos pickers ocuparán el mismo espacio horizontal */
+  font-size: 14px; /* Tamaño del texto */
+  margin-bottom: 10px;
+}
+
+.custom-picker:hover {
+  border-color: #007bff; /* Cambia el color del borde al pasar el cursor */
+}
+
+.custom-picker input::placeholder {
+  color: #bbb !important; /* Color de los placeholders */
+  font-size: 15px !important;
+}
+
+.custom-picker-focused {
+  border-color: #007bff; /* Borde al seleccionar */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Efecto de sombra */
+}
+
+/* Botón de selección de fecha y hora */
+.custom-picker .ant-picker-suffix {
+  color: #007bff; /* Icono del calendario/reloj */
+  font-size: 16px; /* Tamaño del icono */
+}
+
+/* Deshabilitado */
+.custom-picker-disabled {
+  background-color: #f5f5f5; /* Fondo gris claro */
+  color: #ccc; /* Texto gris claro */
+  cursor: not-allowed; /* Cursor de no permitido */
+}
+
+.custom-picker-label {
+  display: block; /* Asegura que cada label ocupe toda la fila */
+  text-align: left; /* Alinea el texto a la izquierda */
+  font-size: 14px; /* Tamaño de fuente */
+  font-weight: bold; /* Hace el texto del label más destacado */
+  color: #333; /* Color del texto del label */
+  margin-bottom: 5px; /* Espaciado debajo del label */
+  padding-left: 2px;
+}
+
   
   @media (max-width: 600px) {
     .modal {

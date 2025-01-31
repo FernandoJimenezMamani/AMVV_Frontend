@@ -1,105 +1,191 @@
-.perfil-equipo {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 8px 0 16px rgba(0, 0, 0, 0.1),
-                -8px 0 16px rgba(0, 0, 0, 0.1),
-                0 8px 16px rgba(0, 0, 0, 0.1),
-                0 -8px 16px rgba(0, 0, 0, 0.1);
-  }
-  
-  .perfil-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
-  }
-  
-  .equipo-logo {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 5px solid #143E42;
-    margin-right: 20px;
-  }
-  
-  .equipo-info {
-    flex: 1;
-  }
-  
-  .equipo-info h2 {
-    font-size: 36px;
-    color: #143E42;
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  .equipo-info p {
-    font-size: 18px;
-    color: #666;
-    margin-top: 10px;
-  }
-  
-  .jugadores-list {
-    margin-top: 40px;
-  }
-  
-  .jugadores-list h3 {
-    font-size: 24px;
-    color: #143E42;
-    margin-bottom: 20px;
-  }
-  
-  .jugador-card {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-  }
-  
-  .jugador-imagen {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #143E42;
-    margin-right: 15px;
-  }
-  
-  .jugador-info {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .jugador-info p {
-    margin: 0;
-    font-size: 18px;
-    color: #143E42;
-  }
-  
-  .jugador-info span {
-    font-size: 16px;
-    color: #666;
-  }
-  
-  .volver-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background: linear-gradient(to bottom, #3D8FA4, #17363E);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .volver-button:hover {
-    background-color: #0f2c2e;
-  }
-  
+/* Contenedor principal */
+.equipoPerfil-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 8px 0 16px rgba(0, 0, 0, 0.1),
+              -8px 0 16px rgba(0, 0, 0, 0.1),
+              0 8px 16px rgba(0, 0, 0, 0.1),
+              0 -8px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Botón de volver */
+.equipoPerfil-volverButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #143E42;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.equipoPerfil-volverButton:hover {
+  color: #0f2c2e;
+}
+
+/* Encabezado */
+.equipoPerfil-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.equipoPerfil-logoContainer {
+  display: inline-block;
+  position: relative;
+}
+
+.equipoPerfil-logo {
+  display: block;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid #143E42;
+}
+
+.equipoPerfil-nombre {
+  font-size: 46px;
+  color: #143E42;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* Tabs de navegación */
+.equipoPerfil-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.equipoPerfil-tabButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #143E42;
+  background: #e8f6f5;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.equipoPerfil-tabButton.active {
+  background-color: #3D8FA4;
+  color: white;
+}
+
+.equipoPerfil-tabButton:hover {
+  background-color: #3D8FA4;
+  color: white;
+}
+
+/* Contenido de las pestañas */
+.equipoPerfil-content {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+}
+
+.equipoPerfil-panel {
+  display: none; /* Oculta por defecto */
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.equipoPerfil-panel.active {
+  display: block; /* Muestra solo el panel activo */
+  opacity: 1;
+}
+
+/* Información */
+.equipoPerfil-detalles {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #666;
+  text-align: left;
+}
+
+/* Jugadores */
+.equipoPerfil-jugadoresCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+}
+
+.equipoPerfil-jugadorCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.equipoPerfil-jugadorCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.equipoPerfil-jugadorImagen {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #143E42;
+  margin-bottom: 10px;
+}
+
+.equipoPerfil-jugadorInfo p {
+  margin: 0;
+  font-size: 16px;
+  color: #143E42;
+  font-weight: bold;
+  text-align: center;
+}
+
+.equipoPerfil-jugadorInfo span {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+.equipoPerfil-jugadoresWrapper {
+  display: flex;
+  flex-direction: column; /* Organiza los elementos en columna */
+  align-items: stretch; /* Asegura que ocupen todo el ancho disponible */
+  width: 100%;
+  margin-bottom: 20px; /* Espaciado inferior */
+}
+
+/* Botón Registrar Jugador */
+.equipoPerfil-registrarButton {
+  align-self: flex-start; /* Alinea el botón a la izquierda */
+  margin-bottom: 15px; /* Espaciado entre el botón y las cards */
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #3D8FA4;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.equipoPerfil-registrarButton:hover {
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+

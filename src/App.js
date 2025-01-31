@@ -35,6 +35,8 @@ import ListaDelegadoClub from './pages/DelegadoClub/Indice';
 import RegistrarArbitro from './pages/Arbitros/Registrar';
 import ListaArbitro from './pages/Arbitros/Indice';
 import RegistrarJugador from './pages/Jugadores/Registrar';
+import AsignarJugador from './pages/Jugadores/AsignarJugador';
+import ListaJugadoresClub from './pages/Jugadores/JugadoresByClub';
 import ListaJugador from './pages/Jugadores/Indice';
 import ListaJugadorAll from './pages/Jugadores/IndiceGeneral';
 import ListaLugar from './pages/Complejos/Indice';
@@ -43,6 +45,9 @@ import PartidoDetalle from './pages/Partidos/PartidoDetalle';
 import ListaTraspaso from './pages/Traspasos/Indice';
 import ListaTraspasoClub from './pages/Traspasos/IndiceClub';
 import DetalleTraspaso from './pages/Traspasos/Detalle';
+import ListaJugadoresEquipo from './pages/Jugadores/IndiceJugadorEquipo';
+import ListaPagos from './pages/Pagos/ListaPagos';
+import ListaEquiposPagos from './pages/Pagos/InscripcionPagos';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -115,15 +120,18 @@ const App = () => {
               <Route path="/presidenteClub/indice" element={<ListaPresidenteClub />} />
               <Route path="/delegadoClub/indice" element={<ListaDelegadoClub />} />
               <Route path="/jugadores/registrar/:id" element={<RegistrarJugador />} />
-              <Route path="/jugadores/indice/:id" element={<ListaJugador />} />
+              <Route path="/jugadores/asignarJugador/:id" element={<AsignarJugador />} />
+              <Route path="/jugadores/indice/:id" element={<ListaJugadoresClub />} />
               <Route path="/jugadores/indice" element={<ListaJugadorAll/>} />
               <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
               <Route path="/arbitro/indice" element={<ListaArbitro />} />
               <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
-
+              <Route path="/jugadores/indice-equipo" element={<ListaJugadoresEquipo />} />
               <Route path="/traspasos/indice" element={<ListaTraspaso />} />
               <Route path="/traspasos/indice-club" element={<ListaTraspasoClub />} />
               <Route path="/traspasos/detalle/:solicitudId" element={<DetalleTraspaso />} />
+              <Route path="/pagos/tipos" element={<ListaPagos />} />
+              <Route path="/pagos/Inscripcion" element={<ListaEquiposPagos />} />
             </Route>
           </Route>
         </Routes>

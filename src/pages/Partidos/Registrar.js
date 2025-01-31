@@ -17,7 +17,9 @@ const PartidoForm = () => {
   const [lugarId, setLugarId] = useState(''); 
   const [resultado, setResultado] = useState('');
   const [equipos, setEquipos] = useState([]);
+  const [selectedArbitros, setSelectedArbitros] = useState([]);
   const [lugares, setLugares] = useState([]); 
+  const [arbitros, setArbitros] = useState([]); 
   const [equipoLocal, setEquipoLocal] = useState(null);
   const [equipoVisitante, setEquipoVisitante] = useState(null);
   const [error, setError] = useState('');
@@ -51,6 +53,24 @@ const PartidoForm = () => {
     fetchEquipos();
     fetchLugares();
   }, [categoriaId]);
+
+  useEffect(() => { 
+    const fetchArbitros = async () => {
+      try{
+        const response = await axios.get(`${API_BASE_URL}/arbitro/get_arbitros`);
+        console.log(response.data);
+        setArbitros(response.data || []);
+        console.log('Arbitros:', arbitros);
+
+      }catch (error) {
+        toast.error('Error al obtener los arbitros');
+        setArbitros([]);
+      }
+
+      
+    };
+    fetchArbitros();
+  }, []);
 
   const handleDateChange = (date) => {
     if (date) {
@@ -94,7 +114,7 @@ const PartidoForm = () => {
         equipo_visitante_id: equipoVisitanteId,
         fecha: formattedFecha,
         lugar_id: lugarId,
-        resultado,
+        arbitros: selectedArbitros.map(arbitro => arbitro.key)
       });
       
       toast.success('Registrado con éxito');
@@ -105,6 +125,7 @@ const PartidoForm = () => {
       setResultado('');
       setEquipoLocal(null);
       setEquipoVisitante(null);
+      setSelectedArbitros([]);
     } catch (err) {
       toast.error('Error al crear el Partido');
       console.error(err.message);
@@ -133,6 +154,11 @@ const PartidoForm = () => {
 
   const handleLugarChange = (value) => {
     setLugarId(value); 
+  };
+
+  const handleArbitroChange = (value) => {
+    console.log('Selected Arbitros:', value);
+    setSelectedArbitros(value);
   };
 
   return (
@@ -203,22 +229,8 @@ const PartidoForm = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="select-container">
-          <Select
-            placeholder="Seleccione un Lugar"
-            value={lugarId || undefined} 
-            onChange={handleLugarChange}
-            style={{ width: '100%' }}
-            allowClear
-          >
-            {lugares.map(lugar => (
-              <Option key={lugar.id} value={lugar.id}>
-                {lugar.nombre}
-              </Option>
-            ))}
-          </Select>
-        </div>
-        <div className="form-group">
+
+      <div className="form-group">
           <DatePicker
             required
             className="custom-range-picker"
@@ -229,6 +241,43 @@ const PartidoForm = () => {
             placeholder="Seleccione la fecha del partido"
             disabledDate={disabledDate} // Deshabilitar fechas anteriores
           />
+        </div>
+        <div className="select-container-u">
+          <Select
+            placeholder="Seleccione un Lugar"
+            value={lugarId || undefined} 
+            onChange={handleLugarChange}
+            style={{ width: '100%' }}
+            allowClear
+            className='custom-ant-select-u'
+          >
+            {lugares.map(lugar => (
+              <Option key={lugar.id} value={lugar.id}>
+                {lugar.nombre}
+              </Option>
+            ))}
+          </Select>
+        </div>
+        
+        <div className="select-container-u">
+        <Select
+          mode="multiple"
+          labelInValue
+          placeholder="Seleccione un Árbitro"
+          onChange={handleArbitroChange}
+          style={{ width: '100%'  }}
+          allowClear
+          value={selectedArbitros}
+          className='custom-ant-select-u'
+        >
+          {arbitros.map(arbitro => (
+            <Option key={arbitro.id} value={arbitro.id}>
+              {arbitro.nombre}
+            </Option>
+          ))}
+        </Select>
+
+
         </div>
         <div className="form-group">
           <button id="RegCampBtn" type="submit">Registrar Partido</button>

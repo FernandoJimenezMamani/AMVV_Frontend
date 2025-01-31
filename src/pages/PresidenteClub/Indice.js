@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import defaultUserIcon from '../../assets/img/user-icon.png';
 import { PresidenteClub } from '../../constants/roles';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import { Select } from 'antd';
 
 const { Option } = Select;
@@ -20,6 +21,7 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const ListaPresidenteClub = () => {
   const [presidentes, setPresidentes] = useState([]);
   const [filteredPresidentes, setFilteredPresidentes] = useState([]);
+  const [roles, setRoles] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [presidenteToDelete, setPersonaToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -105,7 +107,7 @@ const ListaPresidenteClub = () => {
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1; // Cambiar esto si necesitas un valor dinámico
-      await axios.put(`${API_BASE_URL}/persona/delete_persona/${presidenteToDelete}`, { user_id });
+      await axios.put(`${API_BASE_URL}/presidente_club/delete_presidente/${presidenteToDelete}`, { user_id });
       toast.success('Usuario desactivado exitosamente');
       fetchPresidentes();
       setShowConfirm(false); // Cierra el modal
@@ -212,8 +214,18 @@ const ListaPresidenteClub = () => {
                 {p.correo}
               </td>
               <td className="table-td-p">
-                {p.nombre_club}
+                {p.nombre_club ? (
+                  <>
+                    {p.nombre_club} 
+                  </>
+                ) : (
+                  <>
+                   Sin club asignado  <SportsVolleyballIcon/>
+                  </>
+                 
+                )}
               </td>
+
               <td className="table-td-p">
 
                 {/* Botones de acción siempre visibles */}

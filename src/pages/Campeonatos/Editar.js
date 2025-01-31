@@ -1,117 +1,140 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import { DatePicker } from 'antd';
-import Modal from 'react-modal';
-import moment from 'moment';
-import '../../assets/css/registroModal.css'; 
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { DatePicker, TimePicker } from "antd";
+import Modal from "react-modal";
+import moment from "moment";
+import "../../assets/css/registroModal.css";
+import { toast } from "react-toastify";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-const { RangePicker } = DatePicker;
 
-const EditarCampeonato = ({isOpen, onClose,campId}) => {
-  const navigate = useNavigate();
+const EditarCampeonato = ({ isOpen, onClose, campId , onCampEdited }) => {
   const [formData, setFormData] = useState({
-    nombre: '',
-    fecha_rango: [moment(), moment().add(1, 'days')]
+    nombre: "",
+    fecha_inicio_transaccion: "",
+    hora_inicio_transaccion: "",
+    fecha_fin_transaccion: "",
+    hora_fin_transaccion: "",
+    fecha_inicio_campeonato: "",
+    hora_inicio_campeonato: "",
+    fecha_fin_campeonato: "",
+    hora_fin_campeonato: "",
   });
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
-    const fetchCampeonato = async () => {
-      if (!campId) return;  // Evita ejecutar si el campId es null o undefined
-      try {
-        const response = await axios.get(`${API_BASE_URL}/Campeonatos/${campId}`);
-        const { nombre, fecha_inicio, fecha_fin } = response.data;
-        setFormData({
-          nombre: nombre,
-          fecha_rango: [moment(fecha_inicio), moment(fecha_fin)]
-        });
-      } catch (error) {
-        toast.error('Error al obtener los datos del campeonato');
-        console.error('Error fetching campeonato data:', error);
-      }
-    };
-    fetchCampeonato();
+    if (campId) {
+      fetchCampeonato();
+    }
   }, [campId]);
+
+  const fetchCampeonato = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/Campeonatos/${campId}`);
+      const {
+        nombre,
+        fecha_inicio_transaccion,
+        hora_inicio_transaccion,
+        fecha_fin_transaccion,
+        hora_fin_transaccion,
+        fecha_inicio_campeonato,
+        hora_inicio_campeonato,
+        fecha_fin_campeonato,
+        hora_fin_campeonato,
+      } = response.data;
+  
+      console.log("Datos del campeonato recibidos del servidor:", response.data);
+  
+      // Asignar directamente al estado
+      setFormData({
+        nombre,
+        fecha_inicio_transaccion, // Fecha ya separada
+        hora_inicio_transaccion, // Hora ya separada
+        fecha_fin_transaccion,
+        hora_fin_transaccion,
+        fecha_inicio_campeonato,
+        hora_inicio_campeonato,
+        fecha_fin_campeonato,
+        hora_fin_campeonato,
+      });
+  
+      console.log("Estado inicial de formData después de cargar los datos:", {
+        nombre,
+        fecha_inicio_transaccion,
+        hora_inicio_transaccion,
+        fecha_fin_transaccion,
+        hora_fin_transaccion,
+        fecha_inicio_campeonato,
+        hora_inicio_campeonato,
+        fecha_fin_campeonato,
+        hora_fin_campeonato,
+      });
+    } catch (error) {
+      toast.error("Error al obtener los datos del campeonato");
+      console.error("Error fetching campeonato data:", error);
+    }
+  };
   
 
-  useEffect(() => {
-    if (formData.fecha_rango && formData.fecha_rango.length === 2) {
-      updateNombre();
-    }
-  }, [formData.fecha_rango]);
-
-  const updateNombre = () => {
-    const [fecha_inicio] = formData.fecha_rango;
-    const year = fecha_inicio.year();
-    const month = fecha_inicio.month() + 1;
-    const period = month >= 1 && month <= 6 ? 'A' : 'B';
-    const nombre = `Campeonato ${year}-${period}`;
+  const handleDateChange = (name, value) => {
+    const formattedDate = value ? value.format("YYYY-MM-DD") : "";
     setFormData((prevData) => ({
       ...prevData,
-      nombre: nombre
+      [name]: formattedDate,
     }));
   };
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  const handleTimeChange = (name, value) => {
+    console.log(`Cambiando hora para ${name}:`, value ? value.format("HH:mm:ss") : null);
+  
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value ? value.format("HH:mm:ss") : null,
+      };
+      console.log("Nuevo estado actualizado en formData:", updatedData);
+      return updatedData;
     });
   };
-
-  const handleDateChange = (dates) => {
-    setFormData({
-      ...formData,
-      fecha_rango: dates
-    });
-  };
-
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
-  const handleOk = async () => {
-    setIsModalVisible(false);
-    try {
-      const [fecha_inicio, fecha_fin] = formData.fecha_rango;
-
-      // Normalize the name for comparison
-      const normalizedNombre = formData.nombre.replace(/\s+/g, '').toUpperCase();
-
-      // Check if the championship name already exists
-      const checkNameResult = await axios.get(`${API_BASE_URL}/Campeonatos/check-name`, {
-        params: { nombre: normalizedNombre, excludeId: campId }
-      });
-
-      if (checkNameResult.data.exists) {
-        alert('El nombre del campeonato ya existe');
-        return;
-      }
-
-      const response = await axios.put(`${API_BASE_URL}/Campeonatos/edit/${campId}`, {
-        nombre: formData.nombre,
-        fecha_inicio: fecha_inicio.toISOString(),
-        fecha_fin: fecha_fin.toISOString()
-      });
-      console.log(response.data);
-      toast.success('Editado con éxito');
-      navigate('/campeonatos/indice');
-    } catch (error) {
-      console.error('Error al editar el campeonato:', error);
-      alert('Error al editar el campeonato');
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleSubmit = (e) => {
+  
+  
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    showModal();
+
+    try {
+      const inicioTransaccion = moment(
+        `${formData.fecha_inicio_transaccion} ${formData.hora_inicio_transaccion}`,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      const finTransaccion = moment(
+        `${formData.fecha_fin_transaccion} ${formData.hora_fin_transaccion}`,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      const inicioCampeonato = moment(
+        `${formData.fecha_inicio_campeonato} ${formData.hora_inicio_campeonato}`,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      const finCampeonato = moment(
+        `${formData.fecha_fin_campeonato} ${formData.hora_fin_campeonato}`,
+        "YYYY-MM-DD HH:mm:ss"
+      );
+
+      await axios.put(`${API_BASE_URL}/Campeonatos/edit/${campId}`, {
+        nombre: formData.nombre,
+        fecha_inicio_transaccion: inicioTransaccion.format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+        fecha_fin_transaccion: finTransaccion.format("YYYY-MM-DD HH:mm:ss"),
+        fecha_inicio_campeonato: inicioCampeonato.format("YYYY-MM-DD HH:mm:ss"),
+        fecha_fin_campeonato: finCampeonato.format("YYYY-MM-DD HH:mm:ss"),
+      });
+
+      toast.success("Campeonato editado con éxito");
+      onCampEdited();
+      onClose();
+    } catch (error) {
+      toast.error("Error al editar el campeonato");
+      console.error("Error al editar el campeonato:", error);
+    }
   };
 
   return (
@@ -124,18 +147,204 @@ const EditarCampeonato = ({isOpen, onClose,campId}) => {
     >
       <h2 className="modal-title">Editar Campeonato</h2>
 
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+      <form onSubmit={handleSubmit}>
+        {/* Fechas de Transacción */}
         <div className="form-group">
-          <RangePicker
-            required
-            className="input-field custom-range-picker"
-            value={formData.fecha_rango}
-            onChange={handleDateChange}
-            format="YYYY-MM-DD"
-            placeholder={['Fecha de inicio', 'Fecha de fin']}
-          />
+          <label className="custom-picker-label">Transacción</label>
+          <div className="input-group">
+            <DatePicker
+              className="custom-picker"
+              value={
+                formData.fecha_inicio_transaccion
+                  ? moment(formData.fecha_inicio_transaccion, "YYYY-MM-DD")
+                  : null
+              }
+              onChange={(value) =>
+                handleDateChange("fecha_inicio_transaccion", value)
+              }
+              disabledDate={(current) =>
+                current && current < moment().startOf("day")
+              }
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    fecha_inicio_transaccion: null, // Limpia el valor al abrir
+                  }));
+                }
+              }}
+            />
+            <TimePicker
+              className="custom-picker"
+              value={formData.hora_inicio_transaccion
+                ? moment(formData.hora_inicio_transaccion, "HH:mm:ss")
+                : null}
+              onChange={(value) => handleTimeChange("hora_inicio_transaccion", value)}
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    hora_inicio_transaccion: null, // Limpia el campo al abrir el TimePicker
+                  }));
+                }
+              }}
+              format="HH:mm:ss"
+            />
+          </div>
         </div>
 
+        {/* Fin de Transacción */}
+        <div className="form-group">
+          <div className="input-group">
+            <DatePicker
+              className="custom-picker"
+              value={
+                formData.fecha_fin_transaccion
+                  ? moment(formData.fecha_fin_transaccion, "YYYY-MM-DD")
+                  : null
+              }
+              onChange={(value) =>
+                handleDateChange("fecha_fin_transaccion", value)
+              }
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    fecha_fin_transaccion: null, // Limpia el valor al abrir
+                  }));
+                }
+              }}
+              disabledDate={(current) =>
+                current &&
+                current < moment(formData.fecha_inicio_transaccion, "YYYY-MM-DD")
+              }
+            />
+            <TimePicker
+              className="custom-picker"
+              value={
+                formData.hora_fin_transaccion
+                  ? moment(formData.hora_fin_transaccion, "HH:mm:ss")
+                  : null
+              }
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    hora_fin_transaccion: null, // Limpia el campo al abrir el TimePicker
+                  }));
+                }
+              }}
+              onChange={(value) =>
+                handleTimeChange("hora_fin_transaccion", value)
+              }
+              format="HH:mm:ss"
+            />
+          </div>
+        </div>
+
+        {/* Fechas de Campeonato */}
+        <div className="form-group">
+          <label className="custom-picker-label">Campeonato</label>
+          <div className="input-group">
+            <DatePicker
+              className="custom-picker"
+              value={
+                formData.fecha_inicio_campeonato
+                  ? moment(formData.fecha_inicio_campeonato, "YYYY-MM-DD")
+                  : null
+              }
+              onChange={(value) =>
+                handleDateChange("fecha_inicio_campeonato", value)
+              }
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    fecha_inicio_campeonato: null, // Limpia el valor al abrir
+                  }));
+                }
+              }}
+              
+              disabledDate={(current) =>
+                current &&
+                current < moment(formData.fecha_fin_transaccion, "YYYY-MM-DD")
+              }
+            />
+            <TimePicker
+              className="custom-picker"
+              value={
+                formData.hora_inicio_campeonato
+                  ? moment(formData.hora_inicio_campeonato, "HH:mm:ss")
+                  : null
+              }
+              onChange={(value) =>
+                handleTimeChange("hora_inicio_campeonato", value)
+              }
+              
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    hora_inicio_campeonato: null, // Limpia el campo al abrir el TimePicker
+                  }));
+                }
+              }}
+              format="HH:mm:ss"
+            />
+          </div>
+        </div>
+
+        <div className="form-group">
+          <div className="input-group">
+            <DatePicker
+              className="custom-picker"
+              value={
+                formData.fecha_fin_campeonato
+                  ? moment(formData.fecha_fin_campeonato, "YYYY-MM-DD")
+                  : null
+              }
+              onChange={(value) =>
+                handleDateChange("fecha_fin_campeonato", value)
+              }
+
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    fecha_fin_campeonato: null, // Limpia el valor al abrir
+                  }));
+                }
+              }}
+              
+              disabledDate={(current) =>
+                current &&
+                current < moment(formData.fecha_inicio_campeonato, "YYYY-MM-DD")
+              }
+            />
+            <TimePicker
+              className="custom-picker"
+              value={
+                formData.hora_fin_campeonato
+                  ? moment(formData.hora_fin_campeonato, "HH:mm:ss")
+                  : null
+              }
+              onChange={(value) =>
+                handleTimeChange("hora_fin_campeonato", value)
+              }
+              onOpenChange={(open) => {
+                if (open) {
+                  setFormData((prevData) => ({
+                    ...prevData,
+                    hora_fin_campeonato: null, // Limpia el campo al abrir el TimePicker
+                  }));
+                }
+              }}
+              format="HH:mm:ss"
+            />
+          </div>
+        </div>
+
+        {/* Nombre del Campeonato */}
         <div className="form-group">
           <input
             type="text"
@@ -143,13 +352,17 @@ const EditarCampeonato = ({isOpen, onClose,campId}) => {
             id="nombre"
             name="nombre"
             value={formData.nombre}
-            onChange={handleChange}
+            readOnly
             className="input-field"
           />
         </div>
 
         <div className="form-buttons">
-          <button type="button" className="button button-cancel" onClick={onClose}>
+          <button
+            type="button"
+            className="button button-cancel"
+            onClick={onClose}
+          >
             Cancelar
           </button>
           <button type="submit" className="button button-primary">

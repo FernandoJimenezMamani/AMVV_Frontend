@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../assets/css/Registro.css';
 import { toast } from 'react-toastify';
+import Modal from 'react-modal';
 import { useParams } from 'react-router-dom';
 import { Select } from 'antd';
+import '../../assets/css/registroModal.css';
 
+Modal.setAppElement('#root'); 
 const { Option } = Select;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const RegistroEquipo = () => {
-  const { clubId } = useParams(); // Obtener el clubId desde los parámetros de la URL
+const RegistroEquipo = ({ isOpen, onClose, onTeamCreated , clubId }) => { 
   const [formData, setFormData] = useState({
     nombre: '',
     club_id: clubId, // Ahora tomamos el club_id de los parámetros
@@ -18,11 +20,13 @@ const RegistroEquipo = () => {
   const [clubName, setClubName] = useState('Cargando...'); // Valor inicial como "Cargando..."
   const [categorias, setCategorias] = useState([]);
   const [errors, setErrors] = useState({});
+  const [formModalIsOpen, setFormModalIsOpen] = useState(false); 
+  const closeFormModal = () => setFormModalIsOpen(false);
 
   useEffect(() => {
     const fetchClubName = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/club/get_club/${clubId}`);
+        const response = await axios.get(`${API_BASE_URL}/club/get_club/${clubId}`);
         if (response.data && response.data.length > 0 && response.data[0].nombre) {
           setClubName(response.data[0].nombre); // Accede al nombre del club en la posición 0
         } else {
@@ -37,7 +41,7 @@ const RegistroEquipo = () => {
 
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/categoria/get_categoria');
+        const response = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
         setCategorias(response.data);
       } catch (error) {
         toast.error('error')
@@ -94,9 +98,11 @@ const RegistroEquipo = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5002/api/equipo/post_equipo', formData);
+      const response = await axios.post(`${API_BASE_URL}/equipo/post_equipo`, formData);
       console.log(response.data);
       toast.success('Equipo registrado con éxito');
+      onClose(); 
+      onTeamCreated();
     } catch (error) {
       toast.error('error')
       console.error('Error al registrar el equipo:', error);
@@ -104,11 +110,26 @@ const RegistroEquipo = () => {
   };
 
   return (
-    <div className="registro-campeonato">
-      <h2>Registrar Equipo</h2>
+    <div>
+      <Modal
+              isOpen={isOpen} 
+              onRequestClose={closeFormModal}
+              contentLabel="Registrar Club"
+              className="modal"
+              overlayClassName="overlay">
+      <h2 className="modal-title">Registrar Equipo</h2>
       <form onSubmit={handleSubmit}>
+
         <div className="form-group">
-          <label htmlFor="nombre">Nombre del Equipo:</label>
+          <input
+            type="text"
+            value={clubName} // Mostrar el nombre del club o "Cargando..."
+            disabled // Campo no editable
+            className="input-field"
+          />
+        </div>
+
+        <div className="form-group">
           <input
             type="text"
             placeholder="Nombre del Equipo"
@@ -116,18 +137,9 @@ const RegistroEquipo = () => {
             name="nombre"
             value={formData.nombre}
             onChange={handleChange}
-            className={errors.nombre ? 'error' : ''}
+            className="input-field"
           />
           {errors.nombre && <span className="error-message">{errors.nombre}</span>}
-        </div>
-
-        <div className="form-group">
-          <label>Nombre del Club:</label>
-          <input
-            type="text"
-            value={clubName} // Mostrar el nombre del club o "Cargando..."
-            disabled // Campo no editable
-          />
         </div>
 
         <div className="select-container">
@@ -150,10 +162,16 @@ const RegistroEquipo = () => {
           {errors.categoria_id && <span className="error-message">{errors.categoria_id}</span>}
         </div>
 
-        <div className="form-group">
-          <button id="RegCampBtn" type="submit">Registrar</button>
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="button button-primary" type="submit">
+            Registrar
+          </button>
         </div>
       </form>
+     </Modal>
     </div>
   );
 };

@@ -3,47 +3,62 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Clubes/ClubesPerfil.css';
 import { toast } from 'react-toastify';
 import { useEffect, useState } from 'react';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import PeopleIcon from '@mui/icons-material/People';
+import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
+import RegistroEquipo from '../Equipos/Registrar';
+import { set } from 'date-fns';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilClub = () => {
   const { id } = useParams();
   const [club, setClub] = useState(null);
   const [teams, setTeams] = useState([]);
+  const [showTeamsModal, setShowTeamsModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchClubAndTeams = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5002/api/club/get_club_teams/${id}`);
-        if (response.data.length > 0) {
-          const clubInfo = {
-            club_id: response.data[0].club_id,
-            nombre: response.data[0].club_nombre,
-            descripcion: response.data[0].club_descripcion,
-            club_imagen: response.data[0].club_imagen,
-            presidente_asignado: response.data[0].presidente_asignado,
-            presidente_nombre: response.data[0].presidente_nombre,
-          };
-          setClub(clubInfo);
-          const teamsInfo = response.data.map(item => ({
-            equipo_id: item.equipo_id,
-            equipo_nombre: item.equipo_nombre,
-            categoria_nombre: item.categoria_nombre,
-          }));
-
-          setTeams(teamsInfo);
-        }
-      } catch (error) {
-        toast.error('Error al obtener el club y equipos');
-        console.error('Error al obtener el club y equipos:', error);
-      }
-    };
+    
 
     fetchClubAndTeams();
   }, [id]);
 
+  const fetchClubAndTeams = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/club/get_club_teams/${id}`);
+      if (response.data.length > 0) {
+        const clubInfo = {
+          club_id: response.data[0].club_id,
+          nombre: response.data[0].club_nombre,
+          descripcion: response.data[0].club_descripcion,
+          club_imagen: response.data[0].club_imagen,
+          presidente_asignado: response.data[0].presidente_asignado,
+          presidente_nombre: response.data[0].presidente_nombre,
+          presidente_imagen: response.data[0].persona_imagen,
+        };
+        setClub(clubInfo);
+        const teamsInfo = response.data.map(item => ({
+          equipo_id: item.equipo_id,
+          equipo_nombre: item.equipo_nombre,
+          categoria_nombre: item.categoria_nombre,
+        }));
+
+        setTeams(teamsInfo);
+      }
+    } catch (error) {
+      toast.error('Error al obtener el club y equipos');
+      console.error('Error al obtener el club y equipos:', error);
+    }
+  };
+
   const handleAssignPresident = () => {
-    navigate(`/presidente_club/registrar/${club.club_id}`);
+    navigate(`/presidenteClub/indice`);
     console.log("Asignar Presidente");
+  };
+
+  const handleCloseModal = () => {
+    setShowTeamsModal(false);
   };
 
   const handleListJugador = () => {
@@ -52,7 +67,7 @@ const PerfilClub = () => {
   };
 
   const handleCreateTeam = () => {
-    navigate(`/equipos/Registrar/${club.club_id}`);
+   setShowTeamsModal(true);
     console.log("Crear equipo");
   };
 
@@ -67,7 +82,7 @@ const PerfilClub = () => {
 
   return (
     <div className="perfil-club">
-      <div className="perfil-header">
+      <div className="perfil-header-club">
         <div className="club-logo-container">
           <img
             src={club.club_imagen}
@@ -79,14 +94,27 @@ const PerfilClub = () => {
           <h2>{club.nombre}</h2>
           <p>{club.descripcion}</p>
         </div>
+        <RegistroEquipo
+        isOpen={showTeamsModal}
+        onClose={handleCloseModal}
+        onTeamCreated={fetchClubAndTeams} 
+        clubId = {club.club_id}
+      />
 
         {club.presidente_asignado === 'N' ? (
           <button className="assign-president-button" onClick={handleAssignPresident}>
-            Asignar Presidente
+           <AssignmentIndIcon/> Asignar Presidente
           </button>
         ) : (
-          <p className="president-info">Presidente: {club.presidente_nombre}</p>
-        )}
+          <p className="president-info-container">
+            Presidente: {club.presidente_nombre}
+            <img
+              src={club.presidente_imagen}
+              alt={`${club.presidente_nombre} logo`}
+               className="president-image"
+            />
+          </p>
+                  )}
       </div>
 
       <div className="perfil-teams">
@@ -109,10 +137,10 @@ const PerfilClub = () => {
 
       <div className="assign-actions-container">
         <button className="assign-jugador-button" onClick={handleListJugador}>
-          Mis Jugadores
+          <PeopleIcon/> Mis Jugadores
         </button>
         <button className="create-team-button" onClick={handleCreateTeam}>
-          Crear Equipo
+          <SportsVolleyballIcon/> Crear Equipo
         </button>
       </div>
     </div>

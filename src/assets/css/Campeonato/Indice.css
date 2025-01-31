@@ -31,23 +31,25 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  width: 300px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  flex: 1 1 calc(30% - 20px);
-  max-width: 300px;
-  position: relative;  
+  width: 700px; /* Aumentar el ancho del card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
+  flex: 1 1 calc(33% - 20px); /* Ajustar para pantallas grandes */
+  max-width: 700px;
+  position: relative;
 }
+
 
 .campeonato-nombre {
-  font-size: 1.5em;
-  margin-bottom: 10px;
+  font-size: 1.8em; /* Aumentar el tamaño del título */
+  margin-bottom: 15px;
   color: white;
   font-weight: bold;
+  text-align: left; /* Centrar el texto del título */
 }
-
-.campeonato-fecha {
-  font-size: 1em;
+.campeonato-fecha, .campeonato-transaccion {
+  font-size: 0.9em;
   color: white;
+  line-height: 1.6; /* Mejorar la legibilidad */
 }
 
 .campeonato-buttons {
@@ -120,6 +122,72 @@
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
+}
+
+.campeonato-estado {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espacio entre el círculo y el texto */
+  padding: 5px 10px; /* Espaciado interno */
+  border-radius: 12px; /* Borde redondeado */
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.estado-en-preparacion {
+  background-color: #3061e9; /* Fondo verde claro */
+  color: white; /* Texto verde */
+  border: 1px solid #3061e9; /* Borde verde */
+  border-radius: 10px;
+  padding: 5px 7px;
+  
+}
+
+.estado-en-curso {
+  background-color: #4CAF50; /* Fondo verde claro */
+  color: white; /* Texto verde */
+  border: 1px solid #4CAF50; /* Borde verde */
+  border-radius: 10px;
+  padding: 5px 7px;
+  
+}
+
+.estado-en-espera {
+  background-color: #848584; /* Fondo verde claro */
+  color: white; /* Texto verde */
+  border: 1px solid #848584; /* Borde verde */
+  border-radius: 10px;
+  padding: 5px 7px;
+  
+}
+
+
+.estado-finalizado {
+  background-color: #D9534F; /* Fondo rojo claro */
+  color: white; /* Texto rojo */
+  border: 1px solid #D9534F; /* Borde rojo */
+  border-radius: 10px;
+  padding: 5px 7px;
+}
+
+.punto-verde {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #4CAF50; /* Verde para el círculo */
+  flex-shrink: 0; /* Mantén el tamaño fijo */
+}
+
+.punto-rojo {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #D9534F; /* Rojo para el círculo */
+  flex-shrink: 0; /* Mantén el tamaño fijo */
 }
 
 @media (max-width: 768px) {

@@ -174,13 +174,9 @@ const Sidebar = () => {
                 </div>
 
                 <div className="menu-item">
-                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
-                      <MonetizationOnIcon/> Pagos
+                  <a className="main-link" onClick={() => navigate('/pagos/tipos')}>
+                    <MonetizationOnIcon /> Pagos
                   </a>
-                  <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
-                    <Link to="/Campeonatos/Indice">Indice</Link>
-                    <Link to="/Campeonatos/Registrar">Registrar</Link>
-                  </div>
                 </div>
             </div>
           )}

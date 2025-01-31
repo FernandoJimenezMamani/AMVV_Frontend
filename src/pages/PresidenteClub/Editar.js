@@ -51,7 +51,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
           genero: response.data.genero,
           roles:rolesArray,
           club_jugador_id: response.data.club_jugador,
-          club_presidente_id: response.data.club_presidente,
+          club_presidente_id: response.data.club_presidente || null,
           club_delegado_id: response.data.club_presidente,
           image: response.data.persona_imagen,
         });
@@ -110,7 +110,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
   const handleClubChange = (value) => {
     setFormData({
       ...formData,
-      club_jugador_id: value,
+      club_presidente_id: value,
     });
   };
 

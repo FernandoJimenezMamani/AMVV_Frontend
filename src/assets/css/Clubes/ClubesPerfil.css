@@ -10,7 +10,7 @@
               0 -8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.perfil-header {
+.perfil-header-club {
   display: flex;
   align-items: center;
   margin-bottom: 40px;
@@ -68,22 +68,36 @@
 }
 
 .team-card {
-  background-color: #ffffff;
+  background: linear-gradient(to bottom, #5e95ad, #2a4e5c);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
+  transition: all 0.4s ease;
+}
+.team-card:hover{
+  background: linear-gradient(to bottom, #6391a5, #141e22);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  box-shadow: 8px 0 16px rgba(0, 0, 0, 0.2),
+  -8px 0 16px rgba(0, 0, 0, 0.2),
+  0 8px 16px rgba(0, 0, 0, 0.2),
+  0 -8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
 }
 
 .team-card h3 {
   margin: 0;
   font-size: 24px;
-  color: #143E42;
+  color: #f8f8f8;
+  font-weight: bold;
 }
 
 .team-card p {
   font-size: 16px;
-  color: #666;
+  color: #ffffff;
   margin-top: 10px;
 }
 
@@ -92,7 +106,7 @@
   top: 10px;
   right: 10px;
   padding: 10px 20px;
-  background-color: #143E42;
+  background-color: #448f71;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -115,16 +129,52 @@
 .assign-jugador-button,
 .create-team-button {
   padding: 10px 20px;
-  background-color: #143E42;
+  background-color: #3D8FA4;
   color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
-  transition: background-color 0.3s ease;
+  transition: all 0.4s ease;
 }
 
 .assign-jugador-button:hover,
 .create-team-button:hover {
-  background-color: #0f2c2e;
+  background-color: #163e41;
+  transform: translateY(-2px);
+}
+
+.president-info-container {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 10px 20px;
+  background-color: #448f71;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;               /* Flexbox para alinear contenido */
+  align-items: center;         /* Centra verticalmente la imagen y el texto */
+  gap: 10px;                   /* Espaciado entre la imagen y el texto */
+  width: auto;                 /* Ajusta el ancho al contenido */
+  white-space: nowrap;         /* Evita saltos de línea */
+  transition: all 0.4s ease;
+  
+}
+
+.president-info-container:hover {
+  background-color: #2d8160;         /* Espaciado entre el texto y la imagen */
+  box-shadow: 8px 0 16px rgba(0, 0, 0, 0.2),
+  -8px 0 16px rgba(0, 0, 0, 0.2),
+  0 8px 16px rgba(0, 0, 0, 0.2),
+  0 -8px 16px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.president-info-container .president-image {
+  width: 60px;                  /* Ancho de la imagen */
+  height: 60px;                 /* Alto de la imagen */
+  border-radius: 50%;           /* Hace la imagen redonda */
+  object-fit: cover;            /* Asegura que la imagen mantenga sus proporciones */
 }

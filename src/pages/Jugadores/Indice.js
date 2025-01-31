@@ -5,6 +5,7 @@ import ConfirmModal from '../../components/ConfirmModal';
 import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const ListaJugadores = () => {
   const [jugadores, setJugadores] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -16,7 +17,7 @@ const ListaJugadores = () => {
   useEffect(() => {
     const fetchJugadores = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/jugador/get_jugador_club/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/jugador/get_jugador_club/${id}`);
         console.log("Jugadores recibidos:", response.data); 
         setJugadores(response.data);
       } catch (error) {
@@ -40,7 +41,7 @@ const ListaJugadores = () => {
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1;
-      await axios.put(`http://localhost:5002/api/jugador/delete_jugador/${jugadorToDelete}`, { user_id });
+      await axios.put(`${API_BASE_URL}/jugador/delete_jugador/${jugadorToDelete}`, { user_id });
       setJugadores(jugadores.filter(jugador => jugador.jugador_id !== jugadorToDelete));
       setShowConfirm(false);
       setJugadorToDelete(null);
@@ -60,7 +61,7 @@ const ListaJugadores = () => {
   };
 
   const handleAssignJugador = () => {
-    navigate(`/jugadores/registrar/${id}`);
+    navigate(`/jugadores/asignarJugador/${id}`);
     console.log("Lista de jugadores");
   };
 

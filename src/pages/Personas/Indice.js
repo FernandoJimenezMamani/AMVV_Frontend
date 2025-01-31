@@ -97,17 +97,23 @@ const ListaPersonas = () => {
     setShowFormModal(false);
   };
 
-  const handleDeleteClick = (id) => {
-    setPersonaToDelete(id);
+  const handleDeleteClick = (id,roles) => {
+    setPersonaToDelete({ id, roles });
     setShowConfirm(true);
   };
 
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1; // Cambiar esto si necesitas un valor dinámico
-      await axios.put(`${API_BASE_URL}/persona/delete_persona/${personaToDelete}`, { user_id });
+      const { id, roles } = personaToDelete; // Extrae el ID y los roles
+  
+      await axios.put(`${API_BASE_URL}/persona/delete_persona/${id}`, {
+        user_id,
+        roles: roles.split(',').map((role) => role.trim()), // Asegúrate de enviar un array de roles
+      });
+  
       toast.success('Usuario desactivado exitosamente');
-      fetchPersonas();
+      fetchPersonas(); // Actualiza la lista de usuarios
       setShowConfirm(false); // Cierra el modal
       setPersonaToDelete(null); // Limpia el ID almacenado
     } catch (error) {
@@ -115,6 +121,7 @@ const ListaPersonas = () => {
       console.error('Error al eliminar la persona:', error);
     }
   };
+  
   
 
   const handleActivateUser = async (id) => {
@@ -255,7 +262,7 @@ const ListaPersonas = () => {
                   <input
                     type="checkbox"
                     onChange={() =>
-                      p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id)
+                      p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id,p.roles)
                     }
                     checked={p.eliminado !== 'S'} // Marcado si no está eliminado
                   />
