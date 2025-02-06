@@ -47,7 +47,6 @@
   height:50px;
   background-color:#64848C;
   color:#FFFFFF !important;
-  font-width:bold;
 }
 
 .input-container input:-webkit-autofill,
@@ -95,4 +94,85 @@
 
 .login-button:hover {
   background-color: #003d4f;
+}
+
+/* Contenedor general de selección de rol */
+.role-selection-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px; /* Espaciado entre elementos */
+  margin-top: 20px;
+}
+
+/* Título */
+.role-selection-container h2 {
+  font-size: 22px;
+  color: #143E42;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Estilo del Select */
+.role-select {
+  width: 370px;
+  padding: 12px;
+  font-size: 14px;
+  border-radius: 25px;
+  border: 2px solid #1E6770;
+  background-color: #f8f8f8;
+  color: #143E42;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+/* Estilo cuando pasas el mouse sobre el select */
+.role-select:hover {
+  background-color: #e0f2f1 !important;
+  border-color: #143E42;
+}
+
+/* Estilo cuando el select está enfocado */
+.role-select:focus {
+  outline: none;
+  border-color: #1E6770;
+  box-shadow: 0 0 5px rgba(30, 103, 112, 0.5);
+}
+
+.role-select option {
+  padding: 10px;
+  font-size: 16px;
+  background: white;
+  color: #143E42;
+}
+
+.role-select option:hover {
+  background-color: #1E6770;
+  color: white;
+}
+/* Estilo del botón Continuar */
+.role-selection-container .login-button {
+  width: 350px;
+  height: 50px;
+  background: linear-gradient(to right, #143E43, #1E6770);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Efecto hover en el botón */
+.role-selection-container .login-button:hover {
+  background: linear-gradient(to right, #1E6770, #143E43);
+}
+
+/* Espaciado dentro del botón */
+.role-selection-container .login-button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(30, 103, 112, 0.8);
 }

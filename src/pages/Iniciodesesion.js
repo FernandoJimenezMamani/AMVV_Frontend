@@ -6,6 +6,8 @@ import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
 import { toast } from 'react-toastify';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const InicioDeSesion = ({ onLoginSuccess }) => {
   const [formData, setFormData] = useState({
     correo: '',
@@ -24,7 +26,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5002/api/sesion/login', formData, { withCredentials: true });
+      const response = await axios.post(`${API_BASE_URL}/sesion/login`, formData, { withCredentials: true });
       console.log('Respuesta del backend:', response.data);
   
       const { requireRoleSelection, roles, token, user } = response.data;
@@ -50,13 +52,13 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
   
     try {
       const response = await axios.post(
-        'http://localhost:5002/api/sesion/login',
+        `${API_BASE_URL}/sesion/login`,
         { ...formData, selectedRoleId },
         { withCredentials: true }
       );
   
-      const { token, user } = response.data; // `user` ya incluye el rol seleccionado
-      login({ user, token }); // Guarda usuario y token en el contexto
+      const { token, user } = response.data; 
+      login({ user, token }); 
       onLoginSuccess(user);
       navigate('/sidebar');
     } catch (error) {
@@ -75,28 +77,28 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
         <img src={logo} alt="Login" className="login-image" />
         <h1>INICIO DE SESIÓN</h1>
         {roles.length > 0 ? (
-          <div>
-            <h2>Seleccione un rol</h2>
-            <div className="input-container">
-              <select
-                value={selectedRoleId}
-                onChange={(e) => setSelectedRoleId(e.target.value)}
-                className="role-select"
-              >
-                <option value="" disabled>
-                  -- Seleccione un rol --
+          <div className="role-selection-container">
+          <h2>Seleccione un rol</h2>
+          <div className="input-container">
+            <select
+              value={selectedRoleId}
+              onChange={(e) => setSelectedRoleId(e.target.value)}
+              className="role-select"
+            >
+              <option value="" disabled>
+                -- Seleccione un rol --
+              </option>
+              {roles.map((role) => (
+                <option key={role.id} value={role.id}>
+                  {role.nombre}
                 </option>
-                {roles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button className="login-button" onClick={handleRoleSelection}>
-              Continuar
-            </button>
+              ))}
+            </select>
           </div>
+          <button className="login-button" onClick={handleRoleSelection}>
+            Continuar
+          </button>
+        </div>
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="input-container">

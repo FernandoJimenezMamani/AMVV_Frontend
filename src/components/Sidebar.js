@@ -161,7 +161,7 @@ const Sidebar = () => {
                 <a className={`main-link ${expandedSection === 'usuarios' ? 'active' : ''}`} onClick={() => toggleSection('usuarios')} ref={sidebarRef}>
                     <PersonIcon/> Miembros
                 </a>
-                <div className={`submenu ${expandedSection === 'usuarios' ? 'open' : ''}`}>
+                <div className={`submenu ${expandedSection === 'usuarios' ? 'open' : ''}`} >
                   <Link to="/Arbitro/Indice">Arbitros</Link>
                   <Link to="/Jugadores/Indice">Jugadores</Link>
                   <Link to="/PresidenteClub/Indice">Presidentes</Link>
@@ -170,12 +170,13 @@ const Sidebar = () => {
                 </div>
               </div>
               <div className="menu-item">
-                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
+                  <a className={`main-link ${expandedSection === 'traspasos' ? 'active' : ''}`} onClick={() => toggleSection('traspasos')} ref={sidebarRef}>
                       <ChangeCircleIcon/> Traspasos
                   </a>
-                  <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
-                    <Link to="/Campeonatos/Indice">Indice</Link>
-                    <Link to="/Campeonatos/Registrar">Registrar</Link>
+                  <div className={`submenu ${expandedSection === 'traspasos' ? 'open' : ''}`}>
+                      <Link to="/traspasos/TraspasoListaJugadores">Fichar Jugadores</Link>
+                      <Link to="/traspasos/indice">Ver solicitudes</Link>
+                      <Link to="/traspasos/indiceSolicitudesPresidente">Ver solicitudesP</Link>
                   </div>
                 </div>
 

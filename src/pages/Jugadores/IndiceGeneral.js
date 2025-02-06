@@ -10,14 +10,18 @@ import EditIcon from '@mui/icons-material/Edit';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
 
+
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaJugadoresAll = () => {
+
   const [jugadores, setJugadores] = useState([]);
+  const [presidente, setPresidente] = useState([]);
   const [filteredPersonas, setFilteredPersonas] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showConfirmTraspaso,setShowConfirmTraspaso] = useState(false);
   const [jugadorToFichar, setJugadorToFichar] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);  
@@ -30,6 +34,7 @@ const ListaJugadoresAll = () => {
 
   useEffect(() => {
     fetchJugadores();
+    fetchPresidente();
   }, []);
 
    useEffect(() => {
@@ -41,6 +46,21 @@ const ListaJugadoresAll = () => {
       const response = await axios.get(`${API_BASE_URL}/jugador/jugadores`); // Cambiado para obtener todos los jugadores
       console.log("Jugadores recibidos:", response.data); 
       setJugadores(response.data);
+    } catch (error) {
+      toast.error('Error al obtener los jugadores');
+      console.error('Error al obtener los jugadores:', error);
+    }
+  };
+
+  const fetchPresidente = async () => {
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user')); // Convierte el JSON a objeto
+      const userId = user?.id;
+      console.log('hola perra', userId)
+      const response = await axios.get(`${API_BASE_URL}/presidente_club/get_presidenteById/${userId}`); // Cambiado para obtener todos los jugadores
+      console.log("presidente recibidos:", response.data); 
+    
+      setPresidente(response.data);
     } catch (error) {
       toast.error('Error al obtener los jugadores');
       console.error('Error al obtener los jugadores:', error);
@@ -75,7 +95,7 @@ const ListaJugadoresAll = () => {
 
   const handleFicharClick = (jugadorId) => {
     setJugadorToFichar(jugadores.find(jugador => jugador.jugador_id === jugadorId));
-    setShowConfirm(true);
+    setShowConfirmTraspaso(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -92,25 +112,18 @@ const ListaJugadoresAll = () => {
     if (!jugadorToFichar) return;
   
     try {
-      // Obtener el club_presidente_id desde sessionStorage
-      const clubDestinoId = sessionStorage.getItem('clubPresidente_id');
-  
-      if (!clubDestinoId) {
-        toast.error('No se encontró el ID del club destino del presidente');
-        return;
-      }
   
       // Llama al endpoint de crear traspaso en el backend
       await axios.post(`${API_BASE_URL}/traspaso/crear`, {
         jugador_id: jugadorToFichar.jugador_id,
         club_origen_id: jugadorToFichar.club_id, // Usamos el ID del club actual del jugador
-        club_destino_id: clubDestinoId, // Usamos el ID del club del presidente como destino
+        club_destino_id: presidente.club_presidente, // Usamos el ID del club del presidente como destino
         fecha_solicitud: new Date().toISOString().slice(0, 10),
         estado_solicitud: 'PENDIENTE'
       });
   
       toast.success('Traspaso solicitado correctamente');
-      setShowConfirm(false);
+      setShowConfirmTraspaso(false);
       setJugadorToFichar(null);
     } catch (error) {
       toast.error('Error al solicitar el traspaso');
@@ -126,7 +139,7 @@ const ListaJugadoresAll = () => {
   };
 
   const handleCancelFichar = () => {
-    setShowConfirm(false);
+    setShowConfirmTraspaso(false);
     setJugadorToFichar(null);
   };
 
@@ -257,12 +270,6 @@ const ListaJugadoresAll = () => {
                   <EditIcon />
                 </button>
 
-                <button
-                  className="table-button button-assign"
-                  onClick={() => handleFicharClick(jugador.jugador_id)}
-                >
-                  Fichar Jugador
-                </button>
                 <label className="user-activation-switch">
                   <input
                     type="checkbox"
@@ -281,7 +288,7 @@ const ListaJugadoresAll = () => {
       </table>
 
       <ConfirmModal
-        visible={showConfirm}
+        visible={showConfirmTraspaso}
         onConfirm={handleConfirmFichar}
         onCancel={handleCancelFichar}
         message="¿Seguro que quieres fichar a este jugador?"

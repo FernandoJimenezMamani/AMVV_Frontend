@@ -43,12 +43,18 @@ import ListaJugadorAll from './pages/Jugadores/IndiceGeneral';
 import ListaLugar from './pages/Complejos/Indice';
 import RegistrarLugar from './pages/Complejos/Registro';
 import PartidoDetalle from './pages/Partidos/PartidoDetalle';
-import ListaTraspaso from './pages/Traspasos/Indice';
+import ListaTraspaso from './pages/Traspasos/IndiceSolicitudJugador';
 import ListaTraspasoClub from './pages/Traspasos/IndiceClub';
-import DetalleTraspaso from './pages/Traspasos/Detalle';
+import DetalleTraspaso from './pages/Traspasos/DetalleJugador';
 import ListaJugadoresEquipo from './pages/Jugadores/IndiceJugadorEquipo';
 import ListaPagos from './pages/Pagos/ListaPagos';
 import ListaEquiposPagos from './pages/Pagos/InscripcionPagos';
+import ListaJugadoresTraspaso from './pages/Traspasos/IndiceJugadoresTraspaso'
+import MisSolicitudes from './pages/Traspasos/misSolicitudes';
+import DetalleTraspasoPresidente from './pages/Traspasos/DetallePresidente';
+import IndiceSolicitudesPresidente from './pages/Traspasos/IndiceSolicitudPresidente'
+import DetalleTraspasoPresidenteSolicitante from './pages/Traspasos/DetalleSolicitante'
+import ListaTraspasosPagos from './pages/Pagos/TraspasoPagos';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -131,9 +137,15 @@ const App = () => {
               <Route path="/jugadores/indice-equipo" element={<ListaJugadoresEquipo />} />
               <Route path="/traspasos/indice" element={<ListaTraspaso />} />
               <Route path="/traspasos/indice-club" element={<ListaTraspasoClub />} />
-              <Route path="/traspasos/detalle/:solicitudId" element={<DetalleTraspaso />} />
+              <Route path="/traspasos/detalleJugador/:solicitudId" element={<DetalleTraspaso />} />
               <Route path="/pagos/tipos" element={<ListaPagos />} />
               <Route path="/pagos/Inscripcion" element={<ListaEquiposPagos />} />
+              <Route path="/pagos/Traspaso" element={<ListaTraspasosPagos />} />
+              <Route path="/traspasos/TraspasoListaJugadores" element={<ListaJugadoresTraspaso />} />
+              <Route path="/traspasos/misSolicitudes" element={<MisSolicitudes />} />
+              <Route path="/traspasos/detallePresidente/:solicitudId" element={<DetalleTraspasoPresidente />} />
+              <Route path="/traspasos/detalleSolicitante/:solicitudId" element={<DetalleTraspasoPresidenteSolicitante />} />
+              <Route path="/traspasos/indiceSolicitudesPresidente" element={<IndiceSolicitudesPresidente />} />
             </Route>
           </Route>
         </Routes>

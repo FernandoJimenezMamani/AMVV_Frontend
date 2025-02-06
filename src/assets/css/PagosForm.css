@@ -1,0 +1,118 @@
+/* Estilos para el formulario de pagos */
+.modal-pago {
+    width: 500px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .modal-subtitle {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .form-pago {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Secciones del formulario */
+  .form-section {
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .section-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  /* Etiquetas y campos */
+  .label-pago {
+    width: 100%;
+    font-weight: bold;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+    text-align: left; /* Asegura que el texto esté alineado a la izquierda */
+  }
+  
+  .input-pago {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px !important;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f5f5f5;
+    height: 50px !important;
+  }
+  
+  /* Botones */
+  .form-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button-primary {
+    background-color: #3D8FA4;
+    color: white;
+  }
+  
+  .button-primary:hover {
+    background-color: #35748C;
+  }
+  
+  .button-danger {
+    background-color: #D9392F;
+    color: white;
+  }
+  
+  .button-danger:hover {
+    background-color: #B92A22;
+  }
+  
+  .button-cancel {
+    background-color: #9e4444;
+    color: white;
+  }
+  
+  .button-cancel:hover {
+    background-color: #bbb;
+  }
+  
+  .form-buttons {
+    display: flex;
+    justify-content: center; /* Centrar los botones */
+    gap: 80px; /* Espacio entre botones */
+    margin-top: 30px; /* Espacio superior */
+  }
+
+  .textarea-pago {
+    width: 100%;
+    min-height: 50px;
+    max-height: 150px;
+    max-width: 430px;
+
+    border-radius: 8px;
+    font-size: 14px !important;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+  }
+  

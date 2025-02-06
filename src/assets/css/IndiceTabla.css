@@ -365,6 +365,11 @@
   transform: translateX(26px);
 }
 
+.jugador-info {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espacio entre la imagen y el texto */
+}
 
 /* ========== Responsividad ========== */
 @media (max-width: 768px) {

@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-
+import RegistroPagoInscripcion from './RegistroPagoInscripcion';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaEquiposPagos = () => {
   const [equipos, setEquipos] = useState([]);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [selectedEquipoId, setSelectedEquipoId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,9 +28,25 @@ const ListaEquiposPagos = () => {
     }
   };
 
+  const handleRegistrarClick = (EquipoId) => {
+    setSelectedEquipoId(EquipoId);
+    setShowFormModal(true);
+    console.log('Modal abierto:', showFormModal);
+  };
+
+  const handleCloseModal = () => {
+    setShowFormModal(false);
+  };
+
   return (
     <div className="table-container">
-      <h2 className="table-title">Lista de Equipos</h2>
+      <h2 className="table-title">Deuda por inscripción</h2>
+      <RegistroPagoInscripcion
+        isOpen={showFormModal}
+        onClose={handleCloseModal}
+        onClubCreated={fetchClubes} 
+        equipoId={selectedEquipoId}
+      />
       <table className="table-layout">
         <thead className="table-head">
           <tr>
@@ -54,7 +72,7 @@ const ListaEquiposPagos = () => {
               <td className="table-td table-td-name">{equipo.genero}</td>
               <td className="table-td table-td-description">{equipo.costo_inscripcion} Bs</td>
               <td className="table-td">
-                <button className="table-button button-view" ><RemoveRedEyeIcon/></button>
+                <button className="table-button button-view"  onClick={() => handleRegistrarClick(equipo.equipo_id)}><RemoveRedEyeIcon/></button>
               </td>
             </tr>
           ))}
