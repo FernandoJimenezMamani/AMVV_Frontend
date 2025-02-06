@@ -49,6 +49,7 @@ import DetalleTraspaso from './pages/Traspasos/Detalle';
 import ListaJugadoresEquipo from './pages/Jugadores/IndiceJugadorEquipo';
 import ListaPagos from './pages/Pagos/ListaPagos';
 import ListaEquiposPagos from './pages/Pagos/InscripcionPagos';
+import ResumenCampeonato from './pages/Reportes/ResumenCampeonato';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -134,6 +135,7 @@ const App = () => {
               <Route path="/traspasos/detalle/:solicitudId" element={<DetalleTraspaso />} />
               <Route path="/pagos/tipos" element={<ListaPagos />} />
               <Route path="/pagos/Inscripcion" element={<ListaEquiposPagos />} />
+              <Route path="/reportes/resumenCampeonato/:campeonatoId" element={<ResumenCampeonato />} />
             </Route>
           </Route>
         </Routes>

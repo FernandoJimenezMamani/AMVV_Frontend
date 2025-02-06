@@ -1,0 +1,44 @@
+.resumen-container {
+    width: 80%;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .resumen-titulo {
+    font-size: 35px;
+    font-weight: bold;
+    color: #143E42;
+    margin-bottom: 30px;
+  }
+  
+  .resumen-card {
+    background: linear-gradient(to right, #1d4657, #507788);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .resumen-numero {
+    font-size: 40px;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .resumen-lista {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .resumen-lista li {
+    font-size: 20px;
+    margin: 5px 0;
+    background: #fff;
+    color: #143E42;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
