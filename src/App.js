@@ -55,6 +55,7 @@ import DetalleTraspasoPresidente from './pages/Traspasos/DetallePresidente';
 import IndiceSolicitudesPresidente from './pages/Traspasos/IndiceSolicitudPresidente'
 import DetalleTraspasoPresidenteSolicitante from './pages/Traspasos/DetalleSolicitante'
 import ListaTraspasosPagos from './pages/Pagos/TraspasoPagos';
+import ResumenCampeonato from './pages/Reportes/ResumenCampeonato';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -146,6 +147,7 @@ const App = () => {
               <Route path="/traspasos/detallePresidente/:solicitudId" element={<DetalleTraspasoPresidente />} />
               <Route path="/traspasos/detalleSolicitante/:solicitudId" element={<DetalleTraspasoPresidenteSolicitante />} />
               <Route path="/traspasos/indiceSolicitudesPresidente" element={<IndiceSolicitudesPresidente />} />
+              <Route path="/reportes/resumenCampeonato/:campeonatoId" element={<ResumenCampeonato />} />
             </Route>
           </Route>
         </Routes>

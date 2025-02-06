@@ -49,10 +49,18 @@ const ListaCategorias = () => {
     // Navigate to the IndicePartido component and pass both campeonatoId and categoriaId
     navigate(`/partidos/indice/${campeonatoId}/${categoriaId}`);
   };
+
+  const handleResumenClick = () => {
+    navigate(`/reportes/resumenCampeonato/${campeonatoId}`);
+  };
   
 
   return (
     <div className="categorias-container">
+       <button className="resumenCampeonato-button" onClick={handleResumenClick}>
+        Resumen Campeonato
+      </button>
+
       <h2 className="categorias-titulo">Lista de Categorías</h2>
 
       <button 

@@ -122,3 +122,21 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
+.resumenCampeonato-button {
+  width: 20%;
+  padding: 15px;
+  background: linear-gradient(to bottom, #ff8c00, #d2691e);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.resumenCampeonato-button:hover {
+  background-color: #ff6600;
+  transform: scale(1.05);
+}
