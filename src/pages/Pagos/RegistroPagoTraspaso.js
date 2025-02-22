@@ -18,12 +18,15 @@ const RegistroPagoTraspaso = ({ isOpen, onClose, traspasoId }) => {
     club_destino_id: '',
     club_destino_nombre: '',
     jugador_id: '',
+    jugador_persona_id: '',
     jugador_ci: '',
     jugador_nombre: '',
     jugador_apellido: '',
     jugador_fecha_nacimiento: '',
+    id_persona_presi_det: '',
     nombre_presi_club_dest: '',
     apellido_presi_club_dest: '',
+    id_persona_presi_origen : '' ,
     nombre_presi_club_origen: '',
     apellido_presi_club_origen: '', // Fecha actual en formato YYYY-MM-DD
     nombre_campeonato: '',
@@ -51,15 +54,18 @@ const RegistroPagoTraspaso = ({ isOpen, onClose, traspasoId }) => {
             club_destino_id: traspaso.club_destino_id,
             club_destino_nombre: traspaso.club_destino_nombre,
             jugador_id: traspaso.jugador_id,
+            jugador_persona_id:traspaso.jugador_persona_id,
             jugador_nombre: traspaso.jugador_nombre,
             jugador_apellido: traspaso.jugador_apellido,
             jugador_fecha_nacimiento: traspaso.jugador_fecha_nacimiento,
+            id_persona_presi_det : traspaso.id_persona_presi_det,
             nombre_presi_club_dest: traspaso.nombre_presi_club_dest,
             apellido_presi_club_dest: traspaso.apellido_presi_club_dest,
+            id_persona_presi_origen: traspaso.id_persona_presi_origen,
             nombre_presi_club_origen: traspaso.nombre_presi_club_origen,
             apellido_presi_club_origen: traspaso.apellido_presi_club_origen,
             nombre_campeonato: traspaso.nombre_campeonato,
-            costo_traspaso: traspaso.costo_traspaso !== null ? traspaso.costo_traspaso : 100,
+            costo_traspaso: traspaso.costo_traspaso ?? 100,
             jugador_ci: traspaso.jugador_ci,
             referencia: `Pago por traspaso de jugador ${traspaso.jugador_nombre} ${traspaso.jugador_apellido} del club ${traspaso.club_origen_nombre} al club ${traspaso.club_destino_nombre}` 
           }));
@@ -86,15 +92,32 @@ const RegistroPagoTraspaso = ({ isOpen, onClose, traspasoId }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/pagos/insert`, {
-        monto: formData.monto,
+      console.log( formData.monto , 'dinero')
+      const response = await axios.post(`${API_BASE_URL}/pagos/insertPagoTraspaso`, {
+        monto: formData.monto ?? 100,
         fecha: formData.fecha_registro,
         referencia: formData.referencia,
-        tipo_pago: tipoPagos.Inscripcion,
-        EquipoId: formData.equipo_id,
+        tipo_pago: tipoPagos.Traspaso,
+        traspaso_id: formData.traspaso_id,
         estado: estadoPagos.Efectuado,
         userId: 1 ,
-        campeonatoId : formData.campeonato_id
+        campeonatoId : formData.campeonato_id,
+        jugador_id: formData.jugador_id,
+        jugador_traspaso_id : formData.jugador_persona_id,
+        club_destino_id : formData.club_destino_id,
+        jugador_nombre : formData.jugador_nombre,
+        jugador_apellido : formData.jugador_apellido,
+        jugador_ci : formData.jugador_ci,
+        jugador_fecha_nacimiento : formData.jugador_fecha_nacimiento,
+        nombre_campeonato : formData.nombre_campeonato,
+        club_origen_nombre : formData.club_origen_nombre,
+        club_destino_nombre : formData.club_destino_nombre,
+        id_persona_presi_origen : formData.id_persona_presi_origen,
+        nombre_presi_club_origen : formData.nombre_presi_club_origen,
+        apellido_presi_club_origen : formData.apellido_presi_club_origen,
+        id_persona_presi_det : formData.id_persona_presi_det,
+        nombre_presi_club_dest : formData.nombre_presi_club_dest,
+        apellido_presi_club_dest : formData.apellido_presi_club_dest
       });
 
       toast.success('Pago registrado con éxito');

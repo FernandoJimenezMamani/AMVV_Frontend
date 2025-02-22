@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import moment from 'moment';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import '../../assets/css/Partidos/RegistrarPartido.css'; 
 import { DatePicker, Select } from 'antd';
 import { toast } from 'react-toastify';
+
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -24,7 +25,7 @@ const PartidoForm = () => {
   const [equipoVisitante, setEquipoVisitante] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchEquipos = async () => {
       try {
@@ -161,9 +162,18 @@ const PartidoForm = () => {
     setSelectedArbitros(value);
   };
 
+  const handleGenerarFixtureClick = () => {
+    navigate(`/partidos/generarFixture/${campeonatoId}/${categoriaId}`);
+  };
+
   return (
     <div className="registro-campeonato">
       <h2>Registrar Partido</h2>
+      <div className="button-container">
+        <button className="table-add-button" onClick={handleGenerarFixtureClick}>
+          Generar Fixture Aleatorio
+        </button>
+      </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
 

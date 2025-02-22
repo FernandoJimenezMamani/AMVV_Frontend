@@ -12,6 +12,8 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import defaultUserIcon from '../../assets/img/user-icon.png';
 import { PresidenteClub } from '../../constants/roles';
 import { Select } from 'antd';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const { Option } = Select;
 
@@ -23,7 +25,7 @@ const ListaPersonas = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [personaToDelete, setPersonaToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);  // Controla la apertura del modal de edición
+  const [showEditModal, setShowEditModal] = useState(false); 
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
   const [filterRole, setFilterRole] = useState('No filtrar');
   const [filterState, setFilterState] = useState('No filtrar');
@@ -79,13 +81,13 @@ const ListaPersonas = () => {
   };
 
   const handleEditClick = (personaId) => {
-    setSelectedPersonaId(personaId);  // Guarda el id de persona seleccionado
+    setSelectedPersonaId(personaId); 
     setShowEditModal(true);
   };
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setSelectedPersonaId(null);  // Resetea el id seleccionado
+    setSelectedPersonaId(null); 
   };
 
   const handleRegistrarClick = () => {
@@ -104,18 +106,18 @@ const ListaPersonas = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; // Cambiar esto si necesitas un valor dinámico
-      const { id, roles } = personaToDelete; // Extrae el ID y los roles
+      const user_id = 1; 
+      const { id, roles } = personaToDelete; 
   
       await axios.put(`${API_BASE_URL}/persona/delete_persona/${id}`, {
         user_id,
-        roles: roles.split(',').map((role) => role.trim()), // Asegúrate de enviar un array de roles
+        roles: roles.split(',').map((role) => role.trim()),
       });
   
       toast.success('Usuario desactivado exitosamente');
-      fetchPersonas(); // Actualiza la lista de usuarios
-      setShowConfirm(false); // Cierra el modal
-      setPersonaToDelete(null); // Limpia el ID almacenado
+      fetchPersonas(); 
+      setShowConfirm(false); 
+      setPersonaToDelete(null); 
     } catch (error) {
       toast.error('Error al desactivar el usuario');
       console.error('Error al eliminar la persona:', error);
@@ -126,10 +128,9 @@ const ListaPersonas = () => {
 
   const handleActivateUser = async (id) => {
     try {
-      // Lógica para activar al usuario
       await axios.put(`${API_BASE_URL}/persona/activatePersona/${id}`);
       toast.success('Usuario activado exitosamente');
-      fetchPersonas(); // Actualiza la lista de usuarios
+      fetchPersonas();
     } catch (error) {
       toast.error('Error al activar el usuario');
       console.error('Error al activar usuario:', error);
@@ -143,6 +144,13 @@ const ListaPersonas = () => {
 
   const handleProfileClick = (id) => {
     navigate(`/personas/perfil/${id}`);
+  };
+
+  const getImagenPerfil = (persona) => {
+    if (persona.persona_imagen) {
+      return persona.persona_imagen; 
+    }
+    return persona.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
   return (
@@ -215,7 +223,7 @@ const ListaPersonas = () => {
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={p.persona_imagen ? p.persona_imagen : defaultUserIcon}
+                  src={getImagenPerfil(p)}
                   alt={`${p.nombre} ${p.apellido}`}
                   className="table-logo"
                 />

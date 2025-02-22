@@ -20,10 +20,11 @@
 }
 
 .campeonatos-lista-titulo {
-  font-size: 2em;
+  font-size: 45px !important;
   font-weight: bold;
   color: #143E42;
-  margin-bottom: 30px; /* Espacio adicional debajo del título */
+  margin-bottom: 30px; 
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .campeonato-card {
@@ -88,10 +89,6 @@
 .campeonato-buttons .buttonex:active {
   background-color: #2C5D6E;
   transform: translateY(1px);  /* Simulación de presión */
-}
-
-.campeonato-buttons .button-view {
-  background-color: #3D8FA4;  /* Azul */
   color: white;
 }
 
@@ -115,6 +112,16 @@
 
 .campeonato-buttons .button-delete:hover {
   background-color: #C9302C;  /* Rojo más oscuro */
+}
+
+.campeonato-buttons .button-fechas {
+  background-color: #57a664;  /* Amarillo/Naranja */
+  color: white;
+}
+
+.campeonato-buttons .button-fechas:hover {
+  background-color: #4d9c5a;  /* Amarillo/Naranja */
+  color: white;
 }
 
 .campeonato-buttons {
@@ -189,6 +196,111 @@
   background-color: #D9534F; /* Rojo para el círculo */
   flex-shrink: 0; /* Mantén el tamaño fijo */
 }
+
+.fechas-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.fechas-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 450px;
+  max-height: 80vh; /* Altura máxima del 80% del viewport */
+  overflow-y: auto; /* Agregar scroll si el contenido sobrepasa la altura */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+}
+
+.fechas-modal h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #143E42;
+  font-size: 25px !important;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.fechas-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #D9534F;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.fechas-modal-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.fechas-modal-item {
+  background: #eef2f7;
+  margin: 8px 0;
+  padding: 12px;
+  border-radius: 5px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fechas-modal-item span {
+  font-weight: bold;
+}
+
+.fechas-modal-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.fechas-modal-button:hover {
+  background: #0056b3;
+}
+
+.fechas-modal-button {
+  background: #d9534f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fechas-modal-button:hover {
+  background: #c9302c;
+}
+
+.fechas-modal-button i {
+  font-size: 16px;
+}
+
+
 
 @media (max-width: 768px) {
   .campeonato-card {

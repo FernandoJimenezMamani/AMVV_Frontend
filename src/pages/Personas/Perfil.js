@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom'; // Importar useNavigate
+import { useParams, useNavigate } from 'react-router-dom'; 
 import '../../assets/css/Persona/Perfil.css';
 import { useSession } from '../../context/SessionContext';
 import { toast } from 'react-toastify';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import EditIcon from '@mui/icons-material/Edit';
+import ChangePasswordModal from '../CambiarContrasenia';
+import LogoutIcon from '@mui/icons-material/Logout';
+import EditarPerfilPersona from './EditarPerfil';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilJugador = () => {
   const { id } = useParams();
   const [jugador, setJugador] = useState(null);
-  const { user } = useSession(); // Obtener el usuario actual desde el contexto
-  const navigate = useNavigate(); // Para redirigir al usuario
- 
+  const { user , logout  } = useSession(); 
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+
   useEffect(() => {
     const fetchJugador = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/persona/get_personaById/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/persona/get_personaById/${id}`);
         setJugador(response.data);
       } catch (error) {
         toast.error('error')
@@ -41,27 +52,66 @@ const PerfilJugador = () => {
   };
  
   const handleEditProfile = () => {
-    navigate(`/personas/editar/${jugador.id}`); 
+    setIsEditModalOpen(true);
+  };
+  
+
+  const getImagenPerfil = (persona) => {
+    if (persona.persona_imagen) {
+      return persona.persona_imagen; 
+    }
+    return persona.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
+  const ConvertGenero = () => {
+    if (jugador.genero === 'V') {
+      return 'Varón';
+    } else {
+      return 'Mujer';
+    }
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login'); 
   };
  
   return (
     <div className="perfil-jugador">
+      <ChangePasswordModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+      <EditarPerfilPersona
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        personaId={jugador.id}
+        onPersonaUpdated={() => {
+          setIsEditModalOpen(false);
+          window.location.reload(); // Refresca la página para mostrar los cambios actualizados
+        }}
+      />
       <div className="perfil-jugador-header">
-        <h2>Perfil de jugador</h2>
-        {user && jugador.id === user.id && (
-          <button onClick={handleEditProfile} className="editar-perfil-boton">Editar perfil</button>
-        )}
+        <h2>Mi Perfil</h2>
+        <button onClick={handleEditProfile} className="editar-perfil-boton">
+          Editar perfil <EditIcon />
+        </button>
+
+          <button onClick={() => setIsModalOpen(true)} className="editar-perfil-boton">Cambiar Contraseña <EditIcon/></button>
+          <button onClick={handleLogout} className="cerrar-sesion-boton">Cerrar Sesion <LogoutIcon/></button>
       </div>
       <div className="perfil-jugador-contenido">
         <div className="perfil-jugador-imagen">
-          <img src={jugador.persona_imagen} alt={jugador.nombre} />
+          <img src={getImagenPerfil(jugador)} alt={jugador.nombre} />
         </div>
         <div className="perfil-jugador-detalles">
-          <p><strong>Nombre:</strong> {jugador.nombre} {jugador.apellido}</p>
-          <p><strong>Equipo actual:</strong> {jugador.equipo_nombre || "F/A"}</p>
+          <p><strong>Nombre Completo:</strong> {jugador.nombre} {jugador.apellido}</p>
           <p><strong>Carnet de Identidad:</strong> {jugador.ci}</p>
-          <p><strong>Edad:</strong> {calcularEdad(jugador.fecha_nacimiento)}</p>
+          <p><strong>Fecha de Nacimiento:</strong> {jugador.fecha_nacimiento}</p>
+          <p><strong>Edad:</strong> {calcularEdad(jugador.fecha_nacimiento)} años</p>
+          <p><strong>Genero:</strong> {ConvertGenero(jugador.genero) }</p>
           <p><strong>Dirección vivienda:</strong> {jugador.direccion}</p>
+          <p><strong>Correo Electronico:</strong> {jugador.correo}</p>
         </div>
       </div>
     </div>

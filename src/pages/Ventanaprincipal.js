@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Carousel } from 'react-responsive-carousel';
-import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Import the CSS for the carousel
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; 
 import '../assets/css/Ventanaprincipal.css';
 import logo from '../assets/img/imageV.jpeg';
 import { toast } from 'react-toastify';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const CustomCarousel = () => {
   const [partidos, setPartidos] = useState([]);
@@ -13,8 +15,8 @@ const CustomCarousel = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/partidos/get_upcoming_matches/4'); // Replace with your endpoint
-        setPartidos(response.data); // Fetch the first 3 matches for the carousel
+        const response = await axios.get(`${API_BASE_URL}/partidos/get_upcoming_matches/29`); 
+        setPartidos(response.data); 
       } catch (error) {
         toast.error('Error al obtener el título')
         console.error('Error fetching match data:', error);
@@ -23,8 +25,8 @@ const CustomCarousel = () => {
 
     const fetchAllMatches = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/partidos/get_all_matches/4'); // Replace with your endpoint
-        setNextPartidos(response.data); // Fetch the next 9 matches for the grid below
+        const response = await axios.get(`${API_BASE_URL}/partidos/get_all_matches/29`); 
+        setNextPartidos(response.data); // 
       } catch (error) {
         toast.error('Error al obtener el título')
         console.error('Error fetching match data:', error);

@@ -9,7 +9,8 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
-
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const { Option } = Select;
 
@@ -182,7 +183,15 @@ const ListaJugadoresAll = () => {
       toast.error('Error al activar el usuario');
       console.error('Error al activar usuario:', error);
     }
-  };  
+  };
+  
+  const getImagenPerfil = (jugador) => {
+    if (jugador.imagen_persona) {
+      return jugador.imagen_persona; 
+    }
+    return jugador.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
 
   return (
     <div className="table-container">
@@ -236,7 +245,7 @@ const ListaJugadoresAll = () => {
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={jugador.imagen_persona}
+                  src={getImagenPerfil(jugador)}
                   alt={`${jugador.nombre} ${jugador.apellido}`}
                   className="table-logo"
                 />

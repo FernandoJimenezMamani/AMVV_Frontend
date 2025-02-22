@@ -61,7 +61,7 @@ const ListaCategorias = () => {
         Resumen Campeonato
       </button>
 
-      <h2 className="categorias-titulo">Lista de Categorías</h2>
+      <h2 className="categorias-titulo">Seleccione una Categoría</h2>
 
       <button 
         className="division-button" 

@@ -9,19 +9,24 @@ import EditarCampeonato from './Editar';
 import moment from "moment";
 import "moment/locale/es"; 
 import campeonatoEstado from '../../constants/campeonatoEstados';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
 
 const Campeonatos = () => {
   const [campeonatos, setCampeonatos] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCampId, setSelectedCampId] = useState(null);
+  const [showFechasModal, setShowFechasModal] = useState(false);
+  const [fechasCampeonato, setFechasCampeonato] = useState([]);
+  const [selectedCampeonatoId, setSelectedCampeonatoId] = useState(null);
   const { user } = useSession();
   const navigate = useNavigate();
 
   const connectWebSocket = () => {
-    const socket = new WebSocket('ws://localhost:5002');
+    const socket = new WebSocket(WEBSOCKET_URL);
   
     socket.onopen = () => {
       console.log('WebSocket conectado');
@@ -81,6 +86,24 @@ const Campeonatos = () => {
     }
   };
 
+  const handleShowFechas = async (campeonatoId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/Campeonatos/obtenerFechas/${campeonatoId}`);
+      setFechasCampeonato(response.data.fechas);
+      setSelectedCampeonatoId(campeonatoId);
+      setShowFechasModal(true);
+    } catch (error) {
+      toast.error('Error al obtener las fechas del campeonato');
+      console.error('Error obteniendo fechas:', error);
+    }
+  };
+  
+  const handleCloseFechasModal = () => {
+    setShowFechasModal(false);
+    setFechasCampeonato([]);
+    setSelectedCampeonatoId(null);
+  };  
+
   const handleRegistrarClick = () => {
     setShowFormModal(true);
   };
@@ -102,6 +125,23 @@ const Campeonatos = () => {
   const handleViewDetails = (id) => {
     navigate(`/categorias/indice/${id}`);
   };
+
+  const handleGeneratePDF = async (fecha) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/partidos/campeonatoPartidosPDF/${selectedCampeonatoId}?fecha=${fecha}`,
+        { responseType: 'blob' } 
+      );
+  
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      toast.error('Error al generar el PDF');
+      console.error('Error generando PDF:', error);
+    }
+  };
+  
 
   return (
     <div className="campeonatos-container">
@@ -175,7 +215,8 @@ const Campeonatos = () => {
               </button>
               {(campeonato.estado === campeonatoEstado.campeoantoEnCurso || 
                 campeonato.estado === campeonatoEstado.transaccionProceso || 
-                campeonato.estado === campeonatoEstado.enEspera ) && (
+                campeonato.estado === campeonatoEstado.enEspera ||
+                campeonato.estado === campeonatoEstado.campeonatoFinalizado) && (
                   <>
                     <button className="buttonex button-edit" onClick={() => handleEditClick(campeonato.id)}>
                       <i className="fas fa-edit"></i>
@@ -183,6 +224,32 @@ const Campeonatos = () => {
                     <button className="buttonex button-delete">
                       <i className="fas fa-trash-alt"></i>
                     </button>
+                    <button 
+                      className="buttonex button-fechas" 
+                      onClick={() => handleShowFechas(campeonato.id)}>
+                      <i className="fas fa-calendar-alt"></i> 
+                    </button>
+                    {showFechasModal && (
+                      <div className="fechas-modal-overlay">
+                        <div className="fechas-modal">
+                          <h2>Fechas del Campeonato</h2>
+                          <button className="fechas-modal-close" onClick={handleCloseFechasModal}>X</button>
+                          <ul className="fechas-modal-list">
+                            {fechasCampeonato.map((fecha, index) => (
+                              <li key={index} className="fechas-modal-item">
+                                <span>{moment(fecha).format("DD [de] MMMM, YYYY")}</span>
+                                <button 
+                                  className="fechas-modal-button"
+                                  onClick={() => handleGeneratePDF(fecha)}
+                                >
+                                  <i > <PictureAsPdfIcon/></i> 
+                                </button>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
                   </>
               )}
 

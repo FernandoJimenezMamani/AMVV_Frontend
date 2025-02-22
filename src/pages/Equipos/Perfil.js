@@ -4,6 +4,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import '../../assets/css/Equipos/EquiposPerfil.css';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -60,7 +62,13 @@ const PerfilEquipo = () => {
   if (!equipo) {
     return <div>Cargando...</div>;
   }
-
+  
+  const getImagenPerfil = (jugador) => {
+    if (jugador.imagen_persona) {
+      return jugador.imagen_persona; 
+    }
+    return jugador.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
   return (
     <div className="equipoPerfil-container">
     {/* Botón de Volver */}
@@ -167,7 +175,7 @@ const PerfilEquipo = () => {
       {jugadores.map((jugador) => (
         <div key={jugador.id} className="equipoPerfil-jugadorCard">
           <img
-            src={jugador.imagen_persona}
+            src={getImagenPerfil(jugador)}
             alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
             className="equipoPerfil-jugadorImagen"
           />

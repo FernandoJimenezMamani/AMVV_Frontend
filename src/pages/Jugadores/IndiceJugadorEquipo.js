@@ -12,6 +12,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useLocation } from 'react-router-dom';
 import { Jugador } from '../../constants/roles';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const { Option } = Select;
 
@@ -180,6 +182,13 @@ const ListaJugadoresEquipo = () => {
     }
   };  
 
+  const getImagenPerfil = (jugador) => {
+    if (jugador.imagen_persona) {
+      return jugador.imagen_persona; 
+    }
+    return jugador.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">
@@ -237,7 +246,7 @@ const ListaJugadoresEquipo = () => {
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={jugador.imagen_persona}
+                  src={getImagenPerfil(jugador)}
                   alt={`${jugador.nombre} ${jugador.apellido}`}
                   className="table-logo"
                 />

@@ -13,7 +13,7 @@ import roleNames from '../../constants/roles'
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
+const EditarPerfilPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   const { id } = useParams();
   const [formData, setFormData] = useState({
     nombre: '',
@@ -344,8 +344,9 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
           value={formData.roles}
           onChange={handleRoleChange}
           onSelect={() => document.activeElement.blur()}  // Cierra el menú después de seleccionar
-          style={{ width: '100%' }}
+          style={{ width: '100%' ,display: 'none'  }}
           className={`custom-ant-select-u`}
+          
         >
           <Option value={(roleNames.Arbitro)}>Árbitro</Option>
           <Option value={(roleNames.Jugador)}>Jugador</Option>
@@ -372,7 +373,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
               placeholder="Selecciona Club para jugador"
               value={formData.club_jugador_id}
               onChange={(value) => handleClubChange(value, roleNames.Jugador)}
-              style={{ width: '100%' }}
+              style={{ width: '100%' ,display: 'none' }}
               className={`custom-ant-select-u`}
             >
               {clubes.map((club) => (
@@ -390,7 +391,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
                 placeholder="Selecciona Club para Presidente"
                 value={formData.club_presidente_id}
                 onChange={(value) => handleClubChange(value,  roleNames.PresidenteClub)}
-                style={{ width: '100%' }}
+                style={{ width: '100%' ,display: 'none' }}
                 className="custom-ant-select-u"
                 >
                {clubes.map((club) => (
@@ -412,7 +413,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
                 placeholder="Selecciona Club para Presidente"
                 value={formData.club_presidente_id}
                 onChange={(value) => handleClubChange(value, roleNames.DelegadoClub)}
-                style={{ width: '100%' }}
+                style={{ width: '100%' ,display: 'none' }}
                 className="custom-ant-select-u"
 
                 >
@@ -445,4 +446,4 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   );
 };
  
-export default EditarPersona;
+export default EditarPerfilPersona;

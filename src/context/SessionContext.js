@@ -12,61 +12,58 @@ export const SessionProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [tokenData, setTokenData] = useState(null);
-  const [activeRole, setActiveRole] = useState(null); // Nuevo estado para el rol activo
+  const [activeRole, setActiveRole] = useState(null); 
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem('token') || Cookies.get('token');
     const storedUser = sessionStorage.getItem('user');
     const storedRole = sessionStorage.getItem('activeRole');
+    const parsedUser = storedUser ? JSON.parse(storedUser) : null;
 
-    console.log('Usuario almacenado:', storedUser);
-    console.log('Token almacenado:', storedToken);
-
-    if (storedToken && storedUser) {
+    if (storedToken) {
       try {
         const decoded = jwtDecode(storedToken);
+        if (!decoded || !decoded.exp) throw new Error("Token inválido");
+    
         const currentTime = Date.now() / 1000;
-
         if (decoded.exp < currentTime) {
           logout(); // Token expirado, forzar el logout
         } else {
           setToken(storedToken);
-          setUser(JSON.parse(storedUser));
+          setUser(parsedUser);
           setTokenData(decoded);
-          setActiveRole(storedRole ? JSON.parse(storedRole) : decoded.rol); // Recuperar rol activo o usar el predeterminado
+          setActiveRole(storedRole ? JSON.parse(storedRole) : decoded.rol);
         }
       } catch (error) {
-        console.error('Error al decodificar el token:', error);
-        logout(); // Limpiar en caso de error
+        console.error("🚨 Error al decodificar el token:", error);
+        logout(); // Limpiar sesión si hay error
       }
-    }
+    }    
   }, []);
 
   const login = (userData) => {
     const { token } = userData;
     if (!token) {
-      console.error('Token no proporcionado en login');
+      console.error('❌ Token no proporcionado en login');
       return;
     }
-
+  
     try {
       const decoded = jwtDecode(token);
-      console.log('Datos decodificados del token en login:', decoded);
-
+  
       setToken(token);
       sessionStorage.setItem('token', token);
-
+  
       setUser(decoded);
       sessionStorage.setItem('user', JSON.stringify(decoded));
-
-      // Guardar el rol activo inicial
+  
       const defaultRole = decoded.rol;
       setActiveRole(defaultRole);
       sessionStorage.setItem('activeRole', JSON.stringify(defaultRole));
-
+  
       Cookies.set('token', token, { expires: 1 });
     } catch (error) {
-      console.error('Error al decodificar el token:', error);
+      console.error('🚨 Error al decodificar el token:', error);
     }
   };
 

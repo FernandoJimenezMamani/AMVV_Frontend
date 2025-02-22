@@ -28,6 +28,7 @@
   word-wrap: break-word;    /* Ajusta el texto si es muy largo */
   white-space: normal;      /* Permite ajustar a múltiples líneas */
   overflow-wrap: break-word; 
+  margin-top: 10px !important;
 }
   
   .overlay {

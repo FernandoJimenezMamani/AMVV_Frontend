@@ -1,0 +1,67 @@
+.generar-fixture-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .fixture-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #143E42;
+    margin-bottom: 20px;
+  }
+  
+  .fixture-generate-btn {
+    background-color: #3D8FA4;
+    color: white;
+    margin-bottom: 20px;
+    font-size: 16px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .fixture-generate-btn:hover {
+    background-color: #35748C;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .fixture-registrar-btn {
+    background-color: #57a664;
+    color: white;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    font-size: 16px;
+    padding: 10px 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+  }
+
+  .fixture-registrar-btn:hover {
+    background-color: #4d9c5a;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  
+  .fixture-table {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .fixture-equipo-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .fixture-equipo-nombre {
+    margin-left: 10px;
+    font-weight: 500;
+    color: #333;
+  }
+  

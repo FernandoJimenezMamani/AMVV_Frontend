@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams,useNavigate,useLocation  } from 'react-router-dom';
 import '../../assets/css/RegistroResultados.css';
 import { toast } from 'react-toastify';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const SubmitResultados = () => {
   const { partidoId } = useParams();
@@ -23,12 +26,12 @@ const SubmitResultados = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { campeonatoId, categoriaId } = location.state || {};
-
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     const fetchEquiposYJugadores = async () => {
       try {
-        const equiposResponse = await fetch(`http://localhost:5002/api/equipo/get_equipoByPartido/${partidoId}`);
+        const equiposResponse = await fetch(`${API_BASE_URL}/equipo/get_equipoByPartido/${partidoId}`);
         const equipos = await equiposResponse.json();
 
         if (equipos.length === 2) {
@@ -37,10 +40,9 @@ const SubmitResultados = () => {
           const equipoIdSeleccionado = equipoSeleccionado || equipos[0].equipo_id;
           setEquipoSeleccionado(equipoIdSeleccionado);
 
-          const jugadoresResponse = await fetch(`http://localhost:5002/api/partidos/get_jugadores/${equipoIdSeleccionado}`);
+          const jugadoresResponse = await fetch(`${API_BASE_URL}/partidos/get_jugadores/${equipoIdSeleccionado}`);
           const jugadoresData = await jugadoresResponse.json();
           setJugadores(jugadoresData);
-          console.log(jugadoresData,'hola vv');
         }
 
       } catch (error) {
@@ -85,7 +87,7 @@ const SubmitResultados = () => {
       setVisitanteSets({ set1: 0, set2: 0, set3: 0 });
       setResultadoLocal('P');
     setResultadoVisitante('P');
-      setShowSet3(true); // Mostrar todos los sets con valores de 0.
+      setShowSet3(true); 
     } else {
       setLocalSets({ set1: '', set2: '', set3: '' });
       setVisitanteSets({ set1: '', set2: '', set3: '' });
@@ -94,12 +96,21 @@ const SubmitResultados = () => {
   };
 
   const handleImageChange = (e) => {
-    setImagenPlanilla(e.target.files[0]); // Guardar la imagen seleccionada
+    const file = e.target.files[0];
+    if (file) {
+      setImagenPlanilla(file);
+      setShowImageModal(false); // No abrir el modal automáticamente, solo mostrar el icono
+    }
   };
   
 
   const handleInputChange = (e, team, setFunction) => {
     const { name, value } = e.target;
+
+    if (value === "") {
+      setFunction({ ...team, [name]: "" });
+      return;
+    }
     const parsedValue = parseInt(value);
     if (isNaN(parsedValue)) return;
     setFunction({ ...team, [name]: parsedValue });
@@ -107,8 +118,12 @@ const SubmitResultados = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!imagenPlanilla) {
+      toast.error('Debes subir una imagen de la planilla antes de enviar.');
+      return; // Detiene el envío del formulario
+  }
   
-    // Asegurar que los sets tengan valores válidos antes de enviarlos
     const cleanedLocalSets = {
       set1: localSets.set1 ?? 0,
       set2: localSets.set2 ?? 0,
@@ -135,7 +150,7 @@ const SubmitResultados = () => {
     }
   
     try {
-      const response = await fetch('http://localhost:5002/api/partidos/submitResultados', {
+      const response = await fetch(`${API_BASE_URL}/partidos/submitResultados`, {
         method: 'POST',
         body: formData,
       });
@@ -166,9 +181,12 @@ const SubmitResultados = () => {
   const validateSetResult = (setName) => {
     const localScore = localSets[setName];
     const visitanteScore = visitanteSets[setName];
+  
+    if (localScore === '' || visitanteScore === '') return true; // Evita validación con valores vacíos
+  
     const isThirdSet = setName === 'set3';
     const winningScore = isThirdSet ? 15 : 25;
-
+  
     if (localScore >= winningScore || visitanteScore >= winningScore) {
       const difference = Math.abs(localScore - visitanteScore);
       if (difference < 2) {
@@ -181,18 +199,22 @@ const SubmitResultados = () => {
         return false;
       }
     }
-
+  
     return true;
   };
+  
 
   const validateSetResultOnBlur = () => {
+    if (!localSets.set1 || !visitanteSets.set1) return;
+    if (!localSets.set2 || !visitanteSets.set2) return;
+    if (showSet3 && (!localSets.set3 || !visitanteSets.set3)) return;
+  
     const localScores = [localSets.set1, localSets.set2, localSets.set3].map(Number);
     const visitanteScores = [visitanteSets.set1, visitanteSets.set2, visitanteSets.set3].map(Number);
   
     let localWins = 0;
     let visitanteWins = 0;
   
-    // Calcular los sets ganados por cada equipo
     for (let i = 0; i < 3; i++) {
       if (localScores[i] > visitanteScores[i]) {
         localWins++;
@@ -201,7 +223,6 @@ const SubmitResultados = () => {
       }
     }
   
-    // Determinar el ganador y el perdedor
     if (localWins > visitanteWins) {
       setResultadoLocal('G');
       setResultadoVisitante('P');
@@ -210,16 +231,9 @@ const SubmitResultados = () => {
       setResultadoVisitante('G');
     }
   
-    // Mostrar el tercer set solo si hay un empate en los primeros dos sets
-    // o si ya hay valores en el tercer set.
-    const shouldShowSet3 =
-      localWins === 1 && visitanteWins === 1 || localSets.set3 || visitanteSets.set3;
-  
+    const shouldShowSet3 = localWins === 1 && visitanteWins === 1 || localSets.set3 || visitanteSets.set3;
     setShowSet3(shouldShowSet3);
   };
-  
-  
-  
   
 
   const handleAgregarTarjeta = () => {
@@ -245,195 +259,245 @@ const SubmitResultados = () => {
   }
 
   return (
-    <div className="container">
-  <h1>Registrar Resultados del Partido</h1>
-  <form onSubmit={handleSubmit}>
-    <div className="form-group">
-      <label>Walkover</label>
-      <div className="radio-group">
-        <div className="radio-option">
-          <label>
+    <div className="resultados-container">
+    <h1 className="resultados-titulo">Registrar Resultados del Partido</h1>
+    <form onSubmit={handleSubmit}>
+      <div className="resultados-form-group">
+        <label>Walkover</label>
+        <div className="resultados-radio-group">
+          <div className="resultados-radio-option">
             <input
               type="radio"
               name="walkover"
               value="L"
               checked={walkover === 'L'}
               onChange={handleWalkoverChange}
+              id="walkoverL"
             />
-            Local
-          </label>
-        </div>
-        <div className="radio-option">
-          <label>
+            <label htmlFor="walkoverL">Local</label>
+          </div>
+          <div className="resultados-radio-option">
             <input
               type="radio"
               name="walkover"
               value="V"
               checked={walkover === 'V'}
               onChange={handleWalkoverChange}
+              id="walkoverV"
             />
-            Visitante
-          </label>
-        </div>
-        <div className="radio-option">
-          <label>
+            <label htmlFor="walkoverV">Visitante</label>
+          </div>
+          <div className="resultados-radio-option">
             <input
               type="radio"
               name="walkover"
               value="both"
               checked={walkover === 'both'}
               onChange={handleWalkoverChange}
+              id="walkoverBoth"
             />
-            Ambos
-          </label>
-        </div>
-        <div className="radio-option">
-          <label>
+            <label htmlFor="walkoverBoth">Ambos</label>
+          </div>
+          <div className="resultados-radio-option">
             <input
               type="radio"
               name="walkover"
               value="null"
               checked={walkover === 'null'}
               onChange={handleWalkoverChange}
+              id="walkoverNull"
             />
-            Ninguno
-          </label>
+            <label htmlFor="walkoverNull">Ninguno</label>
+          </div>
         </div>
       </div>
-    </div>
-
-    <div className="results-group">
-      <div className="team-column">
-        <div className="team-header">
-          <img src={equipoLocal.club_imagen} alt="Escudo Local" className="team-logo" />
-          <h2>{equipoLocal.equipo_nombre}</h2>
-        </div>
-        <div className="inputs-group">
-          <input
-            type="number"
-            name="set1"
-            placeholder="Set 1 Local"
-            value={localSets.set1}
-            onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
-            onBlur={validateSetResultOnBlur}
-            disabled={walkover !== 'null'}
-            required
-          />
-          <input
-            type="number"
-            name="set2"
-            placeholder="Set 2 Local"
-            value={localSets.set2}
-            onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
-            onBlur={validateSetResultOnBlur}
-            disabled={walkover !== 'null'}
-            required
-          />
-          {showSet3 && walkover !== 'L' && walkover !== 'V' && (
+  
+      <div className="resultados-equipos">
+        <div className="resultados-equipo">
+          <div className="resultados-equipo-header">
+            <img src={equipoLocal.club_imagen} alt="Escudo Local" className="resultados-equipo-logo" />
+            <h2>{equipoLocal.equipo_nombre}</h2>
+          </div>
+          <div className="resultados-sets-group">
             <input
-              type="number"
-              name="set3"
-              placeholder="Set 3 Local"
-              value={localSets.set3}
+             
+              name="set1"
+              placeholder="Set 1 Local"
+              value={localSets.set1}
               onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
               onBlur={validateSetResultOnBlur}
-              disabled={walkover === 'both' ? false : walkover !== 'null'}
+              disabled={walkover !== 'null'}
               required
+              className="resultado-input-field"
             />
-          )}
-        </div>
-      </div>
-
-      <div className="team-column">
-        <div className="team-header">
-          <img src={equipoVisitante.club_imagen} alt="Escudo Visitante" className="team-logo" />
-          <h2>{equipoVisitante.equipo_nombre}</h2>
-        </div>
-        <div className="inputs-group">
-          <input
-            type="number"
-            name="set1"
-            placeholder="Set 1 Visitante"
-            value={visitanteSets.set1}
-            onChange={(e) => handleInputChange(e, visitanteSets, setVisitanteSets)}
-            onBlur={validateSetResultOnBlur}
-            disabled={walkover !== 'null'}
-            required
-          />
-          <input
-            type="number"
-            name="set2"
-            placeholder="Set 2 Visitante"
-            value={visitanteSets.set2}
-            onChange={(e) => handleInputChange(e, visitanteSets, setVisitanteSets)}
-            onBlur={validateSetResultOnBlur}
-            disabled={walkover !== 'null'}
-            required
-          />
-          {showSet3 && walkover !== 'L' && walkover !== 'V' && (
             <input
-              type="number"
-              name="set3"
-              placeholder="Set 3 Visitante"
-              value={visitanteSets.set3}
+              name="set2"
+              placeholder="Set 2 Local"
+              value={localSets.set2}
+              onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
+              onBlur={validateSetResultOnBlur}
+              disabled={walkover !== 'null'}
+              required
+               className="resultado-input-field"
+            />
+            {showSet3 && walkover !== 'L' && walkover !== 'V' && (
+              <input
+                name="set3"
+                placeholder="Set 3 Local"
+                value={localSets.set3}
+                onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
+                onBlur={validateSetResultOnBlur}
+                disabled={walkover === 'both' ? false : walkover !== 'null'}
+                required
+                 className="resultado-input-field"
+              />
+            )}
+          </div>
+        </div>
+  
+        <div className="resultados-equipo">
+          <div className="resultados-equipo-header">
+            <img src={equipoVisitante.club_imagen} alt="Escudo Visitante" className="resultados-equipo-logo" />
+            <h2>{equipoVisitante.equipo_nombre}</h2>
+          </div>
+          <div className="resultados-sets-group">
+            <input
+              name="set1"
+              placeholder="Set 1 Visitante"
+              value={visitanteSets.set1}
               onChange={(e) => handleInputChange(e, visitanteSets, setVisitanteSets)}
               onBlur={validateSetResultOnBlur}
-              disabled={walkover === 'both' ? false : walkover !== 'null'}
+              disabled={walkover !== 'null'}
               required
+               className="resultado-input-field"
             />
-          )}
+            <input
+              name="set2"
+              placeholder="Set 2 Visitante"
+              value={visitanteSets.set2}
+              onChange={(e) => handleInputChange(e, visitanteSets, setVisitanteSets)}
+              onBlur={validateSetResultOnBlur}
+              disabled={walkover !== 'null'}
+              required
+               className="resultado-input-field"
+            />
+            {showSet3 && walkover !== 'L' && walkover !== 'V' && (
+              <input
+                name="set3"
+                placeholder="Set 3 Visitante"
+                value={visitanteSets.set3}
+                onChange={(e) => handleInputChange(e, visitanteSets, setVisitanteSets)}
+                onBlur={validateSetResultOnBlur}
+                disabled={walkover === 'both' ? false : walkover !== 'null'}
+                required
+                 className="resultado-input-field"
+              />
+            )}
+          </div>
         </div>
       </div>
-    </div>
+  
+      <div className="acciones-container">
+        {/* Botón para registrar tarjetas */}
+        <button type="button" onClick={() => setShowModal(true)} className="resultados-modal-btn">
+          Registrar Tarjetas
+        </button>
 
-    <button type="button" onClick={() => setShowModal(true)} className="open-modal-btn">
-  Registrar Tarjetas
-</button>
-
-
-    {tarjetas.length > 0 && (
-      <div className="tarjetas-registradas">
-        <h3>Tarjetas Registradas</h3>
-        <ul>
-          {tarjetas.map((tarjeta, index) => (
-            <li key={index}>
-              {tarjeta.equipoNombre} - {tarjeta.jugadorNombre} - {tarjeta.tipoTarjeta}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
- <div className="form-group">
-          <label htmlFor="imagenPlanilla">Subir Imagen de la Planilla:</label>
+        {/* Botón estilizado para subir imagen */}
+        <label htmlFor="imagenPlanilla" className="upload-button">
+          Subir Imagen de la Planilla
           <input
             type="file"
             id="imagenPlanilla"
             accept="image/*"
             onChange={handleImageChange}
+            hidden
           />
-        </div>
-    <div className="actions">
-      <button type="submit" className="submit-btn">Enviar Resultados</button>
-    </div>
-  </form>
+        </label>
 
-  {showModal && (
-    <>
-      <div className="modal-background" onClick={() => setShowModal(false)}></div>
-      <div className="modal">
-        <div className="modal-content">
-          <button onClick={() => setShowModal(false)} className="close-btn">
-            &times;
-          </button>
-          <h2>Registrar Tarjeta</h2>
-          <select onChange={(e) => setEquipoSeleccionado(e.target.value)} value={equipoSeleccionado}>
+        {/* Ícono para indicar que hay una imagen seleccionada */}
+        {imagenPlanilla && (
+          <span className="file-icon" onClick={() => setShowImageModal(true)} title="Ver Imagen">
+           <AttachFileIcon/>
+          </span>
+        )}
+      </div>
+
+      {/* Modal para previsualizar la imagen */}
+      {showImageModal && imagenPlanilla && (
+        <div className="image-modal-overlay" onClick={() => setShowImageModal(false)}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-modal-btn" onClick={() => setShowImageModal(false)}>✖</button>
+            <h3>Previsualización de la Imagen</h3>
+            <img src={URL.createObjectURL(imagenPlanilla)} alt="Imagen Cargada" className="preview-image" />
+          </div>
+        </div>
+      )}
+
+      {tarjetas.length > 0 && (
+        <div className="resultados-tarjetas">
+          <h3>Tarjetas Registradas</h3>
+          <ul>
+            {tarjetas.map((tarjeta, index) => {
+              console.log(`Tarjeta ${index + 1}:`, tarjeta); // Debugging para verificar los datos
+              return (
+                <li key={index} className="tarjeta-item">
+                  <span className="tarjeta-equipo">{tarjeta.equipoNombre}</span> - 
+                  <span className="tarjeta-jugador">{tarjeta.jugadorNombre}</span> 
+                  <span className={`tarjeta-tipo ${tarjeta.tipoTarjeta}`}></span> 
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+  
+      <div className="resultados-acciones">
+      <button 
+        type="submit" 
+        className="resultados-submit-btn" 
+      >
+        Enviar Resultados
+      </button>
+
+      </div>
+    </form>
+  
+    {showModal && (
+  <>
+    <div className="resultados-modal-fondo" onClick={() => setShowModal(false)}></div>
+    <div className="resultados-modal">
+      <div className="resultados-modal-contenido">
+        {/* Botón de cerrar */}
+        <button onClick={() => setShowModal(false)} className="resultados-close-btn">
+          ✖
+        </button>
+
+        <h2 className="modal-title">Registrar Tarjeta</h2>
+
+        {/* Selección de equipo */}
+        <div className="modal-field">
+          <label>Equipo</label>
+          <select 
+            onChange={(e) => setEquipoSeleccionado(e.target.value)} 
+            value={equipoSeleccionado}
+            className="modal-select"
+          >
             <option value="">Seleccione un equipo</option>
             {equipoLocal && <option value={equipoLocal.equipo_id}>{equipoLocal.equipo_nombre}</option>}
             {equipoVisitante && <option value={equipoVisitante.equipo_id}>{equipoVisitante.equipo_nombre}</option>}
           </select>
+        </div>
 
-          {equipoSeleccionado && (
-            <select onChange={(e) => setJugadorSeleccionado(e.target.value)} value={jugadorSeleccionado}>
+        {/* Selección de jugador */}
+        {equipoSeleccionado && (
+          <div className="modal-field">
+            <label>Jugador</label>
+            <select 
+              onChange={(e) => setJugadorSeleccionado(e.target.value)} 
+              value={jugadorSeleccionado}
+              className="modal-select"
+            >
               <option value="">Seleccione un jugador</option>
               {jugadores.map((jugador) => (
                 <option key={jugador.jugador_id} value={jugador.jugador_id}>
@@ -441,32 +505,55 @@ const SubmitResultados = () => {
                 </option>
               ))}
             </select>
-          )}
+          </div>
+        )}
 
-          {jugadorSeleccionado && (
-            <select onChange={(e) => setTipoTarjeta(e.target.value)} value={tipoTarjeta}>
+        {/* Selección de tipo de tarjeta */}
+        {jugadorSeleccionado && (
+          <div className="modal-field">
+            <label>Tipo de Tarjeta</label>
+            <select 
+              onChange={(e) => setTipoTarjeta(e.target.value)} 
+              value={tipoTarjeta}
+              className="modal-select"
+            >
               <option value="">Seleccione el tipo de tarjeta</option>
               <option value="roja">Roja</option>
               <option value="amarilla">Amarilla</option>
             </select>
+          </div>
+        )}
+
+        {/* Botón para agregar tarjeta */}
+        <button 
+          onClick={handleAgregarTarjeta} 
+          disabled={!equipoSeleccionado || !jugadorSeleccionado || !tipoTarjeta}
+          className="modal-add-btn"
+        >
+          Agregar Tarjeta
+        </button>
+
+          {tarjetas.length > 0 && (
+            <div className="modal-tarjetas-list">
+              <h3>Tarjetas Registradas</h3>
+              <ul>
+                {tarjetas.map((tarjeta, index) => (
+                  <li key={index}>
+                    <span className="tarjeta-equipo">{tarjeta.equipoNombre}</span> - 
+                    <span className="tarjeta-jugador">{tarjeta.jugadorNombre}</span> - 
+                    <span className={`tarjeta-tipo ${tarjeta.tipoTarjeta}`}></span> {/* Rectángulo de color sin texto */}
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
 
-          <button onClick={handleAgregarTarjeta} disabled={!equipoSeleccionado || !jugadorSeleccionado || !tipoTarjeta}>
-            Agregar Tarjeta
-          </button>
-
-          <ul>
-            {tarjetas.map((tarjeta, index) => (
-              <li key={index}>
-                {tarjeta.equipoNombre} - {tarjeta.jugadorNombre} - {tarjeta.tipoTarjeta}
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
-    </>
-  )}
-</div>
+    </div>
+  </>
+)}
+
+  </div>
 
   );
 };

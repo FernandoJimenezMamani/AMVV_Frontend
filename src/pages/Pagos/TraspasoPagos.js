@@ -40,7 +40,7 @@ const ListaTraspasosPagos = () => {
 
   return (
     <div className="table-container">
-      <h2 className="table-title">Deuda por inscripción</h2>
+      <h2 className="table-title">Deuda por Traspasos</h2>
       <RegistroPagoTraspaso
         isOpen={showFormModal}
         onClose={handleCloseModal}

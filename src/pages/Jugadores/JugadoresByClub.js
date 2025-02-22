@@ -6,6 +6,8 @@ import ConfirmModal from '../../components/ConfirmModal';
 import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
 import RegistroJugadorClub from './RegistrarJugadorByCLub';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -72,6 +74,13 @@ const ListaJugadoresClub = () => {
     setShowFormModal(false);
   };
 
+  const getImagenPerfil = (jugador) => {
+    if (jugador.imagen_persona) {
+      return jugador.imagen_persona; 
+    }
+    return jugador.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Jugadores</h2>
@@ -101,16 +110,16 @@ const ListaJugadoresClub = () => {
           <tr key={jugador.jugador_id} className="table-row">
             <td className="table-td-p">
               <img
-                src={jugador.imagen_persona} // Asegúrate de que `imagen_persona` corresponde al campo correcto
+                src={getImagenPerfil(jugador)} 
                 alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
                 className="table-logo"
               />
             </td>
             <td className="table-td-p">
-              {jugador.nombre_persona} {jugador.apellido_persona} {/* Asegúrate de usar `nombre_persona` y `apellido_persona` */}
+              {jugador.nombre_persona} {jugador.apellido_persona} 
             </td>
             <td className="table-td-p">
-              {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString()} {/* Asegúrate de usar `fecha_nacimiento_persona` */}
+              {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString()} 
             </td>
             <td className="table-td-p">
               {jugador.ci_persona} 

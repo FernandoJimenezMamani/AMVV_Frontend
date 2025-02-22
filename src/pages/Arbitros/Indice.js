@@ -9,7 +9,8 @@ import EditarArbitro from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import defaultUserIcon from '../../assets/img/user-icon.png';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { PresidenteClub } from '../../constants/roles';
 import { Select } from 'antd';
 
@@ -23,7 +24,7 @@ const ListaArbitro = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [presidenteToDelete, setPersonaToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);  // Controla la apertura del modal de edición
+  const [showEditModal, setShowEditModal] = useState(false);  
   const [selectedPresidenteId, setSelectedPresidenteId] = useState(null);
   const [filterRole, setFilterRole] = useState('No filtrar');
   const [filterState, setFilterState] = useState('No filtrar');
@@ -52,21 +53,18 @@ const ListaArbitro = () => {
   const applyFilters = () => {
     let filtered = [...arbitros];
 
-    // Filtrar por rol
     if (filterRole !== 'No filtrar') {
       filtered = filtered.filter((p) =>
         p.roles.split(', ').includes(filterRole)
       );
     }
 
-    // Filtrar por estado
     if (filterState !== 'No filtrar') {
       filtered = filtered.filter((p) =>
         filterState === 'Activo' ? p.eliminado === 'N' : p.eliminado === 'S'
       );
     }
 
-    // Filtrar por nombre
     if (searchPresidente) {
       filtered = filtered.filter((p) =>
         `${p.nombre} ${p.apellido}`
@@ -79,13 +77,13 @@ const ListaArbitro = () => {
   };
 
   const handleEditClick = (personaId) => {
-    setSelectedPresidenteId(personaId);  // Guarda el id de persona seleccionado
+    setSelectedPresidenteId(personaId);  
     setShowEditModal(true);
   };
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setSelectedPresidenteId(null);  // Resetea el id seleccionado
+    setSelectedPresidenteId(null);  
   };
 
   const handleRegistrarClick = () => {
@@ -104,12 +102,12 @@ const ListaArbitro = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; // Cambiar esto si necesitas un valor dinámico
+      const user_id = 1; 
       await axios.put(`${API_BASE_URL}/persona/delete_persona/${presidenteToDelete}`, { user_id });
       toast.success('Usuario desactivado exitosamente');
       fetchArbitros();
-      setShowConfirm(false); // Cierra el modal
-      setPersonaToDelete(null); // Limpia el ID almacenado
+      setShowConfirm(false); 
+      setPersonaToDelete(null); 
     } catch (error) {
       toast.error('Error al desactivar el usuario');
       console.error('Error al eliminar la persona:', error);
@@ -119,10 +117,9 @@ const ListaArbitro = () => {
 
   const handleActivateUser = async (id) => {
     try {
-      // Lógica para activar al usuario
       await axios.put(`${API_BASE_URL}/persona/activatePersona/${id}`);
       toast.success('Usuario activado exitosamente');
-      fetchArbitros(); // Actualiza la lista de usuarios
+      fetchArbitros(); 
     } catch (error) {
       toast.error('Error al activar el usuario');
       console.error('Error al activar usuario:', error);
@@ -136,6 +133,13 @@ const ListaArbitro = () => {
 
   const handleProfileClick = (id) => {
     navigate(`/personas/perfil/${id}`);
+  };
+
+  const getImagenPerfil = (arbitro) => {
+    if (arbitro.persona_imagen) {
+      return arbitro.persona_imagen; 
+    }
+    return arbitro.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
   return (
@@ -191,7 +195,7 @@ const ListaArbitro = () => {
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={p.persona_imagen ? p.persona_imagen : defaultUserIcon}
+                  src={getImagenPerfil(p) }
                   alt={`${p.nombre} ${p.apellido}`}
                   className="table-logo"
                 />

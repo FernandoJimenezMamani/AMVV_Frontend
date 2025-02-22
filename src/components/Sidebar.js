@@ -3,12 +3,14 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import '../assets/css/Sidebar.css';
 import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
-import defaultUserIcon from '../assets/img/user-icon.webp';
+import defaultUserIcon from '../assets/img/Default_Imagen_Men.webp';
 import HomeIcon from '@mui/icons-material/Home';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import PersonIcon from '@mui/icons-material/Person';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import defaultUserMenIcon from '../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../assets/img/Default_Imagen_Women.webp';
 
 const Sidebar = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -48,12 +50,11 @@ const Sidebar = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Verificar si el clic fue fuera del sidebar o fuera del menú flotante
       if (
         sidebarRef.current &&
         !sidebarRef.current.contains(event.target)
       ) {
-        setExpandedSection(null); // Cierra el menú flotante
+        setExpandedSection(null); 
       }
     };
   
@@ -68,6 +69,14 @@ const Sidebar = () => {
     return user && user.roles && roles.some(role => user.roles.includes(role));
   };
 
+  const getImagenPerfil = (user) => {
+    if (user?.imagen) {
+      return user.imagen; 
+    }
+    return user?.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+  
+
   return (
     <div className="sidebar-layout" >
       {isMobileMenuOpen && (
@@ -77,7 +86,6 @@ const Sidebar = () => {
         ></div>
       )}
 
-      {/* Botón de hamburguesa para abrir el sidebar en modo móvil */}
       <div
         className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
         onClick={toggleMobileMenu}
@@ -85,14 +93,12 @@ const Sidebar = () => {
         <i className="fas fa-bars"></i>
       </div>
 
-      {/* Sidebar principal */}
       <div
       ref={sidebarRef} 
         className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''} ${
           isMobileMenuOpen ? 'open' : 'close'
         }`}
       >
-        {/* Botón flotante para cerrar el sidebar */}
         {!isSidebarCollapsed && (
           <button className="floating-close-btn" onClick={toggleSidebar}>
             <i className="fas fa-chevron-left"></i>
@@ -106,21 +112,17 @@ const Sidebar = () => {
                 onClick={toggleSidebar}
               />
             )}
-
-        {/* Imagen del usuario cuando el sidebar está expandido */}
         {!isSidebarCollapsed && (
           <div className="sidebar-header user-avatar-container">
             <img
-              src={user?.imagen ? user.imagen: defaultUserIcon}
+              src={getImagenPerfil(user)}
               alt="Usuario"
               className="sidebar-logo user-avatar"
             />
           </div>
         )}
 
-        {/* Contenedor del contenido con scroll interno */}
         <div className={`sidebar-content ${expandedSection ? 'menu-open' : ''}`}>
-          {/* Información del usuario */}
           {!isSidebarCollapsed && (
             <div className="user-info-container">
             <div className="user-name">
@@ -134,7 +136,6 @@ const Sidebar = () => {
           
           )}
 
-          {/* Menú de opciones */}
           {!isSidebarCollapsed && (
             <div className="menu-container">
                 <div className="menu-item">
@@ -187,7 +188,6 @@ const Sidebar = () => {
                 </div>
             </div>
           )}
-          {/* Botón Mi cuenta */}
           <div className="mi-cuenta-container ">
             <button className="mi-cuenta-btn" onClick={() => handleProfileClick(user.id)}>
               <i className="fas fa-user-circle"></i> Mi cuenta
@@ -196,7 +196,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Contenido principal fuera del sidebar */}
       <div className="content">
         <Outlet />
       </div>

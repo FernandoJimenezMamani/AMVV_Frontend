@@ -32,9 +32,9 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       const { requireRoleSelection, roles, token, user } = response.data;
   
       if (requireRoleSelection) {
-        setRoles(roles); // Actualiza el estado para mostrar los roles
+        setRoles(roles); 
       } else {
-        login({ user, token }); // Inicia sesión directamente si no hay selección de rol
+        login({ user, token }); 
         onLoginSuccess(user);
         navigate('/sidebar');
       }

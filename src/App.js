@@ -56,6 +56,7 @@ import IndiceSolicitudesPresidente from './pages/Traspasos/IndiceSolicitudPresid
 import DetalleTraspasoPresidenteSolicitante from './pages/Traspasos/DetalleSolicitante'
 import ListaTraspasosPagos from './pages/Pagos/TraspasoPagos';
 import ResumenCampeonato from './pages/Reportes/ResumenCampeonato';
+import GenerarFixture from './pages/Partidos/GenerarFixture';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -120,6 +121,7 @@ const App = () => {
               <Route path="/complejos/indice" element={<ListaLugar />} />
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
               <Route path="/partidos/registrar/:campeonatoId/:categoriaId" element={<RegistrarPartido />} />
+              <Route path="/partidos/generarFixture/:campeonatoId/:categoriaId" element={<GenerarFixture />} />
               <Route path="/partidos/registrarResultado/:partidoId" element={<RegistrarResultado />} />
               <Route path="/personas/indice" element={<ListaPersona />} />
               <Route path="/personas/registrar" element={<RegistrarPersona />} />

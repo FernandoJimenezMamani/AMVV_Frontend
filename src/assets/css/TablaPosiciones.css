@@ -1,60 +1,109 @@
 .clubes-lista {
-    width: 100%;
-    margin: 0 auto;
-    padding: 20px;
+  padding: 20px;
+  width: 95%;
+  margin: auto;
   }
   
-
   .clubes-lista-titulo {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333; 
+    text-align: left;
+    font-size: 45px !important;
+    margin-bottom: 5px !important;
+    color: #143E42;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    margin-left: auto;
   }
   
-
   .clubes-lista-tabla {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 
+      4px 0 8px rgba(0, 0, 0, 0.2),  /* Sombra derecha */
+      -4px 0 8px rgba(0, 0, 0, 0.2), /* Sombra izquierda */
+      0 4px 8px rgba(0, 0, 0, 0.2),  /* Sombra abajo */
+      0 -4px 8px rgba(0, 0, 0, 0.1); /* Sombra arriba */
   }
-  
 
-  .clubes-lista-thead th {
+  .clubes-lista-thead {
     background: linear-gradient(to bottom, #507788, #141E22);
-    color: white;
-    font-weight: bold;
-    padding: 10px;
-    text-align: center;
-    border-bottom: 2px solid #ddd;
+    color: #fff;
+    border-radius: 8px !important;
+    height: 60px;
   }
   
+  .table-positions-th {
+    text-align: center;
+    font-size: 13px;
+  }
 
-  .clubes-lista-tabla td {
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    color: #555; 
-    font-weight:bold;
+  .table-positions-th:first-child {
+    border-top-left-radius: 8px;
   }
   
+  .table-positions-th:last-child {
+    border-top-right-radius: 8px;
+  }
+
+  .table-positions-td {
+    padding: 1px 12px;
+    text-align: center;
+    background-color: white;
+    box-shadow: none; 
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+  }
+
+  .clubes-lista-tabla  tr:last-child td:first-child {
+    border-bottom-left-radius: 10px !important;
+  }
+  
+  .clubes-lista-tabla  tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+  .equipo-container {
+    display: flex;
+    align-items: center; 
+    gap: 10px;
+}
 
   .club-logo-table {
-    width: 50px; 
-    height: 50px; 
+    width: 40px; 
+    height: 40px; 
     border-radius: 50%; 
     object-fit: cover; 
     margin-right: 5px; 
 }
 
-  .clubes-lista-tabla tr {
-    transition: background-color 0.2s ease-in-out;
+.campeonato-en-curso {
+  display: flex;
+  align-items: center;
+  font-size: 14px; /* Reducir tamaño del texto */
+  color: #0f960f;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  background-color: #0f960f;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: parpadeo 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes parpadeo {
+  0% {
+    opacity: 0.3;
   }
-  
- 
-  .clubes-lista-tabla tr:hover {
-    background-color: #f9f9f9; 
+  100% {
+    opacity: 1;
   }
+}
+
 
   @media screen and (max-width: 768px) {
     .clubes-lista-tabla {

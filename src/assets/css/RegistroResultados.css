@@ -1,48 +1,131 @@
-.container {
+.resultados-container {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+  4px 0 8px rgba(0, 0, 0, 0.2),  
+  -4px 0 8px rgba(0, 0, 0, 0.2),
+  0 4px 8px rgba(0, 0, 0, 0.2),  
+  0 -4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-  text-align: center;
+.resultados-titulo {
+  text-align: left;
+  font-size: 45px !important;
+  margin-bottom: 5px !important;
+  color: #143E42;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  margin-left: auto;
+}
+
+.resultados-form-group {
   margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
 }
 
-.form-group {
-  margin-bottom: 20px;
+.resultados-form-group label{
+  text-align: left;
+  font-size: 15px !important;
+  margin-bottom: 5px !important;
+  color: #143E42;
+  font-weight: bold;
+  margin-left: auto;
 }
 
-.radio-group {
+
+.resultados-radio-group {
   display: flex;
-  gap: 10px;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 10px;
 }
 
-.radio-option {
+/* Contenedor de cada opción */
+.resultados-radio-option {
+  position: relative;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #f1f1f1;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.radio-option label {
-  font-size: 14px;
-  color: #555;
-  margin-left: 5px;
+/* Estilo cuando el usuario pasa el mouse */
+.resultados-radio-option:hover {
+  background-color: #e3e3e3;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-.results-group {
+/* Ocultar el input original */
+.resultados-radio-option input[type="radio"] {
+  opacity: 0;
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+/* Radio button visual */
+.resultados-radio-option label {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Círculo del radio button */
+.resultados-radio-option label::before {
+  content: "";
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #555;
+  display: inline-block;
+  margin-right: 8px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+/* Estilo cuando está seleccionado */
+.resultados-radio-option input[type="radio"]:checked + label::before {
+  background-color: #579FA6;
+  border-color: #35748C;
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
+}
+
+/* Estilo cuando está seleccionado (cambia el fondo del contenedor) */
+.resultados-radio-option input[type="radio"]:checked + label {
+  color: #fff;
+}
+
+/* Cambia el fondo cuando está seleccionado */
+.resultados-radio-option input[type="radio"]:checked + label {
+  background-color: #579FA6;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+/* Asegura buena visibilidad al hacer focus */
+.resultados-radio-option input[type="radio"]:focus + label::before {
+  outline: 3px solid rgba(40, 167, 69, 0.5);
+}
+
+/* Contenedor de resultados de equipos */
+.resultados-equipos {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   margin-top: 20px;
 }
 
-.team-column {
+.resultados-equipo {
   flex: 1;
   background-color: #fff;
   padding: 15px;
@@ -50,33 +133,40 @@ h1 {
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.team-header {
+/* Cabecera de cada equipo */
+.resultados-equipo-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
 }
 
-.team-logo {
-  width: 50px;
-  height: 50px;
+/* Logo del equipo */
+.resultados-equipo-logo {
+  width: 70px;
+  height:70px;
   border-radius: 50%;
   object-fit: cover;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
 }
 
-.team-header h2 {
-  font-size: 18px;
+/* Nombre del equipo */
+.resultados-equipo-header h2 {
+  font-size: 28px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  font-weight: bold;
   color: #333;
   margin: 0;
 }
 
-.inputs-group {
+/* Campos de sets */
+.resultados-sets-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.inputs-group input[type="number"] {
+.resultados-sets-group input[type="number"] {
   width: 100%;
   padding: 8px;
   font-size: 14px;
@@ -85,69 +175,65 @@ h1 {
   box-sizing: border-box;
 }
 
-.inputs-group input[type="number"]:disabled {
+.resultados-sets-group input[type="number"]:disabled {
   background-color: #f0f0f0;
   color: #999;
 }
 
-.actions {
+/* Acciones y botones */
+.resultados-acciones {
   margin-top: 20px;
   text-align: right;
 }
 
-.submit-btn {
-  background-color: #28a745;
-  color: #fff;
-  padding: 10px 20px;
-  font-size: 14px;
+.resultados-submit-btn {
+  background-color: #57a664;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.submit-btn:hover {
+.resultados-submit-btn:hover {
   background-color: #218838;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.open-modal-btn {
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  font-size: 14px;
+/* Botón para abrir el modal */
+.resultados-modal-btn {
+  background-color: #3D8FA4;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.open-modal-btn:hover {
-  background-color: #0056b3;
+.resultados-modal-btn:hover {
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-.tarjetas-registradas {
-  margin-top: 20px;
-}
-
-.tarjetas-registradas h3 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.tarjetas-registradas ul {
-  list-style: none;
-  padding: 0;
-}
-
-.tarjetas-registradas li {
-  font-size: 14px;
-  background-color: #f1f1f1;
-  margin-bottom: 5px;
-  padding: 8px;
-  border-radius: 4px;
-}
-
-.modal-background {
+.resultados-modal-fondo {
   position: fixed;
   top: 0;
   left: 0;
@@ -157,37 +243,401 @@ h1 {
   z-index: 999;
 }
 
-.modal {
+.resultados-modal {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  max-width: 400px;
+  max-width: 450px;
   width: 90%;
+  text-align: center;
 }
 
-.modal-content {
+.resultados-modal-contenido {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
-.close-btn {
+.resultados-close-btn {
   background-color: #dc3545;
   color: #fff;
-  padding: 5px 10px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20%;
   cursor: pointer;
   align-self: flex-end;
+  transition: background-color 0.3s ease;
 }
 
-.close-btn:hover {
+.resultados-close-btn:hover {
   background-color: #c82333;
+}
+
+.modal-title {
+  font-size: 22px;
+  color: #333;
+  margin-top: -21px;
+  margin-bottom: 1px;
+  font-weight: bold;
+}
+
+.modal-field {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-size: 16px;
+}
+
+.modal-field label {
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+}
+
+.modal-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.modal-select:focus {
+  border-color: #35748C;
+  outline: none;
+}
+
+.modal-add-btn {
+  background-color: #3D8FA4;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-add-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.modal-add-btn:hover:not(:disabled) {
+  background-color: #35748C;
+}
+
+/* Contenedor de la lista de tarjetas */
+.modal-tarjetas-list {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.modal-tarjetas-list h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.modal-tarjetas-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-tarjetas-list li {
+  font-size: 16px;
+  background-color: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tarjeta-equipo {
+  font-weight: bold;
+  color: #333;
+}
+
+.tarjeta-jugador {
+  font-weight: 500;
+  color: #666;
+}
+
+.tarjeta-tipo {
+  width: 24px;  
+  height: 16px; 
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.tarjeta-tipo.roja {
+  background-color: #dc3545;
+}
+
+.tarjeta-tipo.amarilla {
+  background-color: #ffc107;
+}
+
+.modal-tarjetas-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.modal-tarjetas-list li {
+  font-size: 16px;
+  background-color: #f8f9fa;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tarjeta-remove-btn {
+  background-color: #5a5051;
+  color: #fff;
+  border: none;
+  padding: 1px 8px;
+  font-size: 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tarjeta-remove-btn:hover {
+  background-color: #cfc3c4;
+  
+}
+
+.tarjeta-tipo {
+  width: 24px;
+  height: 16px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.tarjeta-tipo.roja {
+  background-color: #dc3545;
+}
+
+.tarjeta-tipo.amarilla {
+  background-color: #ffc107;
+}
+
+.input-error {
+  border: 2px solid red;
+  background-color: #ffe5e5;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.resultados-submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.resultado-input-field {
+  width: 100%;
+    max-width: none; 
+    width: 500px !important;
+    height: 50px !important;
+    padding: 10px 12px;
+    font-size: 15px !important;
+    border: 1px solid #ccc;  
+    border-radius: 5px; 
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    font-weight: 100;
+}
+
+.resultado-input-field::placeholder {
+  color: #bbb;  
+  font-size: 15px !important;
+}
+
+.resultado-input-field:focus {
+  border-color: #3D8FA4;
+  outline: none;
+  box-shadow: 0 0 4px rgba(61, 143, 164, 0.5);
+}
+
+
+/* ESTILOS PARA VISUALIZACION DE TARJETAS */
+.resultados-tarjetas h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #143E42;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.resultados-tarjetas ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tarjeta-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  width: 50%;
+}
+
+
+/* ========================= */
+/* ESTILOS PARA EL INPUT DE IMAGEN */
+/* ========================= */
+
+.acciones-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Botón estilizado para cargar imagen */
+.upload-button {
+  background-color: #3D8FA4;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-button:hover {
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.file-icon {
+  font-size: 20px;
+  color: #143E42;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.file-icon:hover {
+  transform: scale(1.2);
+  color: #35748C;
+}
+
+/* ========================= */
+/* ESTILOS PARA EL MODAL DE IMAGEN */
+/* ========================= */
+
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  max-width: 400px;
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.close-modal-btn:hover {
+  background: darkred;
+}
+
+@media (max-width: 768px) {
+  .resultados-radio-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .upload-button {
+    font-size: 10px; 
+  }
+
+  .resultados-modal {
+    width: 95%;
+  }
+
+  .tarjetas-registradas-container {
+    width: 90%;
+  }
+
+  .tarjeta-item {
+    max-width: 100%;
+  }
+
+  .resultados-equipos {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .resultados-equipo {
+    width: 90%;
+  }
+  .resultados-sets-group input {
+    max-width: 100%; /* Ocupar todo el ancho disponible en pantallas pequeñas */
+    height: 45px;
+    font-size: 14px;
+  }
 }

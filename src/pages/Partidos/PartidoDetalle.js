@@ -5,8 +5,17 @@ import '../../assets/css/PartidoDetalle.css';
 import { toast } from 'react-toastify';
 import MapView from '../../components/MapView';
 import ReactModal from 'react-modal';
+import defaultUserIcon from '../../assets/img/user-icon.png';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import MapaDetalle from '../../components/MapaDetalle';
 
 ReactModal.setAppElement('#root');
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PartidoDetalle = () => {
   const { partidoId } = useParams(); 
@@ -22,7 +31,7 @@ const PartidoDetalle = () => {
   useEffect(() => {
     const fetchPartido = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/partidos/get_partido_completo/${partidoId}`);
+        const response = await axios.get(`${API_BASE_URL}/partidos/get_partido_completo/${partidoId}`);
         setPartido(response.data);
       } catch (error) {
         toast.error('Error al obtener los detalles del partido');
@@ -32,7 +41,7 @@ const PartidoDetalle = () => {
   
     const fetchArbitros = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/partidos/get_arbitros/${partidoId}`);
+        const response = await axios.get(`${API_BASE_URL}/partidos/get_arbitros/${partidoId}`);
         setArbitros(response.data);
       } catch (error) {
         toast.error('Error al obtener los árbitros del partido');
@@ -40,17 +49,15 @@ const PartidoDetalle = () => {
       }
     };
   
-    // Llamar solo una vez cuando cambia el partidoId
     fetchPartido();
     fetchArbitros();
   }, [partidoId]);
 
   useEffect(() => {
-    // Solo cargar jugadores si el partido ya está cargado y tiene los IDs de los equipos
     if (partido) {
       const fetchJugadoresLocal = async (equipoId) => {
         try {
-          const response = await axios.get(`http://localhost:5002/api/partidos/get_jugadores/${equipoId}`);
+          const response = await axios.get(`${API_BASE_URL}/partidos/get_jugadores/${equipoId}`);
           setJugadoresLocal(response.data);
         } catch (error) {
           toast.error('Error al obtener los jugadores del equipo local');
@@ -60,7 +67,7 @@ const PartidoDetalle = () => {
   
       const fetchJugadoresVisitante = async (equipoId) => {
         try {
-          const response = await axios.get(`http://localhost:5002/api/partidos/get_jugadores/${equipoId}`);
+          const response = await axios.get(`${API_BASE_URL}/partidos/get_jugadores/${equipoId}`);
           setJugadoresVisitante(response.data);
         } catch (error) {
           toast.error('Error al obtener los jugadores del equipo visitante');
@@ -83,27 +90,58 @@ const PartidoDetalle = () => {
     });
   };
 
+  const formatTime = (fecha) => {
+    const partidoDate = new Date(fecha); 
+  
+    return partidoDate.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, 
+      timeZone: 'UTC', 
+    });
+  };
+
+  const formatDate = (fecha) => {
+    const partidoDate = new Date(fecha);
+    
+    return partidoDate.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+
+  const getImagenPerfil = (arbitro) => {
+    if (arbitro.persona_imagen) {
+      return arbitro.persona_imagen; 
+    }
+    return arbitro.arbitro_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+  
   return (
     <div className="partido-detalle-container">
     <h1 className="titulo-partido">Detalles del Partido</h1>
-    
+    <div className="resultado-button-container">
+      <button className="resultado-button" onClick={() => handlePartidoClick(partidoId)}>
+        Registrar Resultado <AssignmentIcon/>
+      </button>
+    </div>
+
     <div className="partido-info">
-      <p><strong>Fecha:</strong> {new Date(partido.fecha).toLocaleString()}</p>
-      <p><strong>Lugar:</strong> {partido.lugar_nombre}</p>
-      <p><strong>Estado:</strong> {partido.estado || 'Pendiente'}</p>
-      <button className="map-button" onClick={() => setIsMapModalOpen(true)}>
-        Ver Ubicación en el Mapa
-      </button>
-      <button className="map-button" onClick={() => handlePartidoClick(partidoId)}>
-        Registrar Resultados
-      </button>
+      <p><strong>Fecha:</strong> {formatDate(partido.fecha)} , {formatTime(partido.fecha)}</p>
+      <p>
+        <strong>Lugar del encuentro:</strong> {partido.lugar_nombre}
+        <button className="map-button-inline" onClick={() => setIsMapModalOpen(true)}>
+          <LocationOnIcon/>
+        </button>
+      </p>
     </div>
   
     <div className="partido-teams">
       <div className="partido-team">
         <img src={partido.equipo_local_imagen} alt="Logo equipo local" className="partido-team-logo" />
         <p className="partido-team-name">{partido.equipo_local_nombre}</p>
-        <h4>Jugadores</h4>
+        <h4 className="jugadores-title" >Jugadores</h4>
         <ul className="jugadores-list">
           {jugadoresLocal.length > 0 ? (
             jugadoresLocal.map(jugador => (
@@ -122,7 +160,7 @@ const PartidoDetalle = () => {
       <div className="partido-team">
         <img src={partido.equipo_visitante_imagen} alt="Logo equipo visitante" className="partido-team-logo" />
         <p className="partido-team-name">{partido.equipo_visitante_nombre}</p>
-        <h4>Jugadores</h4>
+        <h4 className="jugadores-title">Jugadores</h4>
         <ul className="jugadores-list">
           {jugadoresVisitante.length > 0 ? (
             jugadoresVisitante.map(jugador => (
@@ -138,27 +176,24 @@ const PartidoDetalle = () => {
     <h2 className="titulo-arbitros">Árbitros</h2>
     <ul className="arbitros-list">
       {arbitros.map(arbitro => (
-        <li key={arbitro.arbitro_id}>
-          {arbitro.arbitro_nombre} {arbitro.arbitro_apellido} {arbitro.arbitro_activo ? '(Activo)' : '(Inactivo)'}
-        </li>
+        <li key={arbitro.arbitro_id} className="arbitro-item">
+        <img 
+          src={getImagenPerfil(arbitro)} 
+          alt="Foto del árbitro" 
+          className="arbitro-foto" 
+        />
+        <span>{arbitro.arbitro_nombre} {arbitro.arbitro_apellido}</span>
+      </li>
+      
       ))}
     </ul>
   
-    <ReactModal 
+    <MapaDetalle 
       isOpen={isMapModalOpen}
-      onRequestClose={() => setIsMapModalOpen(false)}
-      contentLabel="Mapa del Lugar"
-      className="modal-content"
-      overlayClassName="modal-overlay"
-    >
-      <h2>Ubicación del Partido</h2>
-      <MapView
-        initialLat={partido.lugar_latitud}
-        initialLng={partido.lugar_longitud}
-        isReadOnly={true}
-      />
-      <button className="close-map-button" onClick={() => setIsMapModalOpen(false)}>Cerrar</button>
-    </ReactModal>
+      onClose={() => setIsMapModalOpen(false)}
+      lat={partido.lugar_latitud}
+      lng={partido.lugar_longitud}
+    />
   </div>
   
 
