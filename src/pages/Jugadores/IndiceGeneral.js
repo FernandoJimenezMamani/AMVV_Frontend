@@ -6,6 +6,7 @@ import '../../assets/css/IndiceTabla.css';
 import RegistrarJugador from './Registrar';
 import EditarJugador from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import PerfilJugadorModal from './Perfil';
 import EditIcon from '@mui/icons-material/Edit';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
@@ -26,6 +27,7 @@ const ListaJugadoresAll = () => {
   const [jugadorToFichar, setJugadorToFichar] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);  
+  const [showPerfilModal, setShowPerfilModal] = useState(false);  
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchName, setSearchName] = useState('');
@@ -91,12 +93,8 @@ const ListaJugadoresAll = () => {
   };
 
   const handleProfileClick = (jugadorId) => {
-    navigate(`/personas/perfil/${jugadorId}`);
-  };
-
-  const handleFicharClick = (jugadorId) => {
-    setJugadorToFichar(jugadores.find(jugador => jugador.jugador_id === jugadorId));
-    setShowConfirmTraspaso(true);
+    setSelectedPersonaId(jugadorId);  
+    setShowPerfilModal(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -109,33 +107,8 @@ const ListaJugadoresAll = () => {
     setPersonaToDelete(null);
   };
 
-  const handleConfirmFichar = async () => {
-    if (!jugadorToFichar) return;
-  
-    try {
-  
-      // Llama al endpoint de crear traspaso en el backend
-      await axios.post(`${API_BASE_URL}/traspaso/crear`, {
-        jugador_id: jugadorToFichar.jugador_id,
-        club_origen_id: jugadorToFichar.club_id, // Usamos el ID del club actual del jugador
-        club_destino_id: presidente.club_presidente, // Usamos el ID del club del presidente como destino
-        fecha_solicitud: new Date().toISOString().slice(0, 10),
-        estado_solicitud: 'PENDIENTE'
-      });
-  
-      toast.success('Traspaso solicitado correctamente');
-      setShowConfirmTraspaso(false);
-      setJugadorToFichar(null);
-    } catch (error) {
-      toast.error('Error al solicitar el traspaso');
-      console.error('Error al crear el traspaso:', error);
-      setShowConfirm(false);
-      setJugadorToFichar(null);
-    }
-  };  
-
   const handleEditClick = (personaId) => {
-    setSelectedPersonaId(personaId);  // Guarda el id de persona seleccionado
+    setSelectedPersonaId(personaId);  
     setShowEditModal(true);
   };
 
@@ -151,8 +124,14 @@ const ListaJugadoresAll = () => {
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
-    setSelectedPersonaId(null);  // Resetea el id seleccionado
+    setSelectedPersonaId(null);  
   };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPersonaId(null);  
+  };
+
 
   const handleCloseModal = () => {
     setShowFormModal(false);
@@ -160,12 +139,12 @@ const ListaJugadoresAll = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const user_id = 1; // Cambiar esto si necesitas un valor dinámico
+      const user_id = 1; 
       await axios.put(`${API_BASE_URL}/persona/delete_persona/${personaToDelete}`, { user_id });
       toast.success('Usuario desactivado exitosamente');
       fetchJugadores();
-      setShowConfirm(false); // Cierra el modal
-      setPersonaToDelete(null); // Limpia el ID almacenado
+      setShowConfirm(false); 
+      setPersonaToDelete(null); 
     } catch (error) {
       toast.error('Error al desactivar el usuario');
       console.error('Error al eliminar la persona:', error);
@@ -227,8 +206,14 @@ const ListaJugadoresAll = () => {
       <EditarJugador
         isOpen={showEditModal}
         onClose={handleCloseEditModal}
-        jugadorId={selectedPersonaId}  // Pasamos el id como prop
+        jugadorId={selectedPersonaId}  
         onJugadorUpdated={fetchJugadores} 
+      />
+
+      <PerfilJugadorModal
+        isOpen={showPerfilModal}
+        onClose={handleClosePerfilModal}
+        jugadorId={selectedPersonaId}  
       />
       <table className="table-layout">
         <thead className="table-head">
@@ -262,11 +247,10 @@ const ListaJugadoresAll = () => {
 
               <td className="table-td-p">
 
-                {/* Botones de acción siempre visibles */}
                 <button
                   className={`table-button button-view ${jugador.eliminado === 'S' ? 'disabled-button' : ''}`}
-                  onClick={() => handleProfileClick(jugador.id)}
-                  disabled={jugador.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
+                  onClick={() => handleProfileClick(jugador.persona_id)}
+                  disabled={jugador.eliminado === 'S'} 
                 >
                   <RemoveRedEyeIcon />
                 </button>
@@ -274,7 +258,7 @@ const ListaJugadoresAll = () => {
                 <button
                   className={`table-button button-edit ${jugador.eliminado === 'S' ? 'disabled-button' : ''}`}
                   onClick={() => handleEditClick(jugador.persona_id)}
-                  disabled={jugador.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
+                  disabled={jugador.eliminado === 'S'} 
                 >
                   <EditIcon />
                 </button>
@@ -285,7 +269,7 @@ const ListaJugadoresAll = () => {
                     onChange={() =>
                       jugador.eliminado === 'S' ? handleActivateUser(jugador.persona_id) : handleDeleteClick(jugador.persona_id)
                     }
-                    checked={jugador.eliminado !== 'S'} // Marcado si no está eliminado
+                    checked={jugador.eliminado !== 'S'} 
                   />
                   <span className="user-activation-slider"></span>
                 </label>
@@ -295,13 +279,6 @@ const ListaJugadoresAll = () => {
           ))}
         </tbody>
       </table>
-
-      <ConfirmModal
-        visible={showConfirmTraspaso}
-        onConfirm={handleConfirmFichar}
-        onCancel={handleCancelFichar}
-        message="¿Seguro que quieres fichar a este jugador?"
-      />
 
       <ConfirmModal
         visible={showConfirm}

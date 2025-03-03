@@ -5,6 +5,7 @@ import '../assets/css/Inicio_de_sesion.css';
 import logo from '../assets/img/logo.png';
 import { useSession } from '../context/SessionContext';
 import { toast } from 'react-toastify';
+import HomeIcon from '@mui/icons-material/Home';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -27,7 +28,6 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     e.preventDefault();
     try {
       const response = await axios.post(`${API_BASE_URL}/sesion/login`, formData, { withCredentials: true });
-      console.log('Respuesta del backend:', response.data);
   
       const { requireRoleSelection, roles, token, user } = response.data;
   
@@ -36,7 +36,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       } else {
         login({ user, token }); 
         onLoginSuccess(user);
-        navigate('/sidebar');
+        navigate('/ventanaPrincipalUser');
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
@@ -60,7 +60,7 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       const { token, user } = response.data; 
       login({ user, token }); 
       onLoginSuccess(user);
-      navigate('/sidebar');
+      navigate('/ventanaPrincipalUser');
     } catch (error) {
       console.error('Error al procesar el rol seleccionado:', error);
       toast.warn('Ocurrió un error al procesar su rol');
@@ -71,8 +71,16 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
     navigate('/reset-password');
   };
 
+  const handleGoHome = () => {
+    navigate('/'); 
+  };
+
   return (
     <div className="login-container">
+
+    <button className="home-button" onClick={handleGoHome}>
+      <HomeIcon className="home-icon" />
+    </button>
       <div className="login-box">
         <img src={logo} alt="Login" className="login-image" />
         <h1>INICIO DE SESIÓN</h1>

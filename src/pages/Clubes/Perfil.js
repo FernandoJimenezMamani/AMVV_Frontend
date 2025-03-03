@@ -41,6 +41,7 @@ const PerfilClub = () => {
         const teamsInfo = response.data.map(item => ({
           equipo_id: item.equipo_id,
           equipo_nombre: item.equipo_nombre,
+          categoria_genero : item.categoria_genero,
           categoria_nombre: item.categoria_nombre,
         }));
 
@@ -128,6 +129,11 @@ const PerfilClub = () => {
             >
               <h3>{team.equipo_nombre}</h3>
               <p>Categoría: {team.categoria_nombre}</p>
+              <p>
+            Género: {team.categoria_genero === 'V' ? 'Varones' :
+           team.categoria_genero === 'D' ? 'Damas' :
+           team.categoria_genero === 'M' ? 'Mixto' : 'Desconocido'}
+            </p>
             </div>
           ))
         ) : (

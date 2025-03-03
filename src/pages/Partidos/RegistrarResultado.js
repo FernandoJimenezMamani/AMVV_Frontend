@@ -40,7 +40,7 @@ const SubmitResultados = () => {
           const equipoIdSeleccionado = equipoSeleccionado || equipos[0].equipo_id;
           setEquipoSeleccionado(equipoIdSeleccionado);
 
-          const jugadoresResponse = await fetch(`${API_BASE_URL}/partidos/get_jugadores/${equipoIdSeleccionado}`);
+          const jugadoresResponse = await fetch(`${API_BASE_URL}/partidos/get_jugadores/${equipoIdSeleccionado}/campeonato/${campeonatoId}`);
           const jugadoresData = await jugadoresResponse.json();
           setJugadores(jugadoresData);
         }

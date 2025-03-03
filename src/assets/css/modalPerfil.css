@@ -1,0 +1,119 @@
+/* ===== MODAL PERFIL JUGADOR ===== */
+.modal-perfil {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+  
+  .modal-perfil-title {
+    font-size: 28px;          /* Tamaño del texto */
+    color: #3D8FA4;           /* Color azul suave */
+    text-align: center;       /* Centrado horizontal */
+    margin-bottom: 10px;      /* Espaciado inferior */
+    font-weight: bold;        /* Texto en negrita */
+    text-transform: uppercase; /* Convertir a mayúsculas */
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;           /* Limita el ancho máximo */
+    word-wrap: break-word;    /* Ajusta el texto si es muy largo */
+    white-space: normal;      /* Permite ajustar a múltiples líneas */
+    overflow-wrap: break-word; 
+    margin-top: 10px !important;
+  }
+  
+  .modal-perfil-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .modal-perfil-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .modal-perfil-info p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  .modal-perfil-clubes {
+    margin-top: 20px;
+  }
+
+  .modal-perfil-clubes h3{
+    margin-top: 20px;
+    font-size: 18px;          
+    color: #2e5c68;        
+    text-align: left;     
+    margin-bottom: 10px;   
+    font-weight: bold;     
+    text-transform: uppercase; 
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 90%;         
+    word-wrap: break-word;    
+    white-space: normal;     
+    overflow-wrap: break-word; 
+    margin-top: 10px !important;
+  }
+  
+  .modal-perfil-clubes-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .modal-perfil-clubes-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s ease-in-out;
+  }
+
+  .modal-perfil-clubes-item:hover {
+    background: #e0f7fa;
+  }
+  
+  .modal-perfil-clubes-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3D8FA4;
+  }
+  
+  .modal-perfil-clubes-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-perfil-clubes-nombre {
+    font-size: 16px;
+    font-weight: bold;
+    color: #3D8FA4;
+  }
+
+  .modal-perfil-clubes-equipos {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .modal-perfil-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  

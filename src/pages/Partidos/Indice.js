@@ -17,6 +17,7 @@ const PartidosList = () => {
   const { campeonatoId, categoriaId } = useParams();
   const [partidos, setPartidos] = useState([]);
   const [agrupacion, setAgrupacion] = useState('todos'); 
+  const [resultados, setResultados] = useState({});
   const navigate = useNavigate();
   const { user } = useSession();
   const [estadoFiltro, setEstadoFiltro] = useState('todos'); 
@@ -34,6 +35,28 @@ const PartidosList = () => {
 
     fetchPartidos();
   }, [categoriaId]);
+
+  useEffect(() => {
+    const fetchResultados = async () => {
+      const partidosFinalizados = partidos.filter(partido => partido.estado === estadosPartidoCampMapping.Finalizado);
+      const resultadosTemp = {};
+
+      for (const partido of partidosFinalizados) {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/partidos/ganador/${partido.id}`);
+          resultadosTemp[partido.id] = response.data; // Guardamos el resultado con la clave del partido ID
+        } catch (error) {
+          console.error(`Error al obtener resultado para partido ${partido.id}:`, error);
+        }
+      }
+
+      setResultados(resultadosTemp); // Almacenamos los resultados en el estado
+    };
+
+    if (partidos.length > 0) {
+      fetchResultados();
+    }
+  }, [partidos]);
 
   const handleRegistrarPartido = () => {
     navigate(`/partidos/registrar/${campeonatoId}/${categoriaId}`);
@@ -178,12 +201,13 @@ const PartidosList = () => {
     <div className="all-matches-grid"> 
       {filtrarPartidosPorEstado(partidos).map((partido) => {
         const estadoPartido = getEstadoPartidoIcono(partido.fecha, partido.estado);
+        const resultado = resultados[partido.id];
         return (
           <div
             key={partido.id}
             className="all-matches-card"
             onClick={() => handlePartidoClick(partido.id)}
-            style={{ cursor: 'pointer', position: 'relative' }} // Asegurar que el icono se posicione correctamente
+            style={{ cursor: 'pointer', position: 'relative' }} 
           >
            {estadoPartido && (
               <div 
@@ -205,11 +229,31 @@ const PartidosList = () => {
                 <p className="all-matches-team-name">{partido.equipo_visitante_nombre}</p>
               </div>
             </div>
-            <div className="all-matches-info">
-              <p className="all-matches-date">{formatDate(partido.fecha)}</p>
-              <p className="all-matches-time">Hora: {formatTime(partido.fecha)}</p>
-              <p className="all-matches-time">Lugar: {partido.lugar_nombre}</p>
-            </div>
+
+            {partido.estado === estadosPartidoCampMapping.Finalizado && resultado && (
+                  <div className="all-matches-result">
+                    {resultado.walkover ? (
+                      <p className="all-matches-walkover">
+                        Walkover {resultado.walkover === "L" ? partido.equipo_local_nombre :
+                        resultado.walkover === "V" ? partido.equipo_visitante_nombre :
+                        "ambos equipos"}
+                      </p>
+                    ) : (
+                      <p className="all-matches-score">
+                        Ganador {resultado.ganador}  {resultado.marcador}
+                      </p>
+                    )}
+                  </div>
+                )}
+              <div className="all-matches-info">
+                  <p className="all-matches-date">{formatDate(partido.fecha)}</p>
+                  {partido.estado === estadosPartidoCampMapping.Confirmado && (
+                    <>
+                      <p className="all-matches-time">Hora: {formatTime(partido.fecha)}</p>
+                      <p className="all-matches-time">Lugar: {partido.lugar_nombre}</p>
+                    </>
+                  )}
+                </div>   
           </div>
         );
       })}
@@ -221,6 +265,7 @@ const PartidosList = () => {
         <div className="all-matches-grid">
           {partidos.map((partido) => {
             const estadoPartido = getEstadoPartidoIcono(partido.fecha, partido.estado);
+            const resultado = resultados[partido.id];
             return (
               <div
                 key={partido.id}
@@ -248,11 +293,31 @@ const PartidosList = () => {
                     <p className="all-matches-team-name">{partido.equipo_visitante_nombre}</p>
                   </div>
                 </div>
-                <div className="all-matches-info">
+                {partido.estado === estadosPartidoCampMapping.Finalizado && resultado && (
+                  <div className="all-matches-result">
+                    {resultado.walkover ? (
+                      <p className="all-matches-walkover">
+                        Walkover {resultado.walkover === "L" ? partido.equipo_local_nombre :
+                        resultado.walkover === "V" ? partido.equipo_visitante_nombre :
+                        "ambos equipos"}
+                      </p>
+                    ) : (
+                      <p className="all-matches-score">
+                        {resultado.ganador} ganó {resultado.marcador}
+                      </p>
+                    )}
+                  </div>
+                )}
+                
+                  <div className="all-matches-info">
                   <p className="all-matches-date">{formatDate(partido.fecha)}</p>
-                  <p className="all-matches-time">Hora: {formatTime(partido.fecha)}</p>
-                  <p className="all-matches-time">Lugar: {partido.lugar_nombre}</p>
-                </div>
+                  {partido.estado === estadosPartidoCampMapping.Confirmado && (
+                    <>
+                      <p className="all-matches-time">Hora: {formatTime(partido.fecha)}</p>
+                      <p className="all-matches-time">Lugar: {partido.lugar_nombre}</p>
+                    </>
+                  )}
+                </div>           
               </div>
             );
           })}

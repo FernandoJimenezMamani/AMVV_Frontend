@@ -270,6 +270,21 @@
   }
 
 
+  .reprogramar-button{
+    background-color: #9DAC42;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .reprogramar-button:hover {
+    background-color: #e0a800;
+  }
+
   .arbitro-item {
     display: flex;
     align-items: center;
@@ -282,6 +297,191 @@
     border-radius: 50%;
     object-fit: cover;
   }
+
+  .partido-detalle-bloque {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* 🔹 Asegura que equipos y jugadores estén juntos */
+    align-items: center;
+    gap: 15px;
+  }
+
+  .partido-equipos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .equipo-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .equipo-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .equipo-nombre {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+  }
+  
+  .resultado-container {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  
+  .vs-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #3D8FA4;
+    margin: 0 15px;
+  }
+
+  .jugadores-title-global {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    color: #333;
+    width: 100%;
+  }
+  
+
+  .jugadores-container {
+    display: flex;
+    justify-content: space-between; /* 🔹 Separa listas de jugadores */
+    gap: 20px;
+    width: 100%;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .jugadores-seccion {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+    width: 60%;
+  }
+
+  .jugadores-list {
+    width: 45%; /* 🔹 Cada lista ocupa 45% para dejar espacio */
+  }
+  
+  .equipo-local {
+    text-align: left;
+  }
+  
+  .equipo-visitante {
+    text-align: right;
+  }
+  
+  .titulo-estado {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+
+
+  .resultado-partido-bloque {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+    width: 60%;
+  }
+  
+  .resultado-ganador {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3D8FA4;
+    margin-bottom: 5px;
+  }
+  
+  .resultado-marcador {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .tabla-resultados {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .columna-local {
+    text-align: left; /* Alineación a la izquierda */
+    flex: 1;
+    padding-left: 10px;
+  }
+  
+  .columna-visitante {
+    text-align: right; /* Alineación a la derecha */
+    flex: 1;
+    padding-right: 10px;
+  }
+  
+  .columna-local h4, .columna-visitante h4 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .columna-local p, .columna-visitante p {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .tarjetas-contenedor {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+  }
+  
+  .tarjeta {
+    display: inline-block;
+    width: 14px;  /* Más ancho */
+    height: 22px; /* Más alto */
+    border-radius: 3px;
+    transform: rotate(-10deg); /* Ligera inclinación */
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    margin-left: 7px;
+    margin-right: 8px;
+  }
+  
+  .tarjeta-amarilla {
+    background-color: #FFD700; /* Amarillo */
+  }
+  
+  .tarjeta-roja {
+    background-color: #FF0000; /* Rojo */
+  }
+  
   
   /* Ajustes Responsivos */
   @media (max-width: 768px) {

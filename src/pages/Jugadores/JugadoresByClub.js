@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import RegistroJugadorClub from './RegistrarJugadorByCLub';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import PerfilJugadorModal from './Perfil';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -16,8 +17,9 @@ const ListaJugadoresClub = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [jugadorToDelete, setJugadorToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
-
+  const [showPerfilModal, setShowPerfilModal] = useState(false);  
   const { id } = useParams(); 
+  const [selectedPersonaId, setSelectedPersonaId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -63,8 +65,15 @@ const ListaJugadoresClub = () => {
   };
 
   const handleProfileClick = (jugadorId) => {
-    navigate(`/personas/perfil/${jugadorId}`);
+    setSelectedPersonaId(jugadorId);  
+    setShowPerfilModal(true);
   };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPersonaId(null);  
+  };
+
 
   const handleAssignJugador = () => {
     setShowFormModal(true);
@@ -95,6 +104,12 @@ const ListaJugadoresClub = () => {
       onJugadorCreated = {fetchJugadores}
       club_jugador_id={id}
        />
+
+      <PerfilJugadorModal
+        isOpen={showPerfilModal}
+        onClose={handleClosePerfilModal}
+        jugadorId={selectedPersonaId}  
+      />
       <table className="table-layout">
         <thead className="table-head">
           <tr>

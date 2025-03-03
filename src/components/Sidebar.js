@@ -12,6 +12,8 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import defaultUserMenIcon from '../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../assets/img/Default_Imagen_Women.webp';
 
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Sidebar = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [expandedSection, setExpandedSection] = useState(null);
@@ -22,6 +24,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const sidebarRef = useRef(null);
+  const [datosPersona , setDatosPersona] = useState(null);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed);
@@ -49,6 +52,22 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (user?.id) {
+          const response = await fetch(`${API_BASE_URL}/persona/get_personaById/${user.id}`);
+          const data = await response.json();
+          setDatosPersona(data);
+        }
+      } catch (error) {
+        console.error('Error al obtener datos del usuario:', error);
+      }
+    };
+  
+    fetchUserData();
+  }, [user?.id]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         sidebarRef.current &&
@@ -69,11 +88,11 @@ const Sidebar = () => {
     return user && user.roles && roles.some(role => user.roles.includes(role));
   };
 
-  const getImagenPerfil = (user) => {
-    if (user?.imagen) {
-      return user.imagen; 
+  const getImagenPerfil = () => {
+    if (datosPersona?.persona_imagen) {
+      return datosPersona.persona_imagen;
     }
-    return user?.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+    return datosPersona?.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon;
   };
   
 
@@ -139,13 +158,9 @@ const Sidebar = () => {
           {!isSidebarCollapsed && (
             <div className="menu-container">
                 <div className="menu-item">
-                  <a className="main-link" onClick={() => toggleSection('Inicio')}>
+                  <a className="main-link" onClick={() => navigate('/ventanaPrincipalUser')}>
                     <HomeIcon/>    Inicio
                   </a>
-                  <div className={`submenu ${expandedSection === 'campeonatos' ? 'open' : ''}`}>
-                    <Link to="/Campeonatos/Indice">Indice</Link>
-                    <Link to="/Campeonatos/Registrar">Registrar</Link>
-                  </div>
                 </div>
               <div className="menu-item">
                 <a className={`main-link ${expandedSection === 'asociacion' ? 'active' : ''}`} onClick={() => toggleSection('asociacion')} ref={sidebarRef}>

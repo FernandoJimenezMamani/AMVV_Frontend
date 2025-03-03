@@ -1,0 +1,41 @@
+.comparacion-equipos-container {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .comparacion-equipos-titulo {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .comparacion-selects {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .comparacion-dropdown {
+    width: 250px;
+  }
+  
+  .comparacion-detalle {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  @media (max-width: 768px) {
+    .comparacion-selects {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .comparacion-dropdown {
+      width: 90%;
+    }
+  }
+  

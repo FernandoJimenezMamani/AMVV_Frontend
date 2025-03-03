@@ -57,6 +57,8 @@ import DetalleTraspasoPresidenteSolicitante from './pages/Traspasos/DetalleSolic
 import ListaTraspasosPagos from './pages/Pagos/TraspasoPagos';
 import ResumenCampeonato from './pages/Reportes/ResumenCampeonato';
 import GenerarFixture from './pages/Partidos/GenerarFixture';
+import Reportes from './pages/Reportes/Reportes';
+import VentanaPrincipalUser from './pages/VentanaPrincipalUser';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -150,6 +152,9 @@ const App = () => {
               <Route path="/traspasos/detalleSolicitante/:solicitudId" element={<DetalleTraspasoPresidenteSolicitante />} />
               <Route path="/traspasos/indiceSolicitudesPresidente" element={<IndiceSolicitudesPresidente />} />
               <Route path="/reportes/resumenCampeonato/:campeonatoId" element={<ResumenCampeonato />} />
+
+              <Route path="/reportes/IndiceGeneral" element={<Reportes />} />
+              <Route path="/ventanaPrincipalUser" element={<VentanaPrincipalUser />} />
             </Route>
           </Route>
         </Routes>

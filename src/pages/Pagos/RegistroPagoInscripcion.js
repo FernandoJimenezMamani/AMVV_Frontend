@@ -10,7 +10,7 @@ import estadoPagos from '../../constants/estadoPago';
 Modal.setAppElement('#root'); 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId }) => {
+const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId ,onEquipoRegistered}) => {
   const [formData, setFormData] = useState({
     equipo_id: '',
     equipo_nombre: '',
@@ -27,6 +27,7 @@ const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId }) => {
     tipo_pago: tipoPagos.Inscripcion,
     referencia: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchEquipoDebt = async () => {
@@ -74,9 +75,10 @@ const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/pagos/insert`, {
+      const response = await axios.post(`${API_BASE_URL}/pagos/insertPagoInscripcion`, {
         monto: formData.monto,
         fecha: formData.fecha_registro,
         referencia: formData.referencia,
@@ -88,11 +90,13 @@ const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId }) => {
       });
 
       toast.success('Pago registrado con éxito');
-      console.log('Pago creado:', response.data);
       onClose();
+      onEquipoRegistered();
     } catch (error) {
       toast.error('Error al registrar el pago');
       console.error('Error en el pago:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -150,11 +154,11 @@ const RegistroPagoInscripcion = ({ isOpen, onClose, equipoId }) => {
 
     {/* Botones */}
     <div className="form-buttons">
-      <button type="button" className="button button-cancel" onClick={onClose}>
+      <button type="button" className="button button-cancel" onClick={onClose} disabled={isLoading} >
         Cancelar
       </button>
-      <button type="submit" className="button button-primary">
-        Registrar Pago
+      <button type="submit" className="button button-primary" disabled={isLoading}>
+        {isLoading ? <span className="spinner"></span> : "Registrar Pago"}
       </button>
     </div>
   </form>

@@ -8,7 +8,7 @@ const Layout = () => {
     <div className="layout-container">
       <nav>
         <ul>
-        <Link to="/" className="logo-link"> {/* Añadimos el Link aquí */}
+        <Link to="/" className="logo-link"> 
             <div className="logo-container">
               <img src={logo} alt="Logo" />
               <li>A.M.V.V</li>

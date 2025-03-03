@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import '../assets/css/Inicio_de_sesion.css';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; 
+
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ResetPassword = () => {
   const [correo, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5002/api/sesion/reset-password', { correo });
+      const response = await axios.post(`${API_BASE_URL}/sesion/reset-password`, { correo });
       console.log('Respuesta del backend:', response.data);
       toast.success('Si el correo está registrado, recibirá instrucciones para restablecer la contraseña.');
       setIsSubmitted(true);
@@ -20,10 +25,18 @@ const ResetPassword = () => {
     }
   };
 
+  const handleGoHome = () => {
+    navigate('/login'); 
+  };
+
   return (
     <div className="login-container">
+      <button className="back-button" onClick={handleGoHome}>
+        <ArrowBackIcon className="back-icon" />
+      </button>
+
       <div className="login-box">
-        <h1>Restablecer Contraseña</h1>
+        <h1 className="login-box-reset">Restablecer Contraseña</h1>
         {isSubmitted ? (
           <p>Por favor, revise su correo electrónico para continuar con el proceso de restablecimiento.</p>
         ) : (

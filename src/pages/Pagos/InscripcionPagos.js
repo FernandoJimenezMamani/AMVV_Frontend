@@ -37,6 +37,15 @@ const ListaEquiposPagos = () => {
   const handleCloseModal = () => {
     setShowFormModal(false);
   };
+  
+  const setValueGenero = (genero) => {
+    if(genero === 'V'){
+      return 'Varones'
+    }else{
+      return 'Damas'
+    }
+  }
+
 
   return (
     <div className="table-container">
@@ -44,7 +53,7 @@ const ListaEquiposPagos = () => {
       <RegistroPagoInscripcion
         isOpen={showFormModal}
         onClose={handleCloseModal}
-        onClubCreated={fetchClubes} 
+        onEquipoRegistered={fetchClubes} 
         equipoId={selectedEquipoId}
       />
       <table className="table-layout">
@@ -69,7 +78,7 @@ const ListaEquiposPagos = () => {
               <td className="table-td table-td-name">{equipo.equipo_nombre}</td>
               <td className="table-td table-td-name">{equipo.nombre_club}</td>
               <td className="table-td table-td-name">{equipo.Categoria}</td>
-              <td className="table-td table-td-name">{equipo.genero}</td>
+              <td className="table-td table-td-name">{setValueGenero(equipo.genero)}</td>
               <td className="table-td table-td-description">{equipo.costo_inscripcion} Bs</td>
               <td className="table-td">
                 <button className="table-button button-view"  onClick={() => handleRegistrarClick(equipo.equipo_id)}><RemoveRedEyeIcon/></button>

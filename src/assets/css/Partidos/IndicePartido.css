@@ -170,7 +170,10 @@
 }
 
 .all-matches-date,
-.all-matches-time {
+.all-matches-time,
+.all-matches-result,
+.all-matches-walkover,
+.all-matches-score {
   font-size: 14px;
   color: #555;
 }

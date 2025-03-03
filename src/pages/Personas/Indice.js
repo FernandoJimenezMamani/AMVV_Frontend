@@ -250,15 +250,6 @@ const ListaPersonas = () => {
               </td>
               <td className="table-td-p">
 
-                {/* Botones de acción siempre visibles */}
-                <button
-                  className={`table-button button-view ${p.eliminado === 'S' ? 'disabled-button' : ''}`}
-                  onClick={() => handleProfileClick(p.id)}
-                  disabled={p.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
-                >
-                  <RemoveRedEyeIcon />
-                </button>
-
                 <button
                   className={`table-button button-edit ${p.eliminado === 'S' ? 'disabled-button' : ''}`}
                   onClick={() => handleEditClick(p.id)}

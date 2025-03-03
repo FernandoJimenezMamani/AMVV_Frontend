@@ -44,7 +44,7 @@ const ListaTraspasosPagos = () => {
       <RegistroPagoTraspaso
         isOpen={showFormModal}
         onClose={handleCloseModal}
-        onClubCreated={fetchClubes} 
+        onTraspasoCreated={fetchClubes} 
         traspasoId={selectedTraspasoId}
       />
       <table className="table-layout">

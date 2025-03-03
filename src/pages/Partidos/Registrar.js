@@ -29,7 +29,7 @@ const PartidoForm = () => {
   useEffect(() => {
     const fetchEquipos = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/equipo/get_equipoCategoria/${categoriaId}`);
+        const response = await axios.get(`${API_BASE_URL}/equipo/get_equipoCategoria/${categoriaId}/${campeonatoId}`);
         console.log("Equipos fetched:", response.data);
         setEquipos(response.data || []);
       } catch (err) {
