@@ -6,6 +6,12 @@ import '../assets/css/Ventanaprincipal.css';
 import logo from '../assets/img/imageV.jpeg';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
+import estadosPartidoCampMapping from '../constants/estadoPartido';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CategoryIcon from '@mui/icons-material/Category';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const { Option } = Select;
@@ -15,16 +21,20 @@ const CustomCarousel = () => {
   const [selectedCategoria, setSelectedCategoria] = useState(null);
   const [partidos, setPartidos] = useState([]);
   const [nextPartidos, setNextPartidos] = useState([]);
+  const [selectedEstado, setSelectedEstado] = useState(estadosPartidoCampMapping.Confirmado);
+  const [visiblePartidos, setVisiblePartidos] = useState(12);
+  const [campeonatos, setCampeonatos] = useState([]);
+  const [selectedCampeonato, setSelectedCampeonato] = useState(null);
+  const [resultados, setResultados] = useState({});
+  const navigate = useNavigate();
 
-  // Obtener categorías al montar el componente
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
-        console.log('Categorías obtenidas:', response.data);
         setCategorias(response.data);
         if (response.data.length > 0) {
-          setSelectedCategoria(response.data[0].id); // Seleccionar la primera por defecto
+          setSelectedCategoria(response.data[0].id); 
         }
       } catch (error) {
         toast.error('Error al obtener categorías');
@@ -36,59 +46,196 @@ const CustomCarousel = () => {
   }, []);
 
   useEffect(() => {
-    if (!selectedCategoria) return;
+    const fetchCampeonatos = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
+        setCampeonatos(response.data);
+  
+        const campeonatoActivo = response.data.find(camp => camp.estado !== 3);
+        
+        if (campeonatoActivo) {
+          setSelectedCampeonato(campeonatoActivo.id);
+        } else if (response.data.length > 0) {
+          setSelectedCampeonato(response.data[0].id); 
+        }
+      } catch (error) {
+        toast.error("Error al obtener los campeonatos");
+        console.error("Error fetching campeonatos:", error);
+      }
+    };
+  
+    fetchCampeonatos();
+  }, []);
+  
+  useEffect(() => {
+    const fetchResultados = async () => {
+      const partidosFinalizados = [...partidos, ...nextPartidos].filter(
+        partido => partido.estado === estadosPartidoCampMapping.Finalizado
+      );
+      const resultadosTemp = {};
+  
+      for (const partido of partidosFinalizados) {
+        try {
+          const response = await axios.get(`${API_BASE_URL}/partidos/ganador/${partido.id}`);
+          resultadosTemp[partido.id] = response.data;
+        } catch (error) {
+          console.error(`Error al obtener resultado para partido ${partido.id}:`, error);
+        }
+      }
+  
+      setResultados(resultadosTemp);
+    };
+  
+    if (partidos.length > 0 || nextPartidos.length > 0) {
+      fetchResultados();
+    }
+  }, [partidos, nextPartidos]); 
+  
 
+  useEffect(() => {
+    if (!selectedCategoria || !selectedEstado || !selectedCampeonato) return;
+  
     const fetchMatches = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/partidos/get_upcoming_matches/${selectedCategoria}`);
+        let endpoint = `${API_BASE_URL}/partidos/get_upcoming_matches/${selectedCategoria}/${selectedCampeonato}`;
+        if (selectedEstado === estadosPartidoCampMapping.Finalizado) {
+          endpoint = `${API_BASE_URL}/partidos/get_past_matches/${selectedCategoria}/${selectedCampeonato}`;
+        }
+  
+        const response = await axios.get(endpoint);
         setPartidos(response.data);
       } catch (error) {
         toast.error('Error al obtener partidos');
         console.error('Error fetching match data:', error);
       }
     };
-
+  
     const fetchAllMatches = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/partidos/get_all_matches/${selectedCategoria}`);
+        let endpoint = `${API_BASE_URL}/partidos/get_all_matchesUpcoming/${selectedCategoria}/${selectedCampeonato}`;
+        if (selectedEstado === estadosPartidoCampMapping.Finalizado) {
+          endpoint = `${API_BASE_URL}/partidos/get_all_matchesPast/${selectedCategoria}/${selectedCampeonato}`;
+        }
+  
+        const response = await axios.get(endpoint);
         setNextPartidos(response.data);
       } catch (error) {
         toast.error('Error al obtener todos los partidos');
         console.error('Error fetching match data:', error);
       }
     };
-
+  
     fetchMatches();
     fetchAllMatches();
-  }, [selectedCategoria]);
+  }, [selectedCategoria, selectedEstado, selectedCampeonato]); 
+
+  const handleLoadMore = () => {
+    setVisiblePartidos(prev => prev + 12); 
+  };
+
+  const setGenderName = (gender) =>{
+    if(gender === 'V'){
+      return 'Varones'
+    }else{
+      return 'Damas'
+    }
+  }
+
+  const formatDate = (fecha) => {
+    const partidoDate = new Date(fecha);
+    
+    return partidoDate.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  };
+  
+  const formatTime = (fecha) => {
+    const partidoDate = new Date(fecha); 
+  
+    return partidoDate.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false, 
+      timeZone: 'UTC', 
+    });
+  };
+
+  const handlePartidoClick = (partidoId) => {
+    navigate(`/partidos/partidoDetalle/${partidoId}`, {
+      state: { 
+        campeonatoId: selectedCampeonato,  
+        categoriaId: selectedCategoria,   
+      }
+    });
+  };
+
+  const handleVerTabla = () => {
+    navigate(`/tablaposiciones/${selectedCategoria}/${selectedCampeonato}`);
+  };
 
   return (
     <div>
      <div>
-      {/* Select para categorías */}
-      <div className="category-select-container">
-        <label>Seleccione una categoría:</label>
-        <Select
-          value={selectedCategoria}
-          onChange={(value) => setSelectedCategoria(value)}
-          style={{ width: '250px', marginBottom: '15px' }}
-        >
-          {categorias.map((categoria) => (
-            <Option key={categoria.id} value={categoria.id}>
-              {`${categoria.nombre} - ${categoria.genero}`}
-            </Option>
-          ))}
-        </Select>
-      </div>
+     <div className="filters-container">
+        <p className="filters-title">Filtros</p>
+        
+        <div className="filters-selects">
+          {/* Select de Campeonato */}
+          <Select
+            className="public-select"
+            value={selectedCampeonato}
+            onChange={(value) => setSelectedCampeonato(value)}
+            style={{ width: '250px' }}
+          >
+            {campeonatos.map((camp) => (
+              <Option key={camp.id} value={camp.id}>
+              <EmojiEventsIcon/> {camp.nombre}
+              </Option>
+            ))}
+          </Select>
 
-      {/* Carrusel de partidos */}
+          {/* Select de Categoría */}
+          <Select
+            className="public-select"
+            value={selectedCategoria}
+            onChange={(value) => setSelectedCategoria(value)}
+            style={{ width: '250px' }}
+          >
+            {categorias.map((categoria) => (
+              <Option key={categoria.id} value={categoria.id}>
+                <CategoryIcon/>{categoria.nombre} - {setGenderName(categoria.genero)}
+              </Option>
+            ))}
+          </Select>
+
+          {/* Select de Estado (Próximos/Finalizados) */}
+          <Select
+            className="public-select"
+            value={selectedEstado}
+            onChange={(value) => setSelectedEstado(value)}
+            style={{ width: '250px' }}
+          >
+            <Option value="C"><CalendarMonthIcon/> Partidos Próximos</Option>
+            <Option value="J"><CheckBoxIcon/> Partidos Finalizados</Option>
+          </Select>
+        </div>
+        <button className="user-ver-tabla-button" onClick={handleVerTabla}>
+          Ver tabla de Posiciones
+        </button>
+      </div>
       <div className="carousel-container">
+        {partidos.length > 0 ? (
         <Carousel showArrows showThumbs={false} infiniteLoop autoPlay interval={5000} showStatus={false}>
-          {partidos.map((match, index) => (
-            <div key={index} className="match-slide">
+        {partidos.map((match, index) => {
+          const resultado = resultados[match.id];
+      
+          return (
+            <div key={index} className="match-slide" onClick={() => handlePartidoClick(match.id)} style={{ cursor: 'pointer' }}>
               <div className="overlay-container">
                 <div className="overlay-text">
-                  <h1>Próximamente</h1>
+                  <h1>{selectedEstado === estadosPartidoCampMapping.Confirmado ? 'Próximamente' : 'Finalizado'}</h1>
                 </div>
               </div>
               <div className="match-content">
@@ -112,44 +259,116 @@ const CustomCarousel = () => {
                   </div>
                 </div>
               </div>
+
               <div className="date-time-container">
-                <p className="match-date">
-                  {new Date(match.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}
-                </p>
-                <p className="match-time">
-                  {new Date(match.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                </p>
+              {match.estado === estadosPartidoCampMapping.Finalizado && resultado && (
+                    <div className="match-result">
+                      {resultado.walkover ? (
+                        <p className="match-walkover">
+                          Walkover {resultado.walkover === "L" ? match.equipo_local_nombre :
+                          resultado.walkover === "V" ? match.equipo_visitante_nombre : "ambos equipos"}
+                        </p>
+                      ) : (
+                        <p className="match-score">
+                          Ganador {resultado.ganador} {resultado.marcador}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                <p className="match-date">{formatDate(match.fecha)}</p>
+                {match.estado === estadosPartidoCampMapping.Confirmado && new Date(match.fecha) < new Date() ? (
+                  <p className="matches-pending">Resultado en espera</p>
+                ) : (
+                  match.estado !== estadosPartidoCampMapping.Finalizado && (
+                    <p className="match-time">{formatTime(match.fecha)}</p>
+                  )
+                )}
               </div>
+      
+              
             </div>
-          ))}
-        </Carousel>
+          );
+        })}
+      </Carousel>
+      
+         ) : (
+          <div className="no-matches-container">
+            <CalendarMonthIcon className="no-matches-icon" />
+            <p className="no-matches-text">
+              {selectedEstado === estadosPartidoCampMapping.Confirmado 
+                ? "No hay más partidos próximos para esta categoría." 
+                : "No hay más partidos finalizados en esta categoría."}
+            </p>
+          </div>
+
+        )}
       </div>
     </div>
 
       {/* Next Matches Section */}
       <div className="next-matches-container">
-        <h2 className="next-matches-titulo">Próximos Partidos</h2>
-        <div className="next-matches-grid">
-          {nextPartidos.slice(0, 12).map((match, index) => (
-            <div key={index} className="next-matches-card">
-              <div className="next-matches-team-info">
-                <div className="next-matches-team">
-                  <img src={match.equipo_local_imagen} alt={match.equipo_local_nombre} className="next-matches-team-logo"/>
-                  <p className="next-matches-team-name">{match.equipo_local_nombre}</p>
+      <h2 className="next-matches-titulo">
+        {nextPartidos.length > 0
+          ? (selectedEstado === estadosPartidoCampMapping.Confirmado ? "Próximos Partidos" : "Partidos Finalizados")
+          : "No hay más partidos en esta categoría"}
+      </h2>
+      <div className="next-matches-grid">
+          {nextPartidos.slice(0, visiblePartidos).map((match, index) => {
+            const resultado = resultados[match.id];
+
+            return (
+              <div key={index} className="next-matches-card" onClick={() =>  handlePartidoClick(match.id)} style={{ cursor: 'pointer' }}>
+                <div className="next-matches-team-info">
+                  <div className="next-matches-team">
+                    <img src={match.equipo_local_imagen} alt={match.equipo_local_nombre} className="next-matches-team-logo"/>
+                    <p className="next-matches-team-name">{match.equipo_local_nombre}</p>
+                  </div>
+                  <div className="next-matches-vs">VS</div>
+                  <div className="next-matches-team">
+                    <img src={match.equipo_visitante_imagen} alt={match.equipo_visitante_nombre} className="next-matches-team-logo"/>
+                    <p className="next-matches-team-name">{match.equipo_visitante_nombre}</p>
+                  </div>
                 </div>
-                <div className="next-matches-vs">VS</div>
-                <div className="next-matches-team">
-                  <img src={match.equipo_visitante_imagen} alt={match.equipo_visitante_nombre} className="next-matches-team-logo"/>
-                  <p className="next-matches-team-name">{match.equipo_visitante_nombre}</p>
+
+                <div className="next-matches-info">
+                    {match.estado === estadosPartidoCampMapping.Finalizado && resultado && (
+                      <div className="next-matches-result">
+                        {resultado.walkover ? (
+                          <p className="next-matches-walkover">
+                            Walkover {resultado.walkover === "L" ? match.equipo_local_nombre :
+                            resultado.walkover === "V" ? match.equipo_visitante_nombre : "ambos equipos"}
+                          </p>
+                        ) : (
+                          <p className="next-matches-score">
+                            Ganador {resultado.ganador} {resultado.marcador}
+                          </p>
+                        )}
+                      </div>
+                      
+                    )}
+                  <p className="next-matches-date">{formatDate(match.fecha)}</p>
+                  {match.estado === estadosPartidoCampMapping.Confirmado && new Date(match.fecha) < new Date() ? (
+                  <p className="next-matches-pending">Resultado en espera</p>
+                ) : (
+                  match.estado !== estadosPartidoCampMapping.Finalizado && (
+                    <p className="next-matches-time">{formatTime(match.fecha)}</p>
+                  )
+                )}
+                  
                 </div>
+
+                
               </div>
-              <div className="next-matches-info">
-                <p className="next-matches-date">{new Date(match.fecha).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' })}</p>
-                <p className="next-matches-time">{new Date(match.fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+        {visiblePartidos < nextPartidos.length && (
+          <div className="load-more-container">
+            <button className="load-more-button" onClick={handleLoadMore}>
+              Cargar más
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

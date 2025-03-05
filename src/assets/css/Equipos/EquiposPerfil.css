@@ -112,7 +112,7 @@
 .equipoPerfil-detalles {
   margin-top: 10px;
   font-size: 16px;
-  color: #666;
+  color: #143E42;
   text-align: left;
 }
 
@@ -240,5 +240,81 @@
   text-align: center;
   font-size: 14px;
 }
+
+/* Contenedor de Participaciones */
+.equipoPerfil-participaciones {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.equipoPerfil-participaciones h3 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #143E42;
+  margin-bottom: 10px;
+}
+
+/* Grid de Participaciones */
+.equipoPerfil-participacionesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* Estilos para cada Card de Participación */
+.equipoPerfil-participacionCard {
+  background: #e8f6f5;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out;
+}
+
+.equipoPerfil-participacionCard h4 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  gap: 8px;
+}
+
+.equipoPerfil-participacionCard p {
+  font-size: 16px;
+  color: #666;
+}
+
+.equipoPerfil-campeonatoEnCurso {
+  width: 10px;
+  height: 10px;
+  background-color: #0f960f;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: parpadeo 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes parpadeo {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* Estilos para medallas de posiciones destacadas */
+.equipoPerfil-medalla {
+  font-size: 20px;
+  display: block;
+  margin-top: 5px;
+}
+
 
 

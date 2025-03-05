@@ -10,6 +10,7 @@ import moment from "moment";
 import "moment/locale/es"; 
 import campeonatoEstado from '../../constants/campeonatoEstados';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import rolMapping from '../../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
@@ -142,15 +143,20 @@ const Campeonatos = () => {
     }
   };
   
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
 
   return (
     <div className="campeonatos-container">
       <h2 className="campeonatos-lista-titulo">Lista de Campeonatos</h2>
 
       <div className="button-container">
+      {hasRole(rolMapping.PresidenteAsociacion) && (
         <button className="table-add-button" onClick={handleRegistrarClick}>
           +1 Campeonato
         </button>
+        )}
       </div>
 
       <RegistroCampeonato
@@ -218,12 +224,16 @@ const Campeonatos = () => {
                 campeonato.estado === campeonatoEstado.enEspera ||
                 campeonato.estado === campeonatoEstado.campeonatoFinalizado) && (
                   <>
+                  {hasRole(rolMapping.PresidenteAsociacion) && (
+                    <>
                     <button className="buttonex button-edit" onClick={() => handleEditClick(campeonato.id)}>
                       <i className="fas fa-edit"></i>
                     </button>
                     <button className="buttonex button-delete">
                       <i className="fas fa-trash-alt"></i>
                     </button>
+                    </>
+                  )}
                     <button 
                       className="buttonex button-fechas" 
                       onClick={() => handleShowFechas(campeonato.id)}>

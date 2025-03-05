@@ -4,6 +4,8 @@ import Dashboard from "./Reportes/DashboardProgresoPartidos";
 import Reportes from "./Reportes/Reportes";
 import TransaccionDashboard from "./Reportes/DashboardMonitoreoEquipos"; // Nuevo componente para estado 1
 import { toast } from "react-toastify";
+import { useSession } from '../context/SessionContext';
+import rolMapping from '../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -11,6 +13,7 @@ const VentanaPrincipalUser = () => {
   const [campeonatoEnCurso, setCampeonatoEnCurso] = useState(null);
   const [campeonatoEnTransaccion, setCampeonatoEnTransaccion] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useSession();
 
   useEffect(() => {
     const fetchCampeonatos = async () => {
@@ -39,14 +42,20 @@ const VentanaPrincipalUser = () => {
     return <p>Cargando...</p>;
   }
 
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  };  
+
   return (
     <div className="inicio-container">
-      {campeonatoEnCurso ? (
-        <Dashboard campeonato={campeonatoEnCurso} />
-      ) : campeonatoEnTransaccion ? (
-        <TransaccionDashboard campeonato={campeonatoEnTransaccion} />
-      ) : (
-        <Reportes />
+      {hasRole(rolMapping.PresidenteAsociacion) && (
+        campeonatoEnCurso ? (
+          <Dashboard campeonato={campeonatoEnCurso} />
+        ) : campeonatoEnTransaccion ? (
+          <TransaccionDashboard campeonato={campeonatoEnTransaccion} />
+        ) : (
+          <Reportes />
+        )
       )}
     </div>
   );

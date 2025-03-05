@@ -9,6 +9,7 @@ import estadosPartidoCampMapping from '../../constants/estadoPartido';
 import ErrorIcon from '@mui/icons-material/Error';
 import PendingIcon from '@mui/icons-material/Pending';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import rolMapping from '../../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const { Option } = Select;
@@ -129,11 +130,6 @@ const PartidosList = () => {
     });
   };
 
-
-  const hasRole = (...roles) => {
-    return user && user.roles && roles.some(role => user.roles.includes(role));
-  };
-
   const filtrarPartidosPorEstado = (partidos) => {
     if (estadoFiltro === estadosPartidoCampMapping.Confirmado) {
       return partidos.filter((partido) => partido.estado === estadosPartidoCampMapping.Confirmado);
@@ -159,14 +155,20 @@ const PartidosList = () => {
     }
     return null;
   };
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
   
   return (
     <div className="all-matches-container">
       <h2 className="all-matches-titulo">Partidos</h2>
       <div className="all-matches-controls">
+      {hasRole(rolMapping.PresidenteAsociacion) && (
         <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
           +1 Partido
         </button>
+      )}
         <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
           Ver tabla
         </button>

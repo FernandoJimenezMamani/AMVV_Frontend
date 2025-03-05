@@ -26,6 +26,11 @@ nav ul li {
   font-weight:bold;  
 }
 
+.navbar-campeonatos {
+  margin-left: 40px; /* Ajusta el espacio a la derecha */
+}
+
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -45,13 +50,86 @@ nav ul li {
 }
 
 .search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Mueve el input a la derecha */
+  max-width: 400px; /* Ajusta el ancho máximo */
+}
+
+.search-input {
+  width: 300px;
+  padding: 8px 30px 8px 8px; 
+  border: 2px solid #ccc;
+  border-left: 4px solid #3D8FA4; /* Línea vertical en el lado izquierdo */
+  border-radius: 5px;
+  outline: none;
+}
+
+.clear-icon {
+  position: absolute;
+  right: 35px; /* Ajusta la posición de la 'X' */
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.clear-icon:hover {
+  color: black;
+}
+.search-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
   display: flex;
   align-items: center;
 }
 
-.search-input {
-  width: 100%; /* Ajusta el ancho del campo de búsqueda */
-  max-width: 200px; /* Establece un ancho máximo */
+.search-button .material-icons {
+  font-size: 20px;
+  color: #3D8FA4; /* Mismo color que la línea izquierda */
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 250px; /* Asegura que la lista sea del mismo ancho que el input */
+  max-height: 200px; /* Evita que la lista sea demasiado larga */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Asegura que la lista esté por encima de otros elementos */
+  flex-direction: column; /* Apila los resultados en columna */
+}
+
+.search-result-item {
+  display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+.search-result-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* Icono al lado de cada resultado */
+.search-result-icon {
+  margin-right: 10px;
+  font-size: 18px;
+  color: #3D8FA4;
 }
 
 .line {
@@ -93,6 +171,7 @@ html, body {
   position: relative;
   bottom: 0;
   width: 100%; /* Asegura que el footer ocupe todo el ancho */
+  margin-top: 200px;
 }
 
 .footer-container {

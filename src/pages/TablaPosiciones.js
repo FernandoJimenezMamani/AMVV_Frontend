@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback  } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/TablaPosiciones.css'; 
 import { toast } from 'react-toastify';
 import estadosMapping from '../constants/campeonatoEstados';
@@ -12,7 +12,8 @@ const ListaEquipos = () => {
   const [equipos, setEquipos] = useState([]);
   const [titulo, setTitulo] = useState('');
   const { categoriaId, campeonatoId } = useParams();
-  const [estadoCampeonato, setEstadoCampeonato] = useState(null); 
+  const [estadoCampeonato, setEstadoCampeonato] = useState(null);
+  const navigate = useNavigate(); 
 
   const fetchTitulo = useCallback(async () => {
     try {
@@ -80,7 +81,10 @@ const ListaEquipos = () => {
       ws.close();
     };
   }, [campeonatoId, categoriaId, fetchEquipos]);
-  
+
+  const handleTeamClick = (equipoId) => {
+    navigate(`/equipos/perfil/${equipoId}`);
+  };
 
   return (
     <div className="clubes-lista">
@@ -112,7 +116,7 @@ const ListaEquipos = () => {
             <tr key={equipo.equipo_id}>
               <td className="table-positions-td">{index + 1}</td> 
               <td className="table-positions-td">
-                <div className="equipo-container"> 
+                <div className="equipo-container" onClick={()=> handleTeamClick(equipo.equipo_id)} style={{ cursor: 'pointer' }}> 
                   <img src={equipo.escudo} alt={`${equipo.nombre} logo`} className="club-logo-table"/>
                   {equipo.equipo_nombre}
                 </div>

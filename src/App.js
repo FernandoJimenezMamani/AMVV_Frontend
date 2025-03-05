@@ -59,6 +59,8 @@ import ResumenCampeonato from './pages/Reportes/ResumenCampeonato';
 import GenerarFixture from './pages/Partidos/GenerarFixture';
 import Reportes from './pages/Reportes/Reportes';
 import VentanaPrincipalUser from './pages/VentanaPrincipalUser';
+import ListaClubesUsuario from './pages/Clubes/ListaClubesUsuario';
+import ListaJugadoresClubUsuario from './pages/Jugadores/ListaJugadoresClubUsuario';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -99,6 +101,11 @@ const App = () => {
           <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
           <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
           <Route path="/tablaposiciones/:categoriaId/:campeonatoId" element={<TablaPosiciones />} />
+          <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
+          <Route path="/equipos/perfil/:id" element={<PerfilEquipo />} />
+          <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
+          <Route path="/clubes/indiceUsuario" element={<ListaClubesUsuario />} />
+          <Route path="/jugadores/indiceJugadoresUsuario/:id" element={<ListaJugadoresClubUsuario />} />
           </Route>
 
           {/* Rutas privadas (Solo accesibles si el usuario está logueado) */}
@@ -118,7 +125,7 @@ const App = () => {
               <Route path="/equipos/indice" element={<ListaEquipo />} />
               <Route path="/equipos/registrar/:clubId" element={<RegistrarEquipo />} />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
-              <Route path="/equipos/perfil/:id" element={<PerfilEquipo />} />
+             
               <Route path="/equipos/registrar_jugador_equipo/:id" element={<RegistrarJugadorEquipo />} />
               <Route path="/complejos/indice" element={<ListaLugar />} />
               <Route path="/complejos/registro" element={<RegistrarLugar />} />
@@ -138,7 +145,7 @@ const App = () => {
               <Route path="/jugadores/indice" element={<ListaJugadorAll/>} />
               <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
               <Route path="/arbitro/indice" element={<ListaArbitro />} />
-              <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
+              
               <Route path="/jugadores/indice-equipo" element={<ListaJugadoresEquipo />} />
               <Route path="/traspasos/indice" element={<ListaTraspaso />} />
               <Route path="/traspasos/indice-club" element={<ListaTraspasoClub />} />

@@ -11,6 +11,7 @@ import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import defaultUserMenIcon from '../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../assets/img/Default_Imagen_Women.webp';
+import rolMapping from '../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -84,10 +85,6 @@ const Sidebar = () => {
     };
   }, []);
 
-  const hasRole = (...roles) => {
-    return user && user.roles && roles.some(role => user.roles.includes(role));
-  };
-
   const getImagenPerfil = () => {
     if (datosPersona?.persona_imagen) {
       return datosPersona.persona_imagen;
@@ -95,7 +92,10 @@ const Sidebar = () => {
     return datosPersona?.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon;
   };
   
-
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
+  
   return (
     <div className="sidebar-layout" >
       {isMobileMenuOpen && (
@@ -169,11 +169,17 @@ const Sidebar = () => {
                 <div className={`submenu ${expandedSection === 'asociacion' ? 'open' : ''}`}>
                   <Link to="/Campeonatos/Indice">Campeonatos</Link>
                   <Link to="/clubes/indice">Clubes</Link>
+                  {hasRole(rolMapping.PresidenteAsociacion) && (
+                    <>
                   <Link to="/categorias/Lista">Categorias</Link>
                   <Link to="/complejos/Indice">Complejos</Link>
+                  </>
+                )}
                 </div>
               </div>
               <div className="menu-item">
+              {hasRole(rolMapping.PresidenteAsociacion) && (
+                 <>
                 <a className={`main-link ${expandedSection === 'usuarios' ? 'active' : ''}`} onClick={() => toggleSection('usuarios')} ref={sidebarRef}>
                     <PersonIcon/> Miembros
                 </a>
@@ -184,22 +190,36 @@ const Sidebar = () => {
                   <Link to="/DelegadoClub/Indice">Delegados</Link>
                   <Link to="/Personas/Indice">Usuarios</Link>
                 </div>
+                </>
+                 )}
               </div>
               <div className="menu-item">
+              {hasRole(rolMapping.PresidenteClub,rolMapping.Jugador) && (
+                 <>
                   <a className={`main-link ${expandedSection === 'traspasos' ? 'active' : ''}`} onClick={() => toggleSection('traspasos')} ref={sidebarRef}>
                       <ChangeCircleIcon/> Traspasos
                   </a>
                   <div className={`submenu ${expandedSection === 'traspasos' ? 'open' : ''}`}>
+                  {hasRole(rolMapping.PresidenteClub) && (
+                    <>
                       <Link to="/traspasos/TraspasoListaJugadores">Fichar Jugadores</Link>
+                      <Link to="/traspasos/indiceSolicitudesPresidente">Ver solicitudes</Link>
+                      </>
+                    )}
+                    {hasRole(rolMapping.Jugador) && (
                       <Link to="/traspasos/indice">Ver solicitudes</Link>
-                      <Link to="/traspasos/indiceSolicitudesPresidente">Ver solicitudesP</Link>
+                    )}
                   </div>
+                  </>
+                 )}
                 </div>
 
                 <div className="menu-item">
+                {hasRole(rolMapping.PresidenteAsociacion , rolMapping.Tesorero) && (
                   <a className="main-link" onClick={() => navigate('/pagos/tipos')}>
                     <MonetizationOnIcon /> Pagos
                   </a>
+                  )}
                 </div>
             </div>
           )}

@@ -332,7 +332,182 @@
     font-family: "Roboto Condensed", sans-serif;
   }
   
-  /* Responsivo */
+  .load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+  }
+  
+  .load-more-button {
+    background-color: #3D8FA4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .load-more-button:hover {
+    background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  }
+
+  .no-matches-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 500px; /* Ajusta según el tamaño del carrusel */
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 60%;
+}
+
+.no-matches-icon {
+    position: absolute;
+    font-size: 180px !important; /* Tamaño grande */
+    color: rgba(150, 150, 150, 0.2); /* Opacidad baja */
+    z-index: 0; /* Enviar al fondo */
+}
+
+.no-matches-text {
+    font-size: 22px;
+    font-weight: bold;
+    color: #444;
+    z-index: 1; /* Asegurar que el texto esté en frente */
+}
+
+
+  /* Contenedor general de los filtros */
+  .filters-container {
+    width: fit-content;
+    margin: 20px auto;
+    padding: 15px 25px;
+    border: 2px solid #3D8FA4; /* Borde verde */
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Título principal de los filtros */
+  .filters-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* Contenedor de los selectores */
+  .filters-selects {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Estilo específico para los selects */
+  .public-select {
+    width: 250px;
+    height: 40px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: 2px solid #3D8FA4 !important;
+    background-color: white;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Estilos para el resultado en el carrusel */
+.match-result {
+  color: white !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos para el resultado en los cards */
+.next-matches-result {
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border-radius: 8px;
+}
+
+/* Estilos diferenciados para Walkover */
+.match-walkover  {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.next-matches-walkover{
+  color: #143E42;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.match-score  {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.next-matches-score{
+  color: #143E42;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.next-matches-pending {
+  color: #143E42; /* Naranja */
+  font-size: 15px;
+  font-weight:bold;
+  text-align: center;
+}
+
+.matches-pending{
+  color: white !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Naranja */
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.user-ver-tabla-button{
+  background-color: #3D8FA4;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
+.user-ver-tabla-button:hover{
+  background-color: #35748C;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
   @media (max-width: 768px) {
     .custom-content {
       flex-direction: column;

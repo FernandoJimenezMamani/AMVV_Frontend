@@ -17,6 +17,8 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ConfirmModal from '../../components/ConfirmModal';
 import ReprogramacionModal from '../../components/ReprogramacionModal';
 import estadosPartidoCampMapping from '../../constants/estadoPartido';
+import rolMapping from '../../constants/roles';
+import { useSession } from '../../context/SessionContext';
 
 ReactModal.setAppElement('#root');
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -36,6 +38,7 @@ const PartidoDetalle = () => {
   const [isReprogramacionModalOpen, setIsReprogramacionModalOpen] = useState(false);
   const [resultadoPartido, setResultadoPartido] = useState(null);
   const [ganadorPartido, setGanadorPartido] = useState(null);
+  const { user } = useSession();
 
   useEffect(() => {
     const fetchPartido = async () => {
@@ -201,19 +204,30 @@ const PartidoDetalle = () => {
       .map(t => t.tipo_tarjeta);
   };
   
+  const handleTeamClick = (equipoId) => {
+    navigate(`/equipos/perfil/${equipoId}`);
+  };
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
   
   return (
     <div className="partido-detalle-container">
     <h1 className="titulo-partido">Detalles del Partido</h1>
     <div className="resultado-button-container">
+    {hasRole(rolMapping.PresidenteAsociacion , rolMapping.Arbitro) && (
       <button className="resultado-button" onClick={() => handlePartidoClick(partidoId)}>
         Registrar Resultado <AssignmentIcon/>
       </button>
-      {partido.estado !== estadosPartidoCampMapping.Finalizado && (
+    )}
+      {hasRole(rolMapping.PresidenteAsociacion) && (
+      partido.estado !== estadosPartidoCampMapping.Finalizado && (
         <button className="reprogramar-button" onClick={() => handleReprogramarClick()}>
           Reprogramar Partido <CalendarMonthIcon/>
         </button>
-      )}
+      )
+    )}
     </div>
 
     <div className="partido-info">
@@ -230,8 +244,8 @@ const PartidoDetalle = () => {
     <h2 className={`titulo-estado ${partido.estado === estadosPartidoCampMapping.Finalizado ? 'finalizado' : 'proximamente'}`}>
         {partido.estado === estadosPartidoCampMapping.Finalizado ? 'Finalizado' : 'Próximamente'}
       </h2>
-      <div className="partido-equipos">
-        <div className="equipo-info equipo-local">
+      <div className="partido-equipos" >
+        <div className="equipo-info equipo-local" onClick={() => handleTeamClick(partido.equipo_local_id)}>
           <img src={partido.equipo_local_imagen} alt="Logo equipo local" className="equipo-logo" />
           <p className="equipo-nombre">{partido.equipo_local_nombre}</p>
         </div>
@@ -240,7 +254,7 @@ const PartidoDetalle = () => {
           <h2 className="vs-text">VS</h2>
         </div>
 
-        <div className="equipo-info equipo-visitante">
+        <div className="equipo-info equipo-visitante" onClick={() => handleTeamClick(partido.equipo_visitante_id)}>
           <img src={partido.equipo_visitante_imagen} alt="Logo equipo visitante" className="equipo-logo" />
           <p className="equipo-nombre">{partido.equipo_visitante_nombre}</p>
         </div>

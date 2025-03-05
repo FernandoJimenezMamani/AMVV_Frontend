@@ -8,6 +8,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import RegistroEquipo from '../Equipos/Registrar';
 import { set } from 'date-fns';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -17,10 +19,9 @@ const PerfilClub = () => {
   const [teams, setTeams] = useState([]);
   const [showTeamsModal, setShowTeamsModal] = useState(false);
   const navigate = useNavigate();
+  const { user } = useSession();
 
   useEffect(() => {
-    
-
     fetchClubAndTeams();
   }, [id]);
 
@@ -33,6 +34,7 @@ const PerfilClub = () => {
           nombre: response.data[0].club_nombre,
           descripcion: response.data[0].club_descripcion,
           club_imagen: response.data[0].club_imagen,
+          presidente_id: response.data[0].presidente_id,
           presidente_asignado: response.data[0].presidente_asignado,
           presidente_nombre: response.data[0].presidente_nombre,
           presidente_imagen: response.data[0].persona_imagen,
@@ -67,6 +69,11 @@ const PerfilClub = () => {
     console.log("Lista de jugadores");
   };
 
+  const handleListJugadorUsuario = () => {
+    navigate(`/jugadores/indiceJugadoresUsuario/${club.club_id}`);
+    console.log("Lista de jugadores");
+  };
+
   const handleCreateTeam = () => {
    setShowTeamsModal(true);
     console.log("Crear equipo");
@@ -80,6 +87,15 @@ const PerfilClub = () => {
   if (!club) {
     return <div>Cargando...</div>;
   }
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
+
+  const isPresidentAssigned = () => {
+    return user && club && user.id === club.presidente_id;
+  };
+  
 
   return (
     <div className="perfil-club">
@@ -101,7 +117,26 @@ const PerfilClub = () => {
         onTeamCreated={fetchClubAndTeams} 
         clubId = {club.club_id}
       />
+      <div className="assign-actions-container">
+      {!user || !user.roles || user.roles.length === 0 ? (
+        <button className="assign-jugador-button" onClick={handleListJugadorUsuario}>
+          <PeopleIcon/> Jugadores
+        </button>
+        ) : null}
 
+      {hasRole(rolMapping.PresidenteAsociacion) || 
+      (hasRole(rolMapping.PresidenteClub, rolMapping.DelegadoClub) && isPresidentAssigned()) ? (
+        <>
+          <button className="assign-jugador-button" onClick={handleListJugador}>
+            <PeopleIcon /> Mis Jugadores
+          </button>
+          <button className="create-team-button" onClick={handleCreateTeam}>
+            <SportsVolleyballIcon /> Crear Equipo
+          </button>
+        </>
+      ) : null}
+
+      </div>
         {club.presidente_asignado === 'N' ? (
           <button className="assign-president-button" onClick={handleAssignPresident}>
            <AssignmentIndIcon/> Asignar Presidente
@@ -141,14 +176,7 @@ const PerfilClub = () => {
         )}
       </div>
 
-      <div className="assign-actions-container">
-        <button className="assign-jugador-button" onClick={handleListJugador}>
-          <PeopleIcon/> Mis Jugadores
-        </button>
-        <button className="create-team-button" onClick={handleCreateTeam}>
-          <SportsVolleyballIcon/> Crear Equipo
-        </button>
-      </div>
+     
     </div>
   );
 };

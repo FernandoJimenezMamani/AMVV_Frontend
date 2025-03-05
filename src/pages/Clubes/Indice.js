@@ -9,6 +9,8 @@ import EditarClub from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -19,6 +21,7 @@ const ListaClubes = () => {
   const [showFormModal, setShowFormModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);  // Controla la apertura del modal de edición
   const [selectedClubId, setSelectedClubId] = useState(null);
+  const { user } = useSession();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,12 +84,16 @@ const ListaClubes = () => {
     navigate(`/clubes/perfil/${clubId}`);
   };
 
-  
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
 
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Clubes</h2>
+      {hasRole(rolMapping.PresidenteAsociacion) && (
       <button className="table-add-button" onClick={handleRegistrarClick} >+1 club</button>
+      )}
       <RegistroClub
         isOpen={showFormModal}
         onClose={handleCloseModal}
@@ -118,10 +125,13 @@ const ListaClubes = () => {
               <td className="table-td table-td-description">{club.descripcion}</td>
               <td className="table-td">
                 <button className="table-button button-view" onClick={() => handleProfileClick(club.id)}><RemoveRedEyeIcon/></button>
-                
+                {hasRole(rolMapping.PresidenteAsociacion) && (
+                  <>
                 <button className="table-button button-edit" onClick={() => handleEditClick(club.id)}><EditIcon/></button>
                 <button className="table-button button-delete" onClick={() => handleDeleteClick(club.id)}><DeleteForeverIcon/></button>
-              </td>
+                </>
+                )}
+                </td>
             </tr>
           ))}
         </tbody>
