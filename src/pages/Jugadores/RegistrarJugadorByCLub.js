@@ -154,6 +154,17 @@ const RegistroJugadorClub = ({ isOpen, onClose, onJugadorCreated ,club_jugador_i
     }
   };
 
+  const handleGeneroChange = (value) => {
+    setFormData({
+      ...formData,
+      genero: value
+    });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      genero: ''
+    }));
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -241,6 +252,21 @@ const RegistroJugadorClub = ({ isOpen, onClose, onJugadorCreated ,club_jugador_i
           />
           {errors.direccion && <span className="error-message">{errors.direccion}</span>}
         </div>
+        <div className="select-container-u">
+                          <Select
+                            id="genero"
+                            name="genero"
+                            value={formData.genero}
+                            onChange={handleGeneroChange}
+                            placeholder="Seleccione Género"
+                            className={`custom-ant-select-u`}
+                            style={{ width: '100%' }}
+                          >
+                            <Option value="V">Varon</Option>
+                            <Option value="D">Dama</Option>
+                          </Select>
+                          {errors.genero && <span className="error-message">{errors.genero}</span>}
+                        </div>
 
         <div className="form-group">
           <input

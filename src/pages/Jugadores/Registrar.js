@@ -158,6 +158,16 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
     }
   };
 
+  const handleGeneroChange = (value) => {
+    setFormData({
+      ...formData,
+      genero: value
+    });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      genero: ''
+    }));
+  };
   return (
     <Modal
       isOpen={isOpen}
@@ -256,7 +266,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
           />
           {errors.correo && <span className="error-message">{errors.correo}</span>}
         </div>
-
+        
         <div className="select-container-u">
           <Select
             placeholder="Selecciona Club para Jugador"
