@@ -11,6 +11,7 @@ import "moment/locale/es";
 import campeonatoEstado from '../../constants/campeonatoEstados';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import rolMapping from '../../constants/roles';
+import ConfirmModal from '../../components/ConfirmModal';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
@@ -25,6 +26,7 @@ const Campeonatos = () => {
   const [selectedCampeonatoId, setSelectedCampeonatoId] = useState(null);
   const { user } = useSession();
   const navigate = useNavigate();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const connectWebSocket = () => {
     const socket = new WebSocket(WEBSOCKET_URL);
@@ -142,6 +144,25 @@ const Campeonatos = () => {
       console.error('Error generando PDF:', error);
     }
   };
+
+  const handleDeleteCampeonato = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/Campeonatos/delete_campeonato/${selectedCampeonatoId}`);
+      toast.success("Campeonato eliminado correctamente");
+      setCampeonatos(campeonatos.filter(camp => camp.id !== selectedCampeonatoId)); // Actualizar la lista
+    } catch (error) {
+      toast.error("Error al eliminar el campeonato");
+      console.error("Error al eliminar el campeonato:", error);
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedCampeonatoId(null);
+    }
+  };
+  
+  const confirmDeleteCampeonato = (campeonatoId) => {
+    setSelectedCampeonatoId(campeonatoId);
+    setShowConfirmModal(true);
+  };
   
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
@@ -169,6 +190,13 @@ const Campeonatos = () => {
         onClose={handleCloseEditModal}
         campId={selectedCampId}
         onCampEdited={fetchCampeonatos}
+      />
+
+      <ConfirmModal
+        visible={showConfirmModal}
+        onConfirm={handleDeleteCampeonato}
+        onCancel={() => setShowConfirmModal(false)}
+        message="¿Estás seguro de que deseas eliminar este campeonato?"
       />
 
       <div className="cards-wrapper">
@@ -229,7 +257,7 @@ const Campeonatos = () => {
                     <button className="buttonex button-edit" onClick={() => handleEditClick(campeonato.id)}>
                       <i className="fas fa-edit"></i>
                     </button>
-                    <button className="buttonex button-delete">
+                    <button className="buttonex button-delete" onClick={() => confirmDeleteCampeonato(campeonato.id)}>
                       <i className="fas fa-trash-alt"></i>
                     </button>
                     </>

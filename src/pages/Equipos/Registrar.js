@@ -151,7 +151,7 @@ const RegistroEquipo = ({ isOpen, onClose, onTeamCreated , clubId }) => {
             allowClear
           >
             {categorias.map(categoria => {
-              const generoText = categoria.genero === 'M' ? 'masculino' : 'femenino';
+              const generoText = categoria.genero === 'V' ? 'masculino' : 'femenino';
               return (
                 <Option key={categoria.id} value={categoria.id}>
                   {`${categoria.nombre} - ${generoText}`}

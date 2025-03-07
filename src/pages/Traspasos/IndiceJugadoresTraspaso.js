@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { Select } from 'antd';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const { Option } = Select;
 
@@ -138,6 +140,14 @@ const ListaJugadoresTraspaso = () => {
     setJugadorToFichar(null);
   };
 
+  const getImagenPerfil = (persona) => {
+    if (persona.imagen_persona) {
+      return persona.imagen_persona; 
+    }
+    return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
+
   return (
     <div className="table-container">
       <h2 className="table-title">Jugadores</h2>
@@ -179,7 +189,7 @@ const ListaJugadoresTraspaso = () => {
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={jugador.imagen_persona}
+                  src={getImagenPerfil(jugador)}
                   alt={`${jugador.nombre} ${jugador.apellido}`}
                   className="table-logo"
                 />

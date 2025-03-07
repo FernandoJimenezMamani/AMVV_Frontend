@@ -10,6 +10,9 @@ import RegistroEquipo from '../Equipos/Registrar';
 import { set } from 'date-fns';
 import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import { Select } from 'antd'; // Importar Select de Ant Design
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -20,6 +23,7 @@ const PerfilClub = () => {
   const [showTeamsModal, setShowTeamsModal] = useState(false);
   const navigate = useNavigate();
   const { user } = useSession();
+  const [selectedGenero, setSelectedGenero] = useState(null);
 
   useEffect(() => {
     fetchClubAndTeams();
@@ -37,6 +41,7 @@ const PerfilClub = () => {
           presidente_id: response.data[0].presidente_id,
           presidente_asignado: response.data[0].presidente_asignado,
           presidente_nombre: response.data[0].presidente_nombre,
+          presidente_genero: response.data[0].presidente_genero,
           presidente_imagen: response.data[0].persona_imagen,
         };
         setClub(clubInfo);
@@ -95,7 +100,13 @@ const PerfilClub = () => {
   const isPresidentAssigned = () => {
     return user && club && user.id === club.presidente_id;
   };
-  
+
+  const getImagenPerfil = (presidente) => {
+    if (presidente.presidente_imagen) {
+      return presidente.presidente_imagen; 
+    }
+    return presidente.presidente_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
 
   return (
     <div className="perfil-club">
@@ -104,7 +115,7 @@ const PerfilClub = () => {
           <img
             src={club.club_imagen}
             alt={`${club.nombre} logo`}
-            className="club-logo"
+            className="club-logo-perfil"
           />
         </div>
         <div className="club-info">
@@ -138,45 +149,58 @@ const PerfilClub = () => {
 
       </div>
         {club.presidente_asignado === 'N' ? (
+          hasRole(rolMapping.PresidenteAsociacion) && (
           <button className="assign-president-button" onClick={handleAssignPresident}>
            <AssignmentIndIcon/> Asignar Presidente
           </button>
+          )
         ) : (
           <p className="president-info-container">
             Presidente: {club.presidente_nombre}
             <img
-              src={club.presidente_imagen}
+              src={getImagenPerfil(club)} 
               alt={`${club.presidente_nombre} logo`}
                className="president-image"
             />
           </p>
                   )}
       </div>
-
+      <div className="equipoFiltro-container">
+        <Select
+          value={selectedGenero || "Todos"} // Valor predeterminado "Todos"
+          onChange={(value) => setSelectedGenero(value === "Todos" ? null : value)}
+          style={{ width: 200, marginBottom: 15 }}
+          className='equipoFiltro-select'
+        >
+          <Select.Option value="Todos">Todos</Select.Option>
+          <Select.Option value="V">Varones</Select.Option>
+          <Select.Option value="D">Damas</Select.Option>
+        </Select>
+      </div>
       <div className="perfil-teams">
         {teams.length > 0 ? (
-          teams.map((team) => (
-            <div
-              key={team.equipo_id}
-              className="team-card"
-              onClick={() => handleTeamClick(team.equipo_id)} // Redirigir al perfil del equipo
-              style={{ cursor: 'pointer' }} // Añadir cursor de pointer para indicar que es clickeable
-            >
-              <h3>{team.equipo_nombre}</h3>
-              <p>Categoría: {team.categoria_nombre}</p>
-              <p>
-            Género: {team.categoria_genero === 'V' ? 'Varones' :
-           team.categoria_genero === 'D' ? 'Damas' :
-           team.categoria_genero === 'M' ? 'Mixto' : 'Desconocido'}
-            </p>
-            </div>
-          ))
+          teams
+          .filter((team) => !selectedGenero || team.categoria_genero === selectedGenero)
+            .map((team) => (
+              <div
+                key={team.equipo_id}
+                className="team-card"
+                onClick={() => handleTeamClick(team.equipo_id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <h3>{team.equipo_nombre}</h3>
+                <p>Categoría: {team.categoria_nombre}</p>
+                <p>
+                  Género: {team.categoria_genero === 'V' ? 'Varones' :
+                  team.categoria_genero === 'D' ? 'Damas' :
+                  team.categoria_genero === 'M' ? 'Mixto' : 'Desconocido'}
+                </p>
+              </div>
+            ))
         ) : (
           <p>No hay equipos disponibles para este club.</p>
         )}
-      </div>
-
-     
+      </div>   
     </div>
   );
 };

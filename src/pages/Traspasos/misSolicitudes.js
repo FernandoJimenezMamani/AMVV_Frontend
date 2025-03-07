@@ -11,6 +11,8 @@ import PendingIcon from '@mui/icons-material/Pending';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const { Option } = Select;
 
@@ -184,6 +186,13 @@ const MisSolicitudes = () => {
     }
   };
 
+  const getImagenPerfil = (persona) => {
+    if (persona.persona_imagen) {
+      return persona.persona_imagen; 
+    }
+    return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Mis Solicitudes</h2>
@@ -227,7 +236,7 @@ const MisSolicitudes = () => {
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={jugador.imagen_persona}
+                  src={getImagenPerfil(jugador)}
                   alt={`${jugador.nombre} ${jugador.apellido}`}
                   className="table-logo"
                 />

@@ -8,6 +8,8 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import PendingIcon from '@mui/icons-material/Pending';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -69,6 +71,20 @@ const IndiceSolicitudesPresidente = () => {
     }
   };
 
+  const getImagenPerfilPresi = (persona) => {
+    if (persona.imagen_presidente) {
+      return persona.imagen_presidente; 
+    }
+    return persona.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
+  const getImagenPerfilJugador = (persona) => {
+    if (persona.imagen_jugador) {
+      return persona.imagen_jugador; 
+    }
+    return persona.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Mis Solicitudes de Traspaso</h2>
@@ -89,7 +105,7 @@ const IndiceSolicitudesPresidente = () => {
                 <td className="table-td-p">
                     <div className="jugador-info">
                         <img 
-                        src={solicitud.imagen_jugador} 
+                        src={getImagenPerfilJugador(solicitud)} 
                         alt={`${solicitud.nombre_jugador} foto`} 
                         className="table-logo" 
                         />
@@ -110,7 +126,7 @@ const IndiceSolicitudesPresidente = () => {
                 <td className="table-td-p">
                     <div className="jugador-info">
                         <img 
-                        src={solicitud.imagen_presidente} 
+                        src={getImagenPerfilPresi(solicitud)} 
                         alt={`${solicitud.nombre} foto`} 
                         className="table-logo" 
                         />

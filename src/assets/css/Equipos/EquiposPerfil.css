@@ -317,4 +317,48 @@
 }
 
 
+.equipoPerfil-botones {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.equipoPerfil-eliminarButton {
+  align-self: flex-start; /* Alinea el botón a la izquierda */
+  margin-bottom: 15px; /* Espaciado entre el botón y las cards */
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #762727;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.equipoPerfil-eliminarButton:hover {
+  background-color: #c82333;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.equipoPerfil-jugadorEliminar {
+  position: relative;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background-color: #762727;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+.equipoPerfil-jugadorEliminar:hover {
+  background-color: #c82333;
+}
 

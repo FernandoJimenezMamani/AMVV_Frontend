@@ -1,13 +1,12 @@
 .perfil-club {
+  position:relative;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: transparent;
-  border-radius: 10px;
-  box-shadow: 8px 0 16px rgba(0, 0, 0, 0.2),
-              -8px 0 16px rgba(0, 0, 0, 0.2),
-              0 8px 16px rgba(0, 0, 0, 0.2),
-              0 -8px 16px rgba(0, 0, 0, 0.2);
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 15px;
 }
 
 .perfil-header-club {
@@ -22,16 +21,17 @@
   display: inline-block;
 }
 
-.club-logo {
+.club-logo-perfil {
   display: block;
-  width: 150px;
-  height: 150px;
+  width: 200px !important;
+  height: 200px !important;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 20px;
   border: 5px solid #143E42;
   cursor: pointer;
   overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); 
 }
 
 .club-info {
@@ -43,12 +43,15 @@
   font-size: 36px;
   color: #143E42;
   font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .club-info p {
   font-size: 18px;
   color: #333;
   margin-top: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  
 }
 
 .president-info {
@@ -71,7 +74,7 @@
   background: linear-gradient(to bottom, #5e95ad, #2a4e5c);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   text-align: center;
   transition: all 0.4s ease;
 }
@@ -93,12 +96,14 @@
   font-size: 24px;
   color: #f8f8f8;
   font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .team-card p {
   font-size: 16px;
   color: #ffffff;
   margin-top: 10px;
+  font-weight: bold;
 }
 
 .assign-president-button {
@@ -155,17 +160,18 @@
   border: none;
   border-radius: 5px;
   font-size: 16px;
-  display: flex;               /* Flexbox para alinear contenido */
-  align-items: center;         /* Centra verticalmente la imagen y el texto */
-  gap: 10px;                   /* Espaciado entre la imagen y el texto */
-  width: auto;                 /* Ajusta el ancho al contenido */
-  white-space: nowrap;         /* Evita saltos de línea */
+  display: flex;    
+  align-items: center;         
+  gap: 10px;              
+  width: auto;                 
+  white-space: nowrap;  
   transition: all 0.4s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   
 }
 
 .president-info-container:hover {
-  background-color: #2d8160;         /* Espaciado entre el texto y la imagen */
+  background-color: #2d8160;        
   box-shadow: 8px 0 16px rgba(0, 0, 0, 0.2),
   -8px 0 16px rgba(0, 0, 0, 0.2),
   0 8px 16px rgba(0, 0, 0, 0.2),
@@ -174,8 +180,27 @@
 }
 
 .president-info-container .president-image {
-  width: 60px;                  /* Ancho de la imagen */
-  height: 60px;                 /* Alto de la imagen */
-  border-radius: 50%;           /* Hace la imagen redonda */
-  object-fit: cover;            /* Asegura que la imagen mantenga sus proporciones */
+  width: 60px;                  
+  height: 60px;                
+  border-radius: 50%;      
+  object-fit: cover;             
+}
+
+.equipoFiltro-container{
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.equipoFiltro-select{
+  border-radius: 8px !important; 
+  padding: 0px !important;
+  height: 40px; 
+  box-shadow: none !important;
+  border: 1px solid #ccc !important;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  transition: all 0.3s ease;
+  border-left: 4px solid #3D8FA4 !important;
 }

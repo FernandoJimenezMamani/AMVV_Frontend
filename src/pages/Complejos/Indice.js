@@ -9,6 +9,7 @@ import EditarComplejo from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import MapaDetalle from '../../components/MapaDetalle';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -20,6 +21,9 @@ const ListaLugar = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedComplejoId, setSelectedComplejoId] = useState(null);
   const navigate = useNavigate();
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const [latitud , setLatitud] = useState(null)
+  const [longitud , setLongitud] = useState(null)
 
   useEffect(() => {
     fetchComplejos();
@@ -77,8 +81,10 @@ const ListaLugar = () => {
     setComplejoToDelete(null);
   };
 
-  const handleProfileClick = (complejoId) => {
-    navigate(`/complejos/perfil/${complejoId}`);
+  const handleProfileClick = (complejo) => {
+    setLatitud(complejo.latitud)
+    setLongitud(complejo.longitud)
+    setIsMapModalOpen(true)
   };
 
   return (
@@ -110,7 +116,7 @@ const ListaLugar = () => {
               <td className="table-td table-td-name">{complejo.nombre}</td>
               <td className="table-td table-td-address">{complejo.direccion}</td>
               <td className="table-td">
-                <button className="table-button button-view" onClick={() => handleProfileClick(complejo.id)}>
+                <button className="table-button button-view" onClick={() => handleProfileClick(complejo)}>
                   <RemoveRedEyeIcon />
                 </button>
                 
@@ -126,6 +132,12 @@ const ListaLugar = () => {
           ))}
         </tbody>
       </table>
+      <MapaDetalle 
+      isOpen={isMapModalOpen}
+      onClose={() => setIsMapModalOpen(false)}
+      lat={latitud}
+      lng={longitud}
+    />
 
       <ConfirmModal
         visible={showConfirm}

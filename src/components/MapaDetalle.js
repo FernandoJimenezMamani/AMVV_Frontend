@@ -13,7 +13,7 @@ const MapaDetalle = ({ isOpen, onClose, lat, lng }) => {
       className="modal-content"
       overlayClassName="modal-overlay"
     >
-      <h2>Ubicación del Partido</h2>
+      <h2>Ubicación </h2>
       <MapView initialLat={lat} initialLng={lng} isReadOnly={true} />
       <button className="close-map-button" onClick={onClose}>Cerrar</button>
     </ReactModal>

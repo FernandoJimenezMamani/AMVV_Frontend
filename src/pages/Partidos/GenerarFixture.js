@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import "../../assets/css/Partidos/GenerarFixture.css";
 import moment from "moment";
 import "moment/locale/es";
+import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -14,6 +15,7 @@ const GenerarFixture = () => {
   const [partidos, setPartidos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const navigate = useNavigate();
 
   const generarFixture = async () => {
     setLoading(true);
@@ -46,11 +48,12 @@ const GenerarFixture = () => {
       const response = await axios.post(
         `${API_BASE_URL}/partidos/registrar-partidos/${campeonatoId}/${categoriaId}`, // ✅ Parámetros en la URL
         {
-          partidos, // ✅ Partidos en el cuerpo de la solicitud
+          partidos, 
         }
       );
   
       toast.success(response.data.message || "Partidos registrados con éxito.");
+      navigate(`/partidos/indice/${campeonatoId}/${categoriaId}`);
     } catch (error) {
       if (error.response && error.response.data) {
         toast.error(error.response.data.message || "Error desconocido al registrar los partidos.");

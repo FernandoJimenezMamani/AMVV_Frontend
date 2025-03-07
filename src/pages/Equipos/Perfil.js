@@ -15,12 +15,13 @@ import { Select } from 'antd';
 import estadosMapping from '../../constants/campeonatoEstados';
 import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
+import ConfirmModal from '../../components/ConfirmModal';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilEquipo = () => {
   const { id } = useParams();
-
   const [equipo, setEquipo] = useState(null);
   const [jugadores, setJugadores] = useState([]);
   const navigate = useNavigate();
@@ -32,32 +33,34 @@ const PerfilEquipo = () => {
   const [selectedCampeonato, setSelectedCampeonato] = useState(null);
   const [participaciones, setParticipaciones] = useState([]);
   const { user } = useSession();
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedJugadorId, setSelectedJugadorId] = useState(null);
+  const [mostrarEliminar, setMostrarEliminar] = useState(false);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
   useEffect(() => {
-    const fetchEquipoAndJugadores = async () => {
-      try {
-        const equipoResponse = await axios.get(`${API_BASE_URL}/equipo/get_equipo/${id}`);
-        setEquipo(equipoResponse.data);
-        const jugadoresResponse = await axios.get(`${API_BASE_URL}/jugador/get_jugadores_equipo/${id}`);
-        setJugadores(jugadoresResponse.data);
-      } catch (error) {
-        toast.error('Error al obtener el equipo y jugadores');
-        console.error('Error al obtener el equipo y jugadores:', error);
-      }
-    };
-
     fetchEquipoAndJugadores();
   }, [id]);
+
+  const fetchEquipoAndJugadores = async () => {
+    try {
+      const equipoResponse = await axios.get(`${API_BASE_URL}/equipo/get_equipo/${id}`);
+      setEquipo(equipoResponse.data);
+      const jugadoresResponse = await axios.get(`${API_BASE_URL}/jugador/get_jugadores_equipo/${id}`);
+      setJugadores(jugadoresResponse.data);
+    } catch (error) {
+      toast.error('Error al obtener el equipo y jugadores');
+      console.error('Error al obtener el equipo y jugadores:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchCampeonatos = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
-        console.log('Campeonatos:', response.data);
         setCampeonatos(response.data);
         if (response.data.length > 0) {
           setSelectedCampeonato(response.data[0].id); 
@@ -77,7 +80,6 @@ const PerfilEquipo = () => {
       if (!selectedCampeonato) return; 
       try {
         const response = await axios.get(`${API_BASE_URL}/partidos/selectPartidosById/${id}/${selectedCampeonato}`);
-        console.log('Partidos:', response.data);
         setPartidos(response.data);
       } catch (error) {
         toast.error('Error al obtener los partidos del equipo');
@@ -118,7 +120,6 @@ const PerfilEquipo = () => {
         }
   
         setParticipaciones(participacionesTemp);
-        console.log(participaciones)
       } catch (error) {
         console.error("Error al obtener campeonatos:", error);
       }
@@ -126,6 +127,30 @@ const PerfilEquipo = () => {
   
     fetchParticipaciones();
   }, [equipo]);
+
+  const handleDeleteJugador = async () => {
+    try {
+      await axios.delete(`${API_BASE_URL}/jugador/delete_jugador_equipo/${selectedJugadorId}`);
+      toast.success("Jugador eliminado correctamente");
+      setJugadores(jugadores.filter(j => j.id !== selectedJugadorId));
+      fetchEquipoAndJugadores();
+    } catch (error) {
+      toast.error("Error al eliminar el jugador");
+      console.error("Error al eliminar el jugador:", error);
+    } finally {
+      setShowConfirmModal(false);
+      setSelectedJugadorId(null);
+    }
+  };  
+  
+  const confirmDeleteJugador = (jugadorId) => {
+    setSelectedJugadorId(jugadorId);
+    setShowConfirmModal(true);
+  };
+
+  const toggleEliminar = () => {
+    setMostrarEliminar(!mostrarEliminar);
+  };  
   
   const obtenerGeneroTexto = (genero) => {
     if (genero === 'V') return 'Varones';
@@ -325,6 +350,7 @@ const PerfilEquipo = () => {
     <div className="equipoPerfil-jugadoresWrapper">
       {/* Botón Registrar Jugador */}
       {hasRole(rolMapping.PresidenteAsociacion, rolMapping.PresidenteClub, rolMapping.DelegadoClub) && (
+      <div className="equipoPerfil-botones">
       <button
         className="equipoPerfil-registrarButton"
         onClick={() => {
@@ -343,12 +369,19 @@ const PerfilEquipo = () => {
       >
         +1 Jugador
       </button>
+    
+      {/* Botón de eliminar jugadores */}
+      <button className="equipoPerfil-eliminarButton" onClick={toggleEliminar}>
+        {mostrarEliminar ? "Cancelar" : "Eliminar Jugadores"}
+      </button>
+    </div>
+    
       )}
 
       {/* Cards de jugadores */}
       <div className="equipoPerfil-jugadoresCards">
         {jugadores.map((jugador) => (
-          <div key={jugador.id} className="equipoPerfil-jugadorCard" onClick={() => handleProfileClick(jugador.persona_id)}>
+          <div key={jugador.jugador_id} className="equipoPerfil-jugadorCard">
             <img
               src={getImagenPerfil(jugador)}
               alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
@@ -360,9 +393,18 @@ const PerfilEquipo = () => {
               </p>
               <span>Edad: {jugador.edad_jugador} años</span>
             </div>
+            
+            {mostrarEliminar && <div className="equipoPerfil-jugadorEliminar" onClick={() => confirmDeleteJugador(jugador.jugador_id)}><RemoveCircleOutlineIcon/></div>}
           </div>
         ))}
-      </div>  
+      </div>
+
+      <ConfirmModal
+        visible={showConfirmModal}
+        onConfirm={handleDeleteJugador}
+        onCancel={() => setShowConfirmModal(false)}
+        message="¿Estás seguro de que deseas eliminar a este jugador del equipo?"
+      />
     </div>
   </div>
 
