@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import { Select } from 'antd';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import rolMapping from '../../constants/roles';
 
 const { Option } = Select;
 
@@ -32,7 +33,8 @@ const ListaJugadoresAll = () => {
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchName, setSearchName] = useState('');
   const [personaToDelete, setPersonaToDelete] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Número de jugadores por página  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -132,15 +134,15 @@ const ListaJugadoresAll = () => {
     setSelectedPersonaId(null);  
   };
 
-
   const handleCloseModal = () => {
     setShowFormModal(false);
   };
 
   const handleConfirmDelete = async () => {
+    console.log("ID a eliminar:", personaToDelete); 
     try {
       const user_id = 1; 
-      await axios.put(`${API_BASE_URL}/persona/delete_persona/${personaToDelete}`, { user_id });
+      await axios.put(`${API_BASE_URL}/persona/delete_persona/${personaToDelete}`, { user_id , roles:rolMapping.Jugador});
       toast.success('Usuario desactivado exitosamente');
       fetchJugadores();
       setShowConfirm(false); 
@@ -170,8 +172,10 @@ const ListaJugadoresAll = () => {
     }
     return jugador.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
-
-
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPersonas.slice(indexOfFirstItem, indexOfLastItem);
+  
   return (
     <div className="table-container">
       <h2 className="table-title">Jugadores</h2>
@@ -215,6 +219,7 @@ const ListaJugadoresAll = () => {
         onClose={handleClosePerfilModal}
         jugadorId={selectedPersonaId}  
       />
+     
       <table className="table-layout">
         <thead className="table-head">
           <tr>
@@ -226,7 +231,7 @@ const ListaJugadoresAll = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPersonas.map((jugador) => (
+          {currentItems.map((jugador) => (
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
@@ -263,22 +268,35 @@ const ListaJugadoresAll = () => {
                   <EditIcon />
                 </button>
 
-                <label className="user-activation-switch">
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      jugador.eliminado === 'S' ? handleActivateUser(jugador.persona_id) : handleDeleteClick(jugador.persona_id)
-                    }
-                    checked={jugador.eliminado !== 'S'} 
-                  />
-                  <span className="user-activation-slider"></span>
-                </label>
-
+                
               </td>
             </tr>
           ))}
         </tbody>
+        
       </table>
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
+
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredPersonas.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredPersonas.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
+
 
       <ConfirmModal
         visible={showConfirm}

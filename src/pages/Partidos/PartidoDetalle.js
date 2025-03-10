@@ -19,6 +19,7 @@ import ReprogramacionModal from '../../components/ReprogramacionModal';
 import estadosPartidoCampMapping from '../../constants/estadoPartido';
 import rolMapping from '../../constants/roles';
 import { useSession } from '../../context/SessionContext';
+import PerfilArbitroModal from '../Arbitros/Perfil';
 
 ReactModal.setAppElement('#root');
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -39,6 +40,8 @@ const PartidoDetalle = () => {
   const [resultadoPartido, setResultadoPartido] = useState(null);
   const [ganadorPartido, setGanadorPartido] = useState(null);
   const { user } = useSession();
+  const [showPerfilModal, setShowPerfilModal] = useState(false);  
+  const [selectedPersonaId, setSelectedPersonaId] = useState(null);
 
   useEffect(() => {
     const fetchPartido = async () => {
@@ -212,9 +215,24 @@ const PartidoDetalle = () => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
   
+  const handleProfileClick = (jugadorId) => {
+    setSelectedPersonaId(jugadorId);  
+    setShowPerfilModal(true);
+  };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPersonaId(null);  
+  };
+
   return (
     <div className="partido-detalle-container">
     <h1 className="titulo-partido">Detalles del Partido</h1>
+    <PerfilArbitroModal
+        isOpen={showPerfilModal}
+        onClose={handleClosePerfilModal}
+        arbitroId={selectedPersonaId}  
+      />
     <div className="resultado-button-container">
     {hasRole(rolMapping.PresidenteAsociacion , rolMapping.Arbitro) && (
       <button className="resultado-button" onClick={() => handlePartidoClick(partidoId)}>
@@ -346,7 +364,7 @@ const PartidoDetalle = () => {
     <h2 className="titulo-arbitros">Árbitros</h2>
     <ul className="arbitros-list">
       {arbitros.map(arbitro => (
-        <li key={arbitro.arbitro_id} className="arbitro-item">
+        <li key={arbitro.arbitro_id} className="arbitro-item" onClick={() => handleProfileClick(arbitro.arbitro_id)} style={{cursor: 'pointer'}}>
         <img 
           src={getImagenPerfil(arbitro)} 
           alt="Foto del árbitro" 

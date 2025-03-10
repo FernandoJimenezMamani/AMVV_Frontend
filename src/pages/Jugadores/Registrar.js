@@ -255,6 +255,22 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
           {errors.direccion && <span className="error-message">{errors.direccion}</span>}
         </div>
 
+         <div className="select-container-u">
+                  <Select
+                    id="genero"
+                    name="genero"
+                    value={formData.genero}
+                    onChange={handleGeneroChange}
+                    placeholder="Seleccione Género"
+                    className="custom-ant-select-u"
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="V">Varón</Option>
+                    <Option value="D">Dama</Option>
+                  </Select>
+                </div>
+        
+
         <div className="form-group">
           <input
             type="email"

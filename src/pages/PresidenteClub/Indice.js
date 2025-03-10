@@ -13,6 +13,7 @@ import defaultUserIcon from '../../assets/img/user-icon.png';
 import { PresidenteClub } from '../../constants/roles';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import { Select } from 'antd';
+import PerfilPresidenteModal from './Perfil';
 
 const { Option } = Select;
 
@@ -31,6 +32,7 @@ const ListaPresidenteClub = () => {
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchPresidente, setSearchPresidente] = useState('');
   const navigate = useNavigate();
+  const [showPerfilModal , setShowPerfilModal] = useState(false)
 
   useEffect(() => {
     fetchPresidentes();
@@ -136,9 +138,16 @@ const ListaPresidenteClub = () => {
     setPersonaToDelete(null);
   };
 
-  const handleProfileClick = (id) => {
-    navigate(`/personas/perfil/${id}`);
+  const handleProfileClick = (jugadorId) => {
+    setSelectedPresidenteId(jugadorId);  
+    setShowPerfilModal(true);
   };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPresidenteId(null);  
+  };
+
 
   return (
     <div className="table-container">
@@ -176,6 +185,12 @@ const ListaPresidenteClub = () => {
         onClose={handleCloseEditModal}
         presidenteId={selectedPresidenteId}  // Pasamos el id como prop
         onPresidenteUpdated={fetchPresidentes} 
+      />
+
+      <PerfilPresidenteModal
+              isOpen={showPerfilModal}
+              onClose={handleClosePerfilModal}
+              presidenteId={selectedPresidenteId}  
       />
       <table className="table-layout">
         <thead className="table-head">
@@ -244,17 +259,6 @@ const ListaPresidenteClub = () => {
                 >
                   <EditIcon />
                 </button>
-                <label className="user-activation-switch">
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id)
-                    }
-                    checked={p.eliminado !== 'S'} // Marcado si no está eliminado
-                  />
-                  <span className="user-activation-slider"></span>
-                </label>
-
               </td>
 
             </tr>

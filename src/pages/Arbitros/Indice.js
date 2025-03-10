@@ -13,6 +13,7 @@ import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { PresidenteClub } from '../../constants/roles';
 import { Select } from 'antd';
+import PerfilArbitroModal from './Perfil';
 
 const { Option } = Select;
 
@@ -29,6 +30,8 @@ const ListaArbitro = () => {
   const [filterRole, setFilterRole] = useState('No filtrar');
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchPresidente, setSearchPresidente] = useState('');
+  const [showPerfilModal, setShowPerfilModal] = useState(false);  
+  const [selectedPersonaId, setSelectedPersonaId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -131,8 +134,14 @@ const ListaArbitro = () => {
     setPersonaToDelete(null);
   };
 
-  const handleProfileClick = (id) => {
-    navigate(`/personas/perfil/${id}`);
+  const handleProfileClick = (jugadorId) => {
+    setSelectedPersonaId(jugadorId);  
+    setShowPerfilModal(true);
+  };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPersonaId(null);  
   };
 
   const getImagenPerfil = (arbitro) => {
@@ -178,6 +187,12 @@ const ListaArbitro = () => {
         onClose={handleCloseEditModal}
         personaId={selectedPresidenteId}  // Pasamos el id como prop
         onPersonaUpdated={fetchArbitros} 
+      />
+
+      <PerfilArbitroModal
+        isOpen={showPerfilModal}
+        onClose={handleClosePerfilModal}
+        arbitroId={selectedPersonaId}  
       />
       <table className="table-layout">
         <thead className="table-head">
@@ -232,16 +247,6 @@ const ListaArbitro = () => {
                 >
                   <EditIcon />
                 </button>
-                <label className="user-activation-switch">
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id)
-                    }
-                    checked={p.eliminado !== 'S'} // Marcado si no está eliminado
-                  />
-                  <span className="user-activation-slider"></span>
-                </label>
 
               </td>
 

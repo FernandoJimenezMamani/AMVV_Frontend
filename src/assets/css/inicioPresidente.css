@@ -1,0 +1,81 @@
+.inicio-presidente-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: transparent;
+    padding: 20px;
+}
+
+.club-info-Inicio {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 400px;
+}
+
+.club-logo-Inicio  {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #007bff;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 
+    4px 0 8px rgba(0, 0, 0, 0.2),  /* Sombra derecha */
+    -4px 0 8px rgba(0, 0, 0, 0.2), /* Sombra izquierda */
+    0 4px 8px rgba(0, 0, 0, 0.2),  /* Sombra abajo */
+    0 -4px 8px rgba(0, 0, 0, 0.1); /* Sombra arriba */
+}
+
+.club-logo-Inicio :hover {
+    transform: scale(1.05);
+}
+
+.club-nombre-Inicio  {
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.btn-ver-club {
+    background: #3D8FA4;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.btn-ver-club:hover {
+    background: #35748C;
+    transform: scale(1.05);
+}
+
+.no-club {
+    font-size: 18px;
+    color: #d9534f;
+    font-weight: bold;
+}
+
+.titulo-mi-club {
+    font-size: 28px;
+    font-weight: bold;
+    color: #143E42;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,23 @@
+.vista-default-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: transparent;
+}
+
+.imagen-contenedor {
+    position: relative;
+    width: 60%;
+    max-width: 800px;
+}
+
+.imagen-default {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    opacity: 0.2;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+

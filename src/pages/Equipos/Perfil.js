@@ -381,7 +381,7 @@ const PerfilEquipo = () => {
       {/* Cards de jugadores */}
       <div className="equipoPerfil-jugadoresCards">
         {jugadores.map((jugador) => (
-          <div key={jugador.jugador_id} className="equipoPerfil-jugadorCard">
+          <div key={jugador.jugador_id} className="equipoPerfil-jugadorCard" onClick={() => handleProfileClick(jugador.persona_id)}>
             <img
               src={getImagenPerfil(jugador)}
               alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}

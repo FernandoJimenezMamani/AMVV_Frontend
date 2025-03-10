@@ -6,6 +6,8 @@ import TransaccionDashboard from "./Reportes/DashboardMonitoreoEquipos"; // Nuev
 import { toast } from "react-toastify";
 import { useSession } from '../context/SessionContext';
 import rolMapping from '../constants/roles';
+import InicioPresidente from "./PresidenteClub/InicioPresidente";
+import VistaDefault from "./VistaDefault";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -56,6 +58,16 @@ const VentanaPrincipalUser = () => {
         ) : (
           <Reportes />
         )
+      )}
+      {hasRole(rolMapping.PresidenteClub) && (
+        <>
+        <InicioPresidente presidenteId ={user.id}></InicioPresidente>
+        </>
+       
+      )}
+      {!hasRole(rolMapping.PresidenteAsociacion) && 
+       !hasRole(rolMapping.PresidenteClub) && (
+        <VistaDefault />
       )}
     </div>
   );

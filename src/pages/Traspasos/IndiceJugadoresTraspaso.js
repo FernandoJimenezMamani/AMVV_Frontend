@@ -9,6 +9,7 @@ import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import PerfilJugadorModal from '../Jugadores/Perfil';
 
 const { Option } = Select;
 
@@ -19,9 +20,11 @@ const ListaJugadoresTraspaso = () => {
   const [presidente, setPresidente] = useState([]);
   const [filteredPersonas, setFilteredPersonas] = useState([]);
   const [showConfirmTraspaso,setShowConfirmTraspaso] = useState(false);
+  const [showPerfilModal, setShowPefilModal] = useState(false)
   const [jugadorToFichar, setJugadorToFichar] = useState(null);
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchName, setSearchName] = useState('');
+  const [selectJugadorId, setSelectedJugadorId]= useState(null)
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -147,10 +150,25 @@ const ListaJugadoresTraspaso = () => {
     return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const handleShowPefilModal = (jugadorId) =>{
+    setSelectedJugadorId(jugadorId)
+    setShowPefilModal(true);
+  }
+
+  const handleClosePerfilJugador = () =>{
+    setSelectedJugadorId(null)
+    setShowPefilModal(false)
+  }
+
 
   return (
     <div className="table-container">
       <h2 className="table-title">Jugadores</h2>
+      <PerfilJugadorModal
+      isOpen={showPerfilModal}
+      onClose={handleClosePerfilJugador}
+      jugadorId={selectJugadorId}
+      />
       
       <div className="table-filters">
       <button className="table-add-button" onClick={handleSolicitudesClick} >Mis Solicitudes</button>
@@ -207,7 +225,7 @@ const ListaJugadoresTraspaso = () => {
               <td className="table-td-p">
               <button
                   className={`table-button button-view `}
-                  onClick={() => handleProfileClick(jugador.id)}
+                  onClick={() => handleShowPefilModal(jugador.jugador_id)}
                   disabled={jugador.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
                 >
                   <RemoveRedEyeIcon />

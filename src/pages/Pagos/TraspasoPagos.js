@@ -5,6 +5,8 @@ import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import RegistroPagoTraspaso from './RegistroPagoTraspaso';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -38,6 +40,13 @@ const ListaTraspasosPagos = () => {
     setShowFormModal(false);
   };
 
+  const getImagenPerfil = (jugador) => {
+    if (jugador.persona_imagen) {
+      return jugador.persona_imagen; 
+    }
+    return jugador.jugador_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Deuda por Traspasos</h2>
@@ -63,7 +72,7 @@ const ListaTraspasosPagos = () => {
                 <td className="table-td-p">
                     <div className="jugador-info">
                         <img 
-                        src={traspaso.persona_imagen} 
+                        src={getImagenPerfil(traspaso)} 
                         alt={`${traspaso.jugador_nombre} foto`} 
                         className="table-logo" 
                         />

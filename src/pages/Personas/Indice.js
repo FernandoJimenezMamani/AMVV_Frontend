@@ -31,7 +31,8 @@ const ListaPersonas = () => {
   const [filterState, setFilterState] = useState('No filtrar');
   const [searchName, setSearchName] = useState('');
   const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   useEffect(() => {
     fetchPersonas();
   }, []);
@@ -153,6 +154,9 @@ const ListaPersonas = () => {
     return persona.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPersonas.slice(indexOfFirstItem, indexOfLastItem);
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Usuarios</h2>
@@ -219,7 +223,7 @@ const ListaPersonas = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPersonas.map((p) => (
+          {currentItems.map((p) => (
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
@@ -275,6 +279,27 @@ const ListaPersonas = () => {
         </tbody>
       </table>
 
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
+
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredPersonas.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredPersonas.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
       <ConfirmModal
         visible={showConfirm}
         onConfirm={handleConfirmDelete}

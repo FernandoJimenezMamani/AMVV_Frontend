@@ -14,6 +14,7 @@ import { Jugador } from '../../constants/roles';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import PerfilJugadorModal from './Perfil';
 
 const { Option } = Select;
 
@@ -34,6 +35,7 @@ const ListaJugadoresEquipo = () => {
   const [personaToDelete, setPersonaToDelete] = useState(null);
   const [equipo, setEquipo] = useState(null);
   const [jugadorSeleccionado, setJugadorSeleccionado] = useState(null);
+  const [showPerfilModal, setShowPerfilModal] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,7 +103,13 @@ const ListaJugadoresEquipo = () => {
   };
 
   const handleProfileClick = (jugadorId) => {
-    navigate(`/personas/perfil/${jugadorId}`);
+    setSelectedPersonaId(jugadorId);  
+    setShowPerfilModal(true);
+  };
+
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPersonaId(null);  
   };
 
   const handleFicharClick = (jugadorId) => {
@@ -223,11 +231,18 @@ const ListaJugadoresEquipo = () => {
         onClose={handleCloseModal}
         onJugadorCreated={fetchJugadores} 
       />
+
       <EditarJugador
         isOpen={showEditModal}
         onClose={handleCloseEditModal}
-        jugadorId={selectedPersonaId}  // Pasamos el id como prop
+        jugadorId={selectedPersonaId}  
         onJugadorUpdated={fetchJugadores} 
+      />
+
+      <PerfilJugadorModal
+        isOpen={showPerfilModal}
+        onClose={handleClosePerfilModal}
+        jugadorId={selectedPersonaId}  
       />
       <table className="table-layout">
         <thead className="table-head">
@@ -243,7 +258,7 @@ const ListaJugadoresEquipo = () => {
         </thead>
         <tbody>
           {filteredPersonas.map((jugador) => (
-            <tr key={jugador.jugador_id} className="table-row">
+            <tr key={jugador.jugador_id} className="table-row" >
               <td className="table-td-p">
                 <img
                   src={getImagenPerfil(jugador)}
@@ -283,7 +298,7 @@ const ListaJugadoresEquipo = () => {
 
                 <button
                   className={`table-button button-view ${jugador.eliminado === 'S' ? 'disabled-button' : ''}`}
-                  onClick={() => handleProfileClick(jugador.id)}
+                  onClick={() => handleProfileClick(jugador.persona_id)}
                   disabled={jugador.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
                 >
                   <RemoveRedEyeIcon />

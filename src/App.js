@@ -77,7 +77,6 @@ const App = () => {
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
-    toast.success('Inicio de sesión exitoso'); // Mostrar notificación de éxito en inicio de sesión
   };
 
   const handleLogout = () => {
@@ -92,14 +91,9 @@ const App = () => {
         <Routes>
           {/* Rutas públicas */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/sidebar" element={<Sidebar />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
           <Route path="/" element={<ConditionalLayout />}>
           <Route index element={<VentanaPrincipal />} />
-          <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
-          <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
-          <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
           <Route path="/tablaposiciones/:categoriaId/:campeonatoId" element={<TablaPosiciones />} />
           <Route path="/partidos/partidoDetalle/:partidoId" element={<PartidoDetalle />} />
           <Route path="/equipos/perfil/:id" element={<PerfilEquipo />} />
@@ -112,13 +106,17 @@ const App = () => {
           <Route element={<PrivateRoutes />}>
             <Route path="/" element={<Sidebar/>}>
               {/* Rutas privadas */}
+              <Route path="/sidebar" element={<Sidebar />} />
+              <Route path="/ventanaPrincipalUser" element={<VentanaPrincipalUser />} />
+              <Route path="/partidos/indice/:campeonatoId/:categoriaId" element={<IndicePartido />} />
               <Route path="/campeonatos/registrar" element={<RegistroCampeonato />} />
               <Route path="/campeonatos/editar/:id" element={<EditarCampeonato />} />
               <Route path="/clubes/indice" element={<IndiceClub />} />
               <Route path="/clubes/registrar" element={<RegistrarClub />} />
               <Route path="/clubes/editar/:id" element={<EditarClub />} />
               <Route path="/clubes/Perfil/:id" element={<PerfilClub />} />
-              
+              <Route path="/campeonatos/indice" element={<IndiceCampeonato />} />
+              <Route path="/categorias/indice/:campeonatoId" element={<ListaCategorias />} />
               <Route path="/categorias/lista" element={<ListaCategorias2 />} />
               <Route path="/categorias/registrar" element={<RegistrarCategoria />} />
               <Route path="/categorias/editar/:id" element={<EditarCategoria />} />
@@ -144,8 +142,7 @@ const App = () => {
               <Route path="/jugadores/indice/:id" element={<ListaJugadoresClub />} />
               <Route path="/jugadores/indice" element={<ListaJugadorAll/>} />
               <Route path="/arbitro/registrar" element={<RegistrarArbitro />} />
-              <Route path="/arbitro/indice" element={<ListaArbitro />} />
-              
+              <Route path="/arbitro/indice" element={<ListaArbitro />} />       
               <Route path="/jugadores/indice-equipo" element={<ListaJugadoresEquipo />} />
               <Route path="/traspasos/indice" element={<ListaTraspaso />} />
               <Route path="/traspasos/indice-club" element={<ListaTraspasoClub />} />
@@ -159,9 +156,7 @@ const App = () => {
               <Route path="/traspasos/detalleSolicitante/:solicitudId" element={<DetalleTraspasoPresidenteSolicitante />} />
               <Route path="/traspasos/indiceSolicitudesPresidente" element={<IndiceSolicitudesPresidente />} />
               <Route path="/reportes/resumenCampeonato/:campeonatoId" element={<ResumenCampeonato />} />
-
               <Route path="/reportes/IndiceGeneral" element={<Reportes />} />
-              <Route path="/ventanaPrincipalUser" element={<VentanaPrincipalUser />} />
             </Route>
           </Route>
         </Routes>

@@ -13,7 +13,8 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
-
+import estadoTraspasoMapping from '../../constants/estadoTraspasos';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -25,10 +26,12 @@ const MisSolicitudes = () => {
   const [filteredPersonas, setFilteredPersonas] = useState([]);
   const [showConfirmTraspaso,setShowConfirmTraspaso] = useState(false);
   const [jugadorToFichar, setJugadorToFichar] = useState(null);
-  const [filterState, setFilterState] = useState('No filtrar');
+  const [filterState, setFilterState] = useState('Pendiente');
   const [searchName, setSearchName] = useState('');
   const [requestToDelete, setRequestToDelete] = useState(null);
   const navigate = useNavigate();
+  const [campeonatos, setCampeonatos] = useState([]);
+  const [selectedCampeonato, setSelectedCampeonato] = useState(null);
 
   useEffect(() => {
     fetchPresidente();
@@ -62,7 +65,8 @@ const MisSolicitudes = () => {
       try {
           const requestBody = {
               club_presidente: presidente.club_presidente, 
-              idTraspasoPresidente: presidente.id_presidente 
+              idTraspasoPresidente: presidente.id_presidente ,
+              campeonatoId : selectedCampeonato
           };
           console.log(requestBody,'ids');
   
@@ -80,16 +84,59 @@ const MisSolicitudes = () => {
       }
   };  
 
+  useEffect(() => {
+    const fetchCampeonatos = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
+        setCampeonatos(response.data);
+  
+        const campeonatoActivo = response.data.find(camp => camp.estado !== 3);
+        
+        if (campeonatoActivo) {
+          setSelectedCampeonato(campeonatoActivo.id);
+        } else if (response.data.length > 0) {
+          setSelectedCampeonato(response.data[0].id); 
+        }
+      } catch (error) {
+        toast.error("Error al obtener los campeonatos");
+        console.error("Error fetching campeonatos:", error);
+      }
+    };
+  
+    fetchCampeonatos();
+  }, []);
+
   const applyFilters = () => {
     let filtered = [...jugadores];
+  
+    // Clasificación de solicitudes
+    filtered = filtered.map((jugador) => {
+      if (jugador.estado_jugador === estadoTraspasoMapping.RECHAZADO || jugador.estado_club === estadoTraspasoMapping.RECHAZADO) {
+        return { ...jugador, estado_solicitud: "Rechazado" };
+      } 
+      else if (
+        (jugador.estado_jugador === estadoTraspasoMapping.PENDIENTE && jugador.estado_club === estadoTraspasoMapping.PENDIENTE) || 
+        (jugador.estado_jugador === estadoTraspasoMapping.PENDIENTE && jugador.estado_club === estadoTraspasoMapping.APROBADO) ||
+        (jugador.estado_jugador === estadoTraspasoMapping.APROBADO && jugador.estado_club === estadoTraspasoMapping.PENDIENTE) ||
+        (jugador.estado_jugador === estadoTraspasoMapping.APROBADO && jugador.estado_club === estadoTraspasoMapping.APROBADO  && jugador.estado_deuda === estadoTraspasoMapping.PENDIENTE) 
+      ) {
+        return { ...jugador, estado_solicitud: "Pendiente" };
+      } 
+      else if (
+        jugador.estado_jugador === estadoTraspasoMapping.APROBADO &&
+        jugador.estado_club === estadoTraspasoMapping.APROBADO &&
+        jugador.estado_deuda === estadoTraspasoMapping.FINALIZADO
+      ) {
+        return { ...jugador, estado_solicitud: "Realizado" };
+      } 
+      else {
+        return { ...jugador, estado_solicitud: "En proceso" };
+      }
+    });
 
-    // Filtrar por estado
-    if (filterState !== 'No filtrar') {
-      filtered = filtered.filter((jugador) =>
-        filterState === 'Activo' ? jugador.eliminado === 'N' : jugador.eliminado === 'S'
-      );
-    }
-
+      filtered = filtered.filter((jugador) => jugador.estado_solicitud === filterState);
+    
+  
     // Filtrar por nombre
     if (searchName) {
       filtered = filtered.filter((jugador) =>
@@ -98,9 +145,9 @@ const MisSolicitudes = () => {
           .includes(searchName.toLowerCase())
       );
     }
-
+  
     setFilteredPersonas(filtered);
-  };
+  };  
 
   const handleDetailsClick = (jugadorId) => {
     navigate(`/traspasos/detalleSolicitante/${jugadorId}`);
@@ -198,17 +245,29 @@ const MisSolicitudes = () => {
       <h2 className="table-title">Mis Solicitudes</h2>
       <div className="table-filters">
       <Select
-            className="filter-select"
-            placeholder="Filtrar por estado"
-            value={filterState}
-            onChange={(value) => setFilterState(value)}
-            style={{ width: 180, marginRight: 10 }}
-          >
-            <Option value="No filtrar">No filtrar</Option>
-            <Option value="Activo">Activo</Option>
-            <Option value="Inactivo">Inactivo</Option>
-        </Select>
+        className="filter-select"
+        placeholder="Filtrar por estado"
+        value={filterState}
+        onChange={(value) => setFilterState(value)}
+        style={{ width: 180, marginRight: 10 }}
+      >
+        <Option value="Rechazado">Rechazado</Option>
+        <Option value="Pendiente">Pendiente</Option>
+        <Option value="Realizado">Realizado</Option>
+      </Select>
 
+      <Select
+            className="public-select"
+            value={selectedCampeonato}
+            onChange={(value) => setSelectedCampeonato(value)}
+            style={{ width: '250px' }}
+          >
+            {campeonatos.map((camp) => (
+              <Option key={camp.id} value={camp.id}>
+              <EmojiEventsIcon/> {camp.nombre}
+              </Option>
+            ))}
+          </Select>
           <input
             type="text"
             placeholder="Buscar por nombre"
