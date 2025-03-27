@@ -9,12 +9,6 @@ const Reportes = () => {
   return (
     <div className="reportes-container">
       <div className="reporte-card">
-        <ProgresoPartidos />
-      </div>
-      <div className="reporte-card">
-        <PartidosPendientes />
-      </div>
-      <div className="reporte-card">
         <ComparacionEquipos />
       </div>
       <div className="reporte-card">

@@ -265,8 +265,8 @@ const PerfilEquipo = () => {
       <div className="equipoPerfil-logoContainer">
         <img
           src={
-            equipo.club.imagenClub && equipo.club.imagenClub.length > 0
-              ? equipo.club.imagenClub[0].club_imagen
+            equipo.club_imagen && equipo.club_imagen.length > 0
+              ? equipo.club_imagen
               : "default-image-url.png"
           }
           alt={`${equipo.nombre} logo`}
@@ -308,16 +308,16 @@ const PerfilEquipo = () => {
       <div className={`equipoPerfil-panel ${activeTab === "informacion" ? "active" : ""}`}>
         <div className="equipoPerfil-detalles">
           <p>
-            <strong>Club:</strong> {equipo.club.nombre}
+            <strong>Club:</strong> {equipo.nombre}
           </p>
           <p>
-            <strong>Categoría:</strong> {equipo.categoria.nombre}
+            <strong>Categoría:</strong> {equipo.categoria_nombre}
           </p>
           <p>
-            <strong>Género:</strong> {obtenerGeneroTexto(equipo.categoria.genero)}
+            <strong>Género:</strong> {obtenerGeneroTexto(equipo.genero)}
           </p>
           <p>
-            <strong>División:</strong> {obtenerDivisionTexto(equipo.categoria.division)}
+            <strong>División:</strong> {obtenerDivisionTexto(equipo.division)}
           </p>
           <div className="equipoPerfil-participaciones">
             <h3>Participaciones</h3>
@@ -354,7 +354,8 @@ const PerfilEquipo = () => {
       <button
         className="equipoPerfil-registrarButton"
         onClick={() => {
-          if (equipo && equipo.club && equipo.categoria) {
+          if (equipo && equipo.club_id && equipo.categoria_id) {
+           
             navigate(`/jugadores/indice-equipo`, {
               state: {
                 clubId: equipo.club_id,

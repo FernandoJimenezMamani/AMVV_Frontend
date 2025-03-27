@@ -18,22 +18,39 @@ const DetalleTraspasoPresidente = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [actionType, setActionType] = useState('');
   const { user } = useSession();
+  const [presidente, setPresidente] = useState([]);
 
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre); 
   };
 
   useEffect(() => {
-   
+      fetchPresidente();
+    }, []);
 
+  useEffect(() => {
     fetchSolicitud();
   }, [solicitudId]);
+
+  const fetchPresidente = async () => {
+    try {
+      const user = JSON.parse(sessionStorage.getItem('user')); // Convierte el JSON a objeto
+      const userId = user?.id;
+      const response = await axios.get(`${API_BASE_URL}/presidente_club/get_presidenteById/${userId}`); // Cambiado para obtener todos los jugadores
+      console.log("presidente recibidos:", response.data); 
+    
+      setPresidente(response.data);
+    } catch (error) {
+      toast.error('Error al obtener los PRESIDENTES');
+      console.error('Error al obtener los PRESIDENTES:', error);
+    }
+  };
 
   const fetchSolicitud = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/traspaso/detalle/${solicitudId}`);
       const solicitud = Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null;
-      
+      console.log('solicitud:', solicitud);
       setSolicitud(solicitud);
     } catch (error) {
       console.error('Error al obtener el detalle de la solicitud de traspaso:', error);
@@ -52,9 +69,16 @@ const DetalleTraspasoPresidente = () => {
 
   const handleAction = async () => {
     try {
-      const url = `${API_BASE_URL}/traspaso/${actionType === 'approve' ? 'aprobar' : 'rechazar'}/club/${solicitudId}`;
-      
-      await axios.put(url);
+      let url = '';
+  
+      if (solicitud.tipo_solicitud === 'Jugador') {
+        url = `${API_BASE_URL}/traspaso/${actionType === 'approve' ? 'aprobarPorPresidente' : 'rechazarPorPresidente'}/${solicitudId}`;
+      } else {
+        url = `${API_BASE_URL}/traspaso/${actionType === 'approve' ? 'aprobar' : 'rechazar'}/club/${solicitudId}`;
+      }
+  
+      await axios.put(url, { presidenteId: user.id });
+  
       toast.success(`Traspaso ${actionType === 'approve' ? 'aprobado' : 'rechazado'} exitosamente`);
       closeModal();
       fetchSolicitud();
@@ -63,6 +87,7 @@ const DetalleTraspasoPresidente = () => {
       console.error(`Error al ${actionType === 'approve' ? 'aprobar' : 'rechazar'} el traspaso:`, error);
     }
   };
+  
 
   if (!solicitud) return <p>Cargando detalles de la solicitud...</p>;
 
@@ -102,25 +127,73 @@ const DetalleTraspasoPresidente = () => {
       </p>
 
       <div className="estado-solicitud">
-      {solicitud.estado_club === 'PENDIENTE' ? (
-        <div className="botones">
-          <button className="boton-aceptar" onClick={() => openModal('approve')}>
-            Aceptar Solicitud
-          </button>
-          <button className="boton-rechazar" onClick={() => openModal('reject')}>
-            Rechazar Solicitud
-          </button>
+          {/* === CASO: tipo presidente === */}
+          {solicitud.tipo_solicitud === 'Presidente' && solicitud.estado_club_origen === 'PENDIENTE' ? (
+            <div className="botones">
+              <button className="boton-aceptar" onClick={() => openModal('approve')}>
+                Aceptar Solicitud
+              </button>
+              <button className="boton-rechazar" onClick={() => openModal('reject')}>
+                Rechazar Solicitud
+              </button>
+            </div>
+          ) : solicitud.tipo_solicitud === 'presidente' && (
+            <div className="icono-estado">
+              {solicitud.estado_club_origen === 'APROBADO' ? (
+                <CheckCircleOutlineIcon style={{ color: 'green', fontSize: '2rem' }} />
+              ) : solicitud.estado_club_origen === 'RECHAZADO' ? (
+                <CancelIcon style={{ color: 'red', fontSize: '2rem' }} />
+              ) : null}
+            </div>
+          )}
+
+          {/* === CASO: tipo jugador → presidente club ORIGEN === */}
+          {solicitud.tipo_solicitud === 'Jugador' &&
+            presidente?.id_presidente === solicitud.presidente_club_id_origen && (
+              solicitud.estado_club_origen === 'PENDIENTE' ? (
+                <div className="botones">
+                  <button className="boton-aceptar" onClick={() => openModal('approve')}>
+                    Aceptar Solicitud 
+                  </button>
+                  <button className="boton-rechazar" onClick={() => openModal('reject')}>
+                    Rechazar Solicitud 
+                  </button>
+                </div>
+              ) : (
+                <div className="icono-estado">
+                  {solicitud.estado_club_origen === 'APROBADO' ? (
+                    <CheckCircleOutlineIcon style={{ color: 'green', fontSize: '2rem' }} />
+                  ) : solicitud.estado_club_origen === 'RECHAZADO' ? (
+                    <CancelIcon style={{ color: 'red', fontSize: '2rem' }} />
+                  ) : null}
+                </div>
+              )
+          )}
+
+          {/* === CASO: tipo jugador → presidente club RECEPTOR === */}
+          {solicitud.tipo_solicitud === 'Jugador' &&
+            presidente?.id_presidente === solicitud.presidente_club_id_destino && (
+              solicitud.estado_club_receptor === 'PENDIENTE' ? (
+                <div className="botones">
+                  <button className="boton-aceptar" onClick={() => openModal('approve')}>
+                    Aceptar Solicitud 
+                  </button>
+                  <button className="boton-rechazar" onClick={() => openModal('reject')}>
+                    Rechazar Solicitud 
+                  </button>
+                </div>
+              ) : (
+                <div className="icono-estado">
+                  {solicitud.estado_club_receptor === 'APROBADO' ? (
+                    <CheckCircleOutlineIcon style={{ color: 'green', fontSize: '2rem' }} />
+                  ) : solicitud.estado_club_receptor === 'RECHAZADO' ? (
+                    <CancelIcon style={{ color: 'red', fontSize: '2rem' }} />
+                  ) : null}
+                </div>
+              )
+          )}
         </div>
-      ) : (
-        <div className="icono-estado">
-          {solicitud.estado_club === 'APROBADO' ? (
-            <CheckCircleOutlineIcon style={{ color: 'green', fontSize: '2rem' }} />
-          ) : solicitud.estado_club === 'RECHAZADO' ? (
-            <CancelIcon style={{ color: 'red', fontSize: '2rem' }} />
-          ) : null}
-        </div>
-      )}
-    </div>
+
 
       <ConfirmModal
         visible={modalVisible}

@@ -13,14 +13,25 @@ const ListaEquipos = () => {
   const [titulo, setTitulo] = useState('');
   const { categoriaId, campeonatoId } = useParams();
   const [estadoCampeonato, setEstadoCampeonato] = useState(null);
+  const [categoriaAscenso, setCategoriaAscenso] = useState(null);
+
   const navigate = useNavigate(); 
 
   const fetchTitulo = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Campeonatos/get_campeonato_categoria/${campeonatoId}/${categoriaId}`);
-      console.log('response', response);
+      const response = await axios.get(`${API_BASE_URL}/campeonatos/get_campeonato_categoria/${campeonatoId}/${categoriaId}`);
+      console.log('🔹 Título y estado campeonato:', response.data);
       setTitulo(`${response.data.campeonato_nombre} - ${response.data.categoria_nombre}`);
       setEstadoCampeonato(response.data.estado); 
+
+      const categoriasRes = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
+      const categoriaActual = categoriasRes.data.find(cat => cat.id === parseInt(categoriaId));
+      console.log('🔹 Categorías obtenidas:', categoriasRes.data);
+      console.log('🔹 Categoría actual:', categoriaActual);
+
+      if (categoriaActual && categoriaActual.es_ascenso === 'S') {
+        setCategoriaAscenso(true);
+      }
     } catch (error) {
       toast.error('Error al obtener el título');
       console.error('Error al obtener el título:', error);
@@ -30,18 +41,29 @@ const ListaEquipos = () => {
   // Función para obtener los equipos (tabla de posiciones)
   const fetchEquipos = useCallback(async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/Campeonatos/get_campeonato_posiciones/${categoriaId}/${campeonatoId}`);
+      const incluir = categoriaAscenso ? 'true' : 'false';
+      const response = await axios.get(`${API_BASE_URL}/campeonatos/get_campeonato_posiciones/${campeonatoId}/${categoriaId}/${incluir}`);
+      console.log(`🔹 Incluyendo no inscritos: ${incluir}`);
+      console.log('🔹 Equipos obtenidos:', response.data);
+      
       setEquipos(response.data);
     } catch (error) {
       toast.error('Error al obtener los equipos');
       console.error('Error al obtener los equipos:', error);
     }
-  }, [campeonatoId, categoriaId]);
+  }, [campeonatoId, categoriaId, categoriaAscenso]);
+  
 
   useEffect(() => {
     fetchTitulo();
-    fetchEquipos();
-  }, [fetchTitulo, fetchEquipos]);
+  }, [fetchTitulo]);
+  
+  useEffect(() => {
+    if (categoriaAscenso !== null) {
+      fetchEquipos();
+    }
+  }, [fetchEquipos, categoriaAscenso]);
+  
 
   useEffect(() => {
     if (!campeonatoId || !categoriaId) {
@@ -113,14 +135,19 @@ const ListaEquipos = () => {
         </thead>
         <tbody>
           {equipos.map((equipo, index) => (
-            <tr key={equipo.equipo_id}>
-              <td className="table-positions-td">{index + 1}</td> 
+           <tr key={equipo.equipo_id} className={equipo.estado === 'Deuda' ? 'equipo-deuda' : ''}>
+           <td className="table-positions-td">{index + 1}</td> 
               <td className="table-positions-td">
-                <div className="equipo-container" onClick={()=> handleTeamClick(equipo.equipo_id)} style={{ cursor: 'pointer' }}> 
-                  <img src={equipo.escudo} alt={`${equipo.nombre} logo`} className="club-logo-table"/>
+                <div className="equipo-container" onClick={() => handleTeamClick(equipo.equipo_id)} style={{ cursor: 'pointer' }}>
+                  <img 
+                    src={equipo.escudo} 
+                    alt={`${equipo.nombre} logo`} 
+                    className="club-logo-table" 
+                    style={equipo.estado === 'Deuda' ? { filter: 'grayscale(100%)', opacity: 0.4 } : {}}
+                  />
                   {equipo.equipo_nombre}
                 </div>
-              </td>
+              </td>         
               <td className="table-positions-td">{equipo.partidos_jugados}</td>
               <td className="table-positions-td">{equipo.partidos_ganados}</td>
               <td className="table-positions-td">{equipo.partidos_perdidos}</td>

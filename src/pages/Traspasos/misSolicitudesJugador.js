@@ -19,9 +19,9 @@ const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const MisSolicitudes = () => {
-  const [jugadores, setJugadores] = useState([]);
-  const [presidente, setPresidente] = useState([]);
+const MisSolicitudesJugador = () => {
+  const [clubes, setClubes] = useState([]);
+  const [jugador, setJugador] = useState([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [filteredPersonas, setFilteredPersonas] = useState([]);
   const [showConfirmTraspaso,setShowConfirmTraspaso] = useState(false);
@@ -34,55 +34,51 @@ const MisSolicitudes = () => {
   const [selectedCampeonato, setSelectedCampeonato] = useState(null);
 
   useEffect(() => {
-    fetchPresidente();
+    fetchJugador();
   }, []);
 
   useEffect(() => {
-    if (presidente && presidente.club_presidente && presidente.id_presidente) {
-      fetchJugadores();
+    if (jugador) {
+        fetchClubes();
     }
-  }, [presidente]); 
+  }, [jugador]); 
 
    useEffect(() => {
       applyFilters();
-    }, [ filterState, searchName, jugadores]);
+    }, [ filterState, searchName, clubes]);
 
-    const fetchPresidente = async () => {
-      try {
-        const user = JSON.parse(sessionStorage.getItem('user')); // Convierte el JSON a objeto
-        const userId = user?.id;
-        const response = await axios.get(`${API_BASE_URL}/presidente_club/get_presidenteById/${userId}`); // Cambiado para obtener todos los jugadores
-        console.log("presidente recibidos:", response.data); 
-      
-        setPresidente(response.data);
-      } catch (error) {
-        toast.error('Error al obtener los PRESIDENTES');
-        console.error('Error al obtener los PRESIDENTES:', error);
-      }
-    };
-
-    const fetchJugadores = async () => {
-      try {
-          const requestBody = {
-              club_presidente: presidente.club_presidente, 
-              idTraspasoPresidente: presidente.id_presidente ,
-              campeonatoId : selectedCampeonato
-          };
-          console.log(requestBody,'ids');
-  
-          const response = await axios.post(`${API_BASE_URL}/jugador/intercambioEstado`, requestBody, {
-              headers: {
-                  'Content-Type': 'application/json'
-              }
-          });
-  
-          console.log("Jugadores recibidos:", response.data); 
-          setJugadores(response.data);
-      } catch (error) {
+    const fetchJugador = async () => {
+        try {
+          const user = JSON.parse(sessionStorage.getItem('user')); 
+          const userId = user?.id;
+          const response = await axios.get(`${API_BASE_URL}/jugador/get_jugadorById/${userId}`); 
+          console.log('Jugador:', response.data);
+          setJugador(response.data);
+        } catch (error) {
           toast.error('Error al obtener los jugadores');
           console.error('Error al obtener los jugadores:', error);
-      }
-  };  
+        }
+      };
+    
+
+      const fetchClubes = async () => {
+        try {
+            if(!jugador || !jugador.jugador_id) return;
+                const requestBody = {
+                    jugador_id: jugador.jugador_id,
+                    campeonatoId : selectedCampeonato
+                };
+          const response = await axios.post(`${API_BASE_URL}/club/clubes_pending_confirm`, requestBody ,{
+            headers: {
+                'Content-Type': 'application/json'
+            }
+          });
+          setClubes(response.data);
+        } catch (error) {
+          toast.error('error')
+          console.error('Error al obtener los clubes:', error);
+        }
+      };
 
   useEffect(() => {
     const fetchCampeonatos = async () => {
@@ -107,40 +103,39 @@ const MisSolicitudes = () => {
   }, []);
 
   const applyFilters = () => {
-    let filtered = [...jugadores];
+    let filtered = [...clubes];
   
-    // Clasificación de solicitudes
-    filtered = filtered.map((jugador) => {
-      if (jugador.estado_jugador === estadoTraspasoMapping.RECHAZADO || jugador.estado_club_origen === estadoTraspasoMapping.RECHAZADO) {
-        return { ...jugador, estado_solicitud: "Rechazado" };
+    filtered = filtered.map((club) => {
+      if (club.estado_club_receptor === estadoTraspasoMapping.RECHAZADO || club.estado_club_origen === estadoTraspasoMapping.RECHAZADO) {
+        return { ...club, estado_solicitud: "Rechazado" };
       } 
       else if (
-        (jugador.estado_jugador === estadoTraspasoMapping.PENDIENTE && jugador.estado_club_origen === estadoTraspasoMapping.PENDIENTE) || 
-        (jugador.estado_jugador === estadoTraspasoMapping.PENDIENTE && jugador.estado_club_origen === estadoTraspasoMapping.APROBADO) ||
-        (jugador.estado_jugador === estadoTraspasoMapping.APROBADO && jugador.estado_club_origen === estadoTraspasoMapping.PENDIENTE) ||
-        (jugador.estado_jugador === estadoTraspasoMapping.APROBADO && jugador.estado_club_origen === estadoTraspasoMapping.APROBADO  && jugador.estado_deuda === estadoTraspasoMapping.PENDIENTE) 
+        (club.estado_club_receptor === estadoTraspasoMapping.PENDIENTE && club.estado_club_origen === estadoTraspasoMapping.PENDIENTE) || 
+        (club.estado_club_receptor === estadoTraspasoMapping.PENDIENTE && club.estado_club_origen === estadoTraspasoMapping.APROBADO) ||
+        (club.estado_club_receptor === estadoTraspasoMapping.APROBADO && club.estado_club_origen === estadoTraspasoMapping.PENDIENTE) ||
+        (club.estado_club_receptor === estadoTraspasoMapping.APROBADO && club.estado_club_origen === estadoTraspasoMapping.APROBADO  && club.estado_deuda === estadoTraspasoMapping.PENDIENTE) 
       ) {
-        return { ...jugador, estado_solicitud: "Pendiente" };
+        return { ...club, estado_solicitud: "Pendiente" };
       } 
       else if (
-        jugador.estado_jugador === estadoTraspasoMapping.APROBADO &&
-        jugador.estado_club_origen === estadoTraspasoMapping.APROBADO &&
-        jugador.estado_deuda === estadoTraspasoMapping.FINALIZADO
+        club.estado_club_receptor === estadoTraspasoMapping.APROBADO &&
+        club.estado_club_origen === estadoTraspasoMapping.APROBADO &&
+        club.estado_deuda === estadoTraspasoMapping.FINALIZADO
       ) {
-        return { ...jugador, estado_solicitud: "Realizado" };
+        return { ...club, estado_solicitud: "Realizado" };
       } 
       else {
-        return { ...jugador, estado_solicitud: "En proceso" };
+        return { ...club, estado_solicitud: "En proceso" };
       }
     });
 
-      filtered = filtered.filter((jugador) => jugador.estado_solicitud === filterState);
+      filtered = filtered.filter((club) => club.estado_solicitud === filterState);
     
   
     // Filtrar por nombre
     if (searchName) {
-      filtered = filtered.filter((jugador) =>
-        `${jugador.nombre_persona} ${jugador.apellido_persona}`
+      filtered = filtered.filter((club) =>
+        `${club.nombre_club}`
           .toLowerCase()
           .includes(searchName.toLowerCase())
       );
@@ -152,34 +147,6 @@ const MisSolicitudes = () => {
   const handleDetailsClick = (jugadorId) => {
     navigate(`/traspasos/detalleSolicitante/${jugadorId}`);
   };
-
-  const handleFicharClick = (jugadorId) => {
-    setJugadorToFichar(jugadores.find(jugador => jugador.jugador_id === jugadorId));
-    setShowConfirmTraspaso(true);
-  };
-
-
-  const handleConfirmFichar = async () => {
-    if (!jugadorToFichar) return;
-  
-    try {
-
-      await axios.post(`${API_BASE_URL}/traspaso/crear`, {
-        jugador_id: jugadorToFichar.jugador_id,
-        club_origen_id: jugadorToFichar.club_id, 
-        club_destino_id: presidente.club_presidente, 
-      });
-  
-      toast.success('Traspaso solicitado correctamente');
-      setShowConfirmTraspaso(false);
-      setJugadorToFichar(null);
-    } catch (error) {
-      toast.error('Error al solicitar el traspaso');
-      console.error('Error al crear el traspaso:', error);
-      setShowConfirmTraspaso(false);
-      setJugadorToFichar(null);
-    }
-  };  
 
   const handleCancelFichar = () => {
     setShowConfirmTraspaso(false);
@@ -201,7 +168,7 @@ const MisSolicitudes = () => {
       await axios.put(`${API_BASE_URL}/traspaso/eliminar/${requestToDelete}`);
       setShowConfirmDelete(false);
       setRequestToDelete(null);
-      fetchJugadores();
+      fetchClubes();
     } catch (error) {
       toast.error('error')
       console.error('Error al eliminar el club:', error);
@@ -233,12 +200,6 @@ const MisSolicitudes = () => {
     }
   };
 
-  const getImagenPerfil = (persona) => {
-    if (persona.persona_imagen) {
-      return persona.persona_imagen; 
-    }
-    return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
-  };
 
   return (
     <div className="table-container">
@@ -280,76 +241,58 @@ const MisSolicitudes = () => {
         <thead className="table-head">
           <tr>
             <th className="table-th-p">Foto</th>
-            <th className="table-th-p">Nombre del Jugador</th>
-            <th className="table-th-p">Fecha de Nacimiento</th>
-            <th className="table-th-p">Club Actual</th>
+            <th className="table-th-p">Club Solicitado</th>
             <th className="table-th-p">Fecha de Solicitud</th>
-            <th className="table-th-p">Respuesta Jugador</th>
-            <th className="table-th-p">Respuesta Club</th>
+            <th className="table-th-p">Respuesta del presidente actual</th>
+            <th className="table-th-p">Respuesta Club receptor</th>
             <th className="table-th-p">Pago</th>
             <th className="table-th-p">Acción</th>
           </tr>
         </thead>
         <tbody>
-          {filteredPersonas.map((jugador) => (
-            <tr key={jugador.jugador_id} className="table-row">
+          {filteredPersonas.map((club) => (
+            <tr key={club.club_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={getImagenPerfil(jugador)}
-                  alt={`${jugador.nombre} ${jugador.apellido}`}
+                  src={club.imagen_club}
+                  alt={`${club.nombre_club}`}
                   className="table-logo"
                 />
               </td>
               <td className="table-td-p">
-                {jugador.nombre_persona} {jugador.apellido_persona}
+                {club.nombre_club}
               </td>
+            
               <td className="table-td-p">
-                {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric' 
-                })}
-              </td>
-              <td className="table-td-p">
-                {jugador.nombre_club }
-              </td>
-              <td className="table-td-p">
-                {new Date(jugador.fecha_solicitud).toLocaleDateString('es-ES', { 
+                {new Date(club.fecha_solicitud).toLocaleDateString('es-ES', { 
                   day: 'numeric', 
                   month: 'long', 
                   year: 'numeric' 
                 }) }
               </td>
               <td className="table-td-p">
-                    {getStatusIcon(jugador.estado_jugador)}
+                    {getStatusIcon(club.estado_club_origen)}
                 </td>
                 <td className="table-td-p">
-                    {getStatusIcon(jugador.estado_club_origen)}
+                    {getStatusIcon(club.estado_club_receptor)}
                 </td>
                 <td className="table-td-p">
-                    {getStatusIcon(jugador.estado_deuda)}
+                    {getStatusIcon(club.estado_deuda)}
                 </td>
 
               <td className="table-td-p">
               <button
                   className={`table-button button-view `}
-                  onClick={() => handleDetailsClick(jugador.id_traspaso)}
+                  onClick={() => handleDetailsClick(club.traspaso_id)}
                 >
                   <RemoveRedEyeIcon />
                 </button>
-                <button className="table-button button-delete" onClick={() => handleDeleteClick(jugador.id_traspaso)}><DeleteForeverIcon/></button>
+                <button className="table-button button-delete" onClick={() => handleDeleteClick(club.traspaso_id)}><DeleteForeverIcon/></button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      <ConfirmModal
-        visible={showConfirmTraspaso}
-        onConfirm={handleConfirmFichar}
-        onCancel={handleCancelFichar}
-        message="¿Seguro que quieres fichar a este jugador?"
-      />
 
       <ConfirmModal
         visible={showConfirmDelete}
@@ -362,4 +305,4 @@ const MisSolicitudes = () => {
   );
 };
 
-export default MisSolicitudes;
+export default MisSolicitudesJugador;

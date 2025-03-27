@@ -207,7 +207,10 @@ const Sidebar = () => {
                       </>
                     )}
                     {hasRole(rolMapping.Jugador) && (
-                      <Link to="/traspasos/indice">Ver solicitudes</Link>
+                      <>
+                        <Link to="/traspasos/TraspasoListaClubes">Cambiar de club</Link>
+                        <Link to="/traspasos/indice">Ver solicitudes</Link>
+                      </>
                     )}
                   </div>
                   </>

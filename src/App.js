@@ -61,6 +61,8 @@ import Reportes from './pages/Reportes/Reportes';
 import VentanaPrincipalUser from './pages/VentanaPrincipalUser';
 import ListaClubesUsuario from './pages/Clubes/ListaClubesUsuario';
 import ListaJugadoresClubUsuario from './pages/Jugadores/ListaJugadoresClubUsuario';
+import ListaClubesTraspasos from './pages/Traspasos/IndiceClubesTraspaso';
+import MisSolicitudesJugador from './pages/Traspasos/misSolicitudesJugador';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -152,9 +154,11 @@ const App = () => {
               <Route path="/pagos/Traspaso" element={<ListaTraspasosPagos />} />
               <Route path="/traspasos/TraspasoListaJugadores" element={<ListaJugadoresTraspaso />} />
               <Route path="/traspasos/misSolicitudes" element={<MisSolicitudes />} />
+              <Route path="/traspasos/misSolicitudesJugador" element={<MisSolicitudesJugador />} />
               <Route path="/traspasos/detallePresidente/:solicitudId" element={<DetalleTraspasoPresidente />} />
               <Route path="/traspasos/detalleSolicitante/:solicitudId" element={<DetalleTraspasoPresidenteSolicitante />} />
               <Route path="/traspasos/indiceSolicitudesPresidente" element={<IndiceSolicitudesPresidente />} />
+              <Route path="/traspasos/TraspasoListaClubes" element={<ListaClubesTraspasos />} />
               <Route path="/reportes/resumenCampeonato/:campeonatoId" element={<ResumenCampeonato />} />
               <Route path="/reportes/IndiceGeneral" element={<Reportes />} />
             </Route>
