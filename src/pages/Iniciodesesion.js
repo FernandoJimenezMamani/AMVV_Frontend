@@ -40,8 +40,10 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       }
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
-      toast.warn('Revise sus credenciales');
+      const mensaje = error.response?.data?.message || 'Error inesperado al iniciar sesión';
+      toast.warn(mensaje);
     }
+    
   };  
 
   const handleRoleSelection = async () => {
@@ -63,8 +65,10 @@ const InicioDeSesion = ({ onLoginSuccess }) => {
       navigate('/ventanaPrincipalUser');
     } catch (error) {
       console.error('Error al procesar el rol seleccionado:', error);
-      toast.warn('Ocurrió un error al procesar su rol');
+      const mensaje = error.response?.data?.message || 'Ocurrió un error al procesar su rol';
+      toast.warn(mensaje);
     }
+    
   };
   
   const handleForgotPassword = () => {

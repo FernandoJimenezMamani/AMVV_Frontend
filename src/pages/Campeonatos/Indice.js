@@ -249,17 +249,14 @@ const Campeonatos = () => {
               </button>
               {(campeonato.estado === campeonatoEstado.campeoantoEnCurso || 
                 campeonato.estado === campeonatoEstado.transaccionProceso || 
-                campeonato.estado === campeonatoEstado.enEspera ||
-                campeonato.estado === campeonatoEstado.campeonatoFinalizado) && (
+                campeonato.estado === campeonatoEstado.enEspera ) && (
                   <>
                   {hasRole(rolMapping.PresidenteAsociacion) && (
                     <>
                     <button className="buttonex button-edit" onClick={() => handleEditClick(campeonato.id)}>
                       <i className="fas fa-edit"></i>
                     </button>
-                    <button className="buttonex button-delete" onClick={() => confirmDeleteCampeonato(campeonato.id)}>
-                      <i className="fas fa-trash-alt"></i>
-                    </button>
+     
                     </>
                   )}
                     <button 

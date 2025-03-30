@@ -45,7 +45,7 @@ const DetallePagoInscripcion = ({ isOpen, onClose, equipoId, campeonatoId }) => 
       className="modal modal-pago"
       overlayClassName="overlay"
     >
-      <h2 className="modal-title">Historial de Pagos de Inscripción</h2>
+      <h2 className="modal-title">Detalle del Pago</h2>
 
       {pagosEquipo.length === 0 ? (
         <p>No hay pagos registrados para este equipo.</p>
@@ -90,14 +90,7 @@ const DetallePagoInscripcion = ({ isOpen, onClose, equipoId, campeonatoId }) => 
                 <label className="label-pago">Referencia:</label>
                 <input type="text" value={pago.referencia} disabled className="input-pago" />
               </div>
-
-              <div className="form-group">
-                <label className="label-pago">Estado:</label>
-                <input type="text" value={pago.estado} disabled className="input-pago" />
-              </div>
             </div>
-
-            <hr />
           </form>
         ))
       )}

@@ -63,6 +63,7 @@ import ListaClubesUsuario from './pages/Clubes/ListaClubesUsuario';
 import ListaJugadoresClubUsuario from './pages/Jugadores/ListaJugadoresClubUsuario';
 import ListaClubesTraspasos from './pages/Traspasos/IndiceClubesTraspaso';
 import MisSolicitudesJugador from './pages/Traspasos/misSolicitudesJugador';
+import HistorialPagosInscripcion from './pages/Pagos/HistorialPagosInscripcion';
 import './assets/css/tailwind.css';
 import Toast from './components/Toast'
 import {toast} from 'react-toastify'
@@ -151,6 +152,7 @@ const App = () => {
               <Route path="/traspasos/detalleJugador/:solicitudId" element={<DetalleTraspaso />} />
               <Route path="/pagos/tipos" element={<ListaPagos />} />
               <Route path="/pagos/Inscripcion" element={<ListaEquiposPagos />} />
+              <Route path="/pagos/HistorialInscripcion" element={<HistorialPagosInscripcion />} />
               <Route path="/pagos/Traspaso" element={<ListaTraspasosPagos />} />
               <Route path="/traspasos/TraspasoListaJugadores" element={<ListaJugadoresTraspaso />} />
               <Route path="/traspasos/misSolicitudes" element={<MisSolicitudes />} />

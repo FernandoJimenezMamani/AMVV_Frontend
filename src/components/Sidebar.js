@@ -218,7 +218,7 @@ const Sidebar = () => {
                 </div>
 
                 <div className="menu-item">
-                {hasRole(rolMapping.PresidenteAsociacion , rolMapping.Tesorero) && (
+                {hasRole( rolMapping.Tesorero) && (
                   <a className="main-link" onClick={() => navigate('/pagos/tipos')}>
                     <MonetizationOnIcon /> Pagos
                   </a>

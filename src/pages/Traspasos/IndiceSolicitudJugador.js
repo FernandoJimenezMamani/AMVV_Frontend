@@ -47,8 +47,7 @@ const Indice = () => {
     const fetchSolicitudes = async () => {
       try {
         if (!selectedCampeonato) {
-          console.error('No se ha seleccionado un campeonato válido');
-          return; // No ejecutar la petición si el campeonato es null
+          return; 
         }
         const token = sessionStorage.getItem('token');
         if (!token) {

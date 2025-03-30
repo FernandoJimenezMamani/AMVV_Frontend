@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-Modal.setAppElement('#root'); // Configuración importante para accesibilidad
+Modal.setAppElement('#root'); 
 
 const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
   const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
     if (fecha_inicio_campeonato ) {
       const inicio = moment(fecha_inicio_campeonato);
       const year = inicio.year();
-      const month = inicio.month() + 1; // Los meses son 0-indexados
+      const month = inicio.month() + 1; 
       const period = month >= 1 && month <= 6 ? 'A' : 'B';
       const nombre = `Campeonato ${year}-${period}`;
       
@@ -42,18 +42,13 @@ const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
 
   const handleDateChange = (name, value) => {
     const formattedDate = value ? value.format('YYYY-MM-DD') : '';
-    console.log(`Fecha seleccionada para ${name}:`, formattedDate);
   
     const updatedFormData = {
       ...formData,
       [name]: formattedDate,
     };
   
-    console.log('Updated formData después de handleDateChange:', updatedFormData);
-  
     setFormData(updatedFormData);
-  
-    // Llama a updateNombreCampeonato si es necesario
     if (name === 'fecha_inicio_campeonato' || name === 'fecha_fin_campeonato') {
       updateNombreCampeonato(updatedFormData);
     }
@@ -99,6 +94,20 @@ const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validación de campos obligatorios
+    const camposFaltantes = [];
+  
+    if (!formData.nombre) camposFaltantes.push('Nombre');
+    if (!formData.fecha_inicio_transaccion || !formData.hora_inicio_transaccion) camposFaltantes.push('Inicio de transacciones');
+    if (!formData.fecha_fin_transaccion || !formData.hora_fin_transaccion) camposFaltantes.push('Fin de transacciones');
+    if (!formData.fecha_inicio_campeonato || !formData.hora_inicio_campeonato) camposFaltantes.push('Inicio del campeonato');
+    if (!formData.fecha_fin_campeonato || !formData.hora_fin_campeonato) camposFaltantes.push('Fin del campeonato');
+  
+    if (camposFaltantes.length > 0) {
+      toast.warn(`Complete los siguientes campos: ${camposFaltantes.join(', ')}`);
+      return;
+    }
   
     try {
       const inicioTransaccion = formData.fecha_inicio_transaccion
@@ -131,9 +140,9 @@ const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
       onClose();
       onCampCreated();
     } catch (error) {
-      toast.error('Error al registrar el campeonato');
-      console.error('Error al crear el campeonato:', error);
-    }
+      const mensaje = error.response?.data?.message || 'Error al registrar el campeonato';
+      toast.error(mensaje);
+    }    
   };
   
   return (
@@ -274,7 +283,7 @@ const RegistroCampeonato = ({ isOpen, onClose, onCampCreated }) => {
           id="nombre"
           name="nombre"
           value={formData.nombre}
-          readOnly
+          onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
           className="input-field"
         />
         </div>

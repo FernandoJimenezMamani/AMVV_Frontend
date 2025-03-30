@@ -42,14 +42,16 @@ const PerfilEquipo = () => {
   };
 
   useEffect(() => {
-    fetchEquipoAndJugadores();
-  }, [id]);
-
+    if (selectedCampeonato) {
+      fetchEquipoAndJugadores();
+    }
+  }, [id, selectedCampeonato]);
+  
   const fetchEquipoAndJugadores = async () => {
     try {
       const equipoResponse = await axios.get(`${API_BASE_URL}/equipo/get_equipo/${id}`);
       setEquipo(equipoResponse.data);
-      const jugadoresResponse = await axios.get(`${API_BASE_URL}/jugador/get_jugadores_equipo/${id}`);
+      const jugadoresResponse = await axios.get(`${API_BASE_URL}/jugador/get_jugadores_equipo/${id}/${selectedCampeonato}`);
       setJugadores(jugadoresResponse.data);
     } catch (error) {
       toast.error('Error al obtener el equipo y jugadores');
@@ -93,40 +95,56 @@ const PerfilEquipo = () => {
   }, [id, activeTab, selectedCampeonato]);
 
   useEffect(() => {
-    const fetchParticipaciones = async () => {
+    const fetchParticipacion = async () => {
+      if (!selectedCampeonato || !equipo?.equipo_id) return;
+  
       try {
-        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
-        const campeonatos = response.data;
-        let participacionesTemp = [];
+        const posicionResponse = await axios.post(`${API_BASE_URL}/campeonatos/obtenerEquipoPosicion`, {
+          campeonatoId: selectedCampeonato,
+          equipoId: equipo.equipo_id,
+        });
   
-        for (const campeonato of campeonatos) {
-          try {
-            const posicionResponse = await axios.post(`${API_BASE_URL}/campeonatos/obtenerEquipoPosicion`, {
-              categoriaId: equipo.categoria_id,
-              campeonatoId: campeonato.id,
-              equipoId: equipo.id,
-            });
-  
-            if (posicionResponse.data) {
-              participacionesTemp.push({
-                nombre: campeonato.nombre,
-                estado_campeonato : campeonato.estado,
-                posicion: posicionResponse.data.posicion
-              });
-            }
-          } catch (error) {
-            console.warn(`El equipo no participó en ${campeonato.nombre}`);
-          }
+        if (posicionResponse.data) {
+          setParticipaciones([{
+            nombre: campeonatos.find(c => c.id === selectedCampeonato)?.nombre || "Campeonato",
+            estado_campeonato: campeonatos.find(c => c.id === selectedCampeonato)?.estado || "",
+            posicion: posicionResponse.data.posicion,
+            estado_equipo_campeonato: posicionResponse.data.estado_equipo_campeonato
+          }]);
+        } else {
+          setParticipaciones([]);
         }
-  
-        setParticipaciones(participacionesTemp);
       } catch (error) {
-        console.error("Error al obtener campeonatos:", error);
+        setParticipaciones([]);
+        console.warn("Este equipo no participó en el campeonato seleccionado.");
       }
     };
   
-    fetchParticipaciones();
-  }, [equipo]);
+    fetchParticipacion();
+  }, [selectedCampeonato, equipo?.equipo_id]);  
+
+  useEffect(() => {
+    const fetchCategoriaPorCampeonato = async () => {
+      if (!selectedCampeonato || !equipo) return;
+  
+      try {
+        const response = await axios.get(`${API_BASE_URL}/equipo/categoria/${equipo.equipo_id}/${selectedCampeonato}`);
+        setEquipo((prev) => ({
+          ...prev,
+          categoria_id: response.data.categoria_id,
+          categoria_nombre: response.data.categoria_nombre,
+          genero: response.data.genero,
+          division: response.data.division,
+        }));
+      } catch (error) {
+        console.error('Error al obtener la categoría por campeonato:', error);
+        toast.warn('No se pudo obtener la categoría actual del equipo.');
+      }
+    };
+  
+    fetchCategoriaPorCampeonato();
+  }, [selectedCampeonato, equipo?.equipo_id]);
+  
 
   const handleDeleteJugador = async () => {
     try {
@@ -249,11 +267,9 @@ const PerfilEquipo = () => {
   
   return (
     <div className="equipoPerfil-container">
-    {/* Botón de Volver */}
     <button className="equipoPerfil-volverButton" onClick={() => window.history.back()}>
       <ArrowBackIcon/>
     </button>
-
     <PerfilJugadorModal
         isOpen={showPerfilModal}
         onClose={handleClosePerfilModal}
@@ -273,10 +289,26 @@ const PerfilEquipo = () => {
           className="equipoPerfil-logo"
         />
       </div>
-      <h2 className="equipoPerfil-nombre">{equipo.nombre}</h2>
-    </div>
+      <h2 className="equipoPerfil-nombre">{equipo.equipo_nombre}</h2>
+      <div className="equipoPerfil-selectCampeonato">
+        {campeonatos.length > 0 ? (
+          <Select
+            value={selectedCampeonato || campeonatos[0].id}
+            onChange={(value) => setSelectedCampeonato(value)}
+            style={{ width: '250px', marginBottom: '0px' }}
+          >
+            {campeonatos.map((campeonato) => (
+              <Select.Option key={campeonato.id} value={campeonato.id}>
+                {campeonato.nombre}
+              </Select.Option>
+            ))}
+          </Select>
+        ) : (
+          <p>Cargando campeonatos...</p>
+        )}
+      </div>
 
-    {/* Botones de navegación */}
+    </div>
     <div className="equipoPerfil-tabs">
       <button
         className={`equipoPerfil-tabButton ${
@@ -308,10 +340,10 @@ const PerfilEquipo = () => {
       <div className={`equipoPerfil-panel ${activeTab === "informacion" ? "active" : ""}`}>
         <div className="equipoPerfil-detalles">
           <p>
-            <strong>Club:</strong> {equipo.nombre}
+            <strong>Club:</strong> {equipo.club_nombre}
           </p>
           <p>
-            <strong>Categoría:</strong> {equipo.categoria_nombre}
+            <strong>Categoría Actual:</strong> {equipo.categoria_nombre}
           </p>
           <p>
             <strong>Género:</strong> {obtenerGeneroTexto(equipo.genero)}
@@ -320,7 +352,7 @@ const PerfilEquipo = () => {
             <strong>División:</strong> {obtenerDivisionTexto(equipo.division)}
           </p>
           <div className="equipoPerfil-participaciones">
-            <h3>Participaciones</h3>
+            <h3>Posición</h3>
             <div className="equipoPerfil-participacionesGrid">
               {participaciones.length > 0 ? (
                 participaciones.map((participacion, index) => (
@@ -329,17 +361,27 @@ const PerfilEquipo = () => {
                       {participacion.nombre}
                       {participacion.estado_campeonato !== estadosMapping.campeonatoFinalizado && <span className="equipoPerfil-campeonatoEnCurso"></span>}
                     </h4>
-                    {getMedalIcon(participacion.posicion) && (
-                      <span className="equipoPerfil-medalla">{getMedalIcon(participacion.posicion)}</span>
+                    {participacion.estado_equipo_campeonato === "Inscrito" ? (
+                      <>
+                        {getMedalIcon(participacion.posicion) && (
+                          <span className="equipoPerfil-medalla">
+                            {getMedalIcon(participacion.posicion)}
+                          </span>
+                        )}
+                        <p>
+                          {participacion.estado_campeonato !== estadosMapping.campeonatoFinalizado
+                            ? "Posición actual"
+                            : "Posición"}
+                          : <strong>{formatPosition(participacion.posicion)}</strong>
+                        </p>
+                      </>
+                    ) : (
+                      <p><strong>No participó</strong></p>
                     )}
-                    <p>
-                    {participacion.estado_campeonato !== estadosMapping.campeonatoFinalizado ? "Posición actual" : "Posición"}:
-                    <strong> {formatPosition(participacion.posicion)} </strong>
-                  </p>
                   </div>
                 ))
               ) : (
-                <p>Este equipo no ha participado en ningún campeonato.</p>
+                <p>Este equipo no ha participado en este campeonato.</p>
               )}
             </div>
           </div>
@@ -411,26 +453,6 @@ const PerfilEquipo = () => {
 
   <div className={`equipoPerfil-panel ${activeTab === "partidos" ? "active" : ""}`}>
       <div className="equipoPerfil-partidosWrapper">
-      <div className="equipoPerfil-selectCampeonato">
-          <label>Selecciona un campeonato:</label>
-          {campeonatos.length > 0 ? (
-            <Select
-              value={selectedCampeonato || campeonatos[0].id}
-              onChange={(value) => setSelectedCampeonato(value)}
-              style={{ width: '100%', marginBottom: '15px' }}
-            >
-              {campeonatos.map((campeonato) => (
-                <Select.Option key={campeonato.id} value={campeonato.id}>
-                  {campeonato.nombre}
-                </Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <p>Cargando campeonatos...</p>
-          )}
-        </div>
-
-
         {partidos.length === 0 ? (
           <p className="equipoPerfil-noPartidos">No hay partidos registrados para este equipo en este campeonato.</p>
         ) : (

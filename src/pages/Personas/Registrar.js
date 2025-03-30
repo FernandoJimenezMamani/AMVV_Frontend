@@ -44,7 +44,7 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
   const [roleError, setRoleError] = useState(false);
   const [selectedRoles, setSelectedRoles] = useState([]);
   const fileInputRef = React.createRef();
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -155,7 +155,7 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
 
   const handleSubmit = async (e) => { 
     e.preventDefault();
-
+    setIsLoading(true);
     if (formData.roles.length === 0) {
       setRoleError(true); // Activar el estado de error si no hay roles seleccionados
       return;
@@ -227,6 +227,8 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
         // Error inesperado
         toast.error('Ocurrió un error al registrar la persona. Inténtelo nuevamente.');
       }
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -453,10 +455,12 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
         )}
 
         <div className="form-buttons">
-          <button type="button" className="button button-cancel" onClick={handleClose}>
+          <button type="button" className="button button-cancel" onClick={handleClose} disabled={isLoading}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">Registrar</button>
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+          {isLoading ? <span className="spinner"></span> : "Registrar"}
+            </button>
         </div>
       </form>
 

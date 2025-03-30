@@ -48,6 +48,7 @@ const MisSolicitudesJugador = () => {
     }, [ filterState, searchName, clubes]);
 
     const fetchJugador = async () => {
+      if(!selectedCampeonato) return;
         try {
           const user = JSON.parse(sessionStorage.getItem('user')); 
           const userId = user?.id;

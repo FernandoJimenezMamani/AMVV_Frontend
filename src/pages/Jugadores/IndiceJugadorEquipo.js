@@ -200,22 +200,11 @@ const ListaJugadoresEquipo = () => {
   return (
     <div className="table-container">
       <h2 className="table-title">
-        {equipo ? `Jugadores del Equipo ${equipo.nombre}` : "Cargando equipo..."}
+        {equipo ? `Añadir jugadores al Equipo ${equipo.equipo_nombre}` : "Cargando equipo..."}
       </h2>
 
       <div className="table-filters">
         <p></p>
-      <Select
-            className="filter-select"
-            placeholder="Filtrar por estado"
-            value={filterState}
-            onChange={(value) => setFilterState(value)}
-            style={{ width: 180, marginRight: 10 }}
-          >
-            <Option value="No filtrar">No filtrar</Option>
-            <Option value="Activo">Activo</Option>
-            <Option value="Inactivo">Inactivo</Option>
-        </Select>
 
           <input
             type="text"
@@ -303,16 +292,7 @@ const ListaJugadoresEquipo = () => {
                 >
                   <RemoveRedEyeIcon />
                 </button>
-                <label className="user-activation-switch">
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      jugador.eliminado === 'S' ? handleActivateUser(jugador.persona_id) : handleDeleteClick(jugador.persona_id)
-                    }
-                    checked={jugador.eliminado !== 'S'} // Marcado si no está eliminado
-                  />
-                  <span className="user-activation-slider"></span>
-                </label>
+                
 
               </td>
             </tr>

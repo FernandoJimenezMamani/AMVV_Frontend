@@ -46,10 +46,15 @@ const ListaEquiposPagos = () => {
     }
   }
 
+  const handleHistorialClick = () => {
+    navigate('/pagos/HistorialInscripcion');
+  }
+
 
   return (
     <div className="table-container">
       <h2 className="table-title">Deuda por inscripción</h2>
+      <button className="table-add-button" onClick={handleHistorialClick} >Historial</button>
       <RegistroPagoInscripcion
         isOpen={showFormModal}
         onClose={handleCloseModal}
