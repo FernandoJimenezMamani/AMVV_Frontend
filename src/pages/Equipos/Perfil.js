@@ -17,7 +17,6 @@ import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
 import ConfirmModal from '../../components/ConfirmModal';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilEquipo = () => {
@@ -148,7 +147,7 @@ const PerfilEquipo = () => {
 
   const handleDeleteJugador = async () => {
     try {
-      await axios.delete(`${API_BASE_URL}/jugador/delete_jugador_equipo/${selectedJugadorId}`);
+      await axios.delete(`${API_BASE_URL}/jugador/delete_jugador_equipo/${selectedJugadorId}/${id}`);
       toast.success("Jugador eliminado correctamente");
       setJugadores(jugadores.filter(j => j.id !== selectedJugadorId));
       fetchEquipoAndJugadores();
@@ -392,32 +391,36 @@ const PerfilEquipo = () => {
     <div className="equipoPerfil-jugadoresWrapper">
       {/* Botón Registrar Jugador */}
       {hasRole(rolMapping.PresidenteAsociacion, rolMapping.PresidenteClub, rolMapping.DelegadoClub) && (
+      campeonatos.find(c => c.id === selectedCampeonato)?.estado === estadosMapping.transaccionProceso
+      && (
       <div className="equipoPerfil-botones">
-      <button
-        className="equipoPerfil-registrarButton"
-        onClick={() => {
-          if (equipo && equipo.club_id && equipo.categoria_id) {
-           
-            navigate(`/jugadores/indice-equipo`, {
-              state: {
-                clubId: equipo.club_id,
-                categoriaId: equipo.categoria_id,
-                equipoId: id
-              }
-            });
-          } else {
-            toast.error("No se pudo navegar, faltan datos");
-          }
-        }}
-      >
-        +1 Jugador
-      </button>
-    
-      {/* Botón de eliminar jugadores */}
+
+          <button
+          className="equipoPerfil-registrarButton"
+          onClick={() => {
+            if (equipo && equipo.club_id && equipo.categoria_id) {
+             
+              navigate(`/jugadores/indice-equipo`, {
+                state: {
+                  clubId: equipo.club_id,
+                  categoriaId: equipo.categoria_id,
+                  equipoId: id
+                }
+              });
+            } else {
+              toast.error("No se pudo navegar, faltan datos");
+            }
+          }}
+        >
+          +1 Jugador
+        </button>
+        
+
       <button className="equipoPerfil-eliminarButton" onClick={toggleEliminar}>
         {mostrarEliminar ? "Cancelar" : "Eliminar Jugadores"}
       </button>
     </div>
+    )
     
       )}
 

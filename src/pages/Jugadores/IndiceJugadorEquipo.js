@@ -311,10 +311,8 @@ const ListaJugadoresEquipo = () => {
         visible={showConfirmRegister}
         onConfirm={() => handleConfirmRegister(jugadorSeleccionado?.jugador_id)}
         onCancel={handleCancelRegister}
-        message={`¿Seguro que quieres añadir al jugador ${jugadorSeleccionado?.nombre_persona} ${jugadorSeleccionado?.apellido_persona}? al equipo ${equipo?.nombre}`}
+        message={`¿Seguro que quieres añadir al jugador ${jugadorSeleccionado?.nombre_persona} ${jugadorSeleccionado?.apellido_persona}? al equipo ${equipo?.equipo_nombre}`}
       />
-
-      
     </div>
 
   );
