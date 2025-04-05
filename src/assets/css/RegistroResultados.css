@@ -5,18 +5,18 @@
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 
-  4px 0 8px rgba(0, 0, 0, 0.2),  
-  -4px 0 8px rgba(0, 0, 0, 0.2),
-  0 4px 8px rgba(0, 0, 0, 0.2),  
-  0 -4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    4px 0 8px rgba(0, 0, 0, 0.2),
+    -4px 0 8px rgba(0, 0, 0, 0.2),
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 -4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .resultados-titulo {
   text-align: left;
   font-size: 45px !important;
   margin-bottom: 5px !important;
-  color: #143E42;
+  color: #143e42;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
   margin-left: auto;
@@ -26,15 +26,14 @@
   margin-bottom: 20px;
 }
 
-.resultados-form-group label{
+.resultados-form-group label {
   text-align: left;
   font-size: 15px !important;
   margin-bottom: 5px !important;
-  color: #143E42;
+  color: #143e42;
   font-weight: bold;
   margin-left: auto;
 }
-
 
 .resultados-radio-group {
   display: flex;
@@ -53,7 +52,9 @@
   padding: 8px 12px;
   border-radius: 8px;
   background-color: #f1f1f1;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /* Estilo cuando el usuario pasa el mouse */
@@ -95,8 +96,8 @@
 
 /* Estilo cuando está seleccionado */
 .resultados-radio-option input[type="radio"]:checked + label::before {
-  background-color: #579FA6;
-  border-color: #35748C;
+  background-color: #579fa6;
+  border-color: #35748c;
   box-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
 }
 
@@ -107,7 +108,7 @@
 
 /* Cambia el fondo cuando está seleccionado */
 .resultados-radio-option input[type="radio"]:checked + label {
-  background-color: #579FA6;
+  background-color: #579fa6;
   border-radius: 8px;
   padding: 5px 10px;
 }
@@ -144,7 +145,7 @@
 /* Logo del equipo */
 .resultados-equipo-logo {
   width: 70px;
-  height:70px;
+  height: 70px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.8);
@@ -211,7 +212,7 @@
 
 /* Botón para abrir el modal */
 .resultados-modal-btn {
-  background-color: #3D8FA4;
+  background-color: #3d8fa4;
   color: white;
   font-size: 12px;
   font-weight: bold;
@@ -228,7 +229,7 @@
 }
 
 .resultados-modal-btn:hover {
-  background-color: #35748C;
+  background-color: #35748c;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
@@ -311,12 +312,12 @@
 }
 
 .modal-select:focus {
-  border-color: #35748C;
+  border-color: #35748c;
   outline: none;
 }
 
 .modal-add-btn {
-  background-color: #3D8FA4;
+  background-color: #3d8fa4;
   color: #fff;
   padding: 10px 15px;
   font-size: 16px;
@@ -332,7 +333,7 @@
 }
 
 .modal-add-btn:hover:not(:disabled) {
-  background-color: #35748C;
+  background-color: #35748c;
 }
 
 /* Contenedor de la lista de tarjetas */
@@ -374,8 +375,8 @@
 }
 
 .tarjeta-tipo {
-  width: 24px;  
-  height: 16px; 
+  width: 24px;
+  height: 16px;
   border-radius: 4px;
   display: inline-block;
 }
@@ -417,7 +418,6 @@
 
 .tarjeta-remove-btn:hover {
   background-color: #cfc3c4;
-  
 }
 
 .tarjeta-tipo {
@@ -453,35 +453,36 @@
 
 .resultado-input-field {
   width: 100%;
-    max-width: none; 
-    width: 500px !important;
-    height: 50px !important;
-    padding: 10px 12px;
-    font-size: 15px !important;
-    border: 1px solid #ccc;  
-    border-radius: 5px; 
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
-    font-weight: 100;
+  max-width: none;
+  width: 500px !important;
+  height: 50px !important;
+  padding: 10px 12px;
+  font-size: 15px !important;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+  font-weight: 100;
 }
 
 .resultado-input-field::placeholder {
-  color: #bbb;  
+  color: #bbb;
   font-size: 15px !important;
 }
 
 .resultado-input-field:focus {
-  border-color: #3D8FA4;
+  border-color: #3d8fa4;
   outline: none;
   box-shadow: 0 0 4px rgba(61, 143, 164, 0.5);
 }
-
 
 /* ESTILOS PARA VISUALIZACION DE TARJETAS */
 .resultados-tarjetas h3 {
   font-size: 18px;
   font-weight: bold;
-  color: #143E42;
+  color: #143e42;
   text-align: center;
   margin-bottom: 10px;
 }
@@ -506,7 +507,6 @@
   width: 50%;
 }
 
-
 /* ========================= */
 /* ESTILOS PARA EL INPUT DE IMAGEN */
 /* ========================= */
@@ -519,7 +519,7 @@
 
 /* Botón estilizado para cargar imagen */
 .upload-button {
-  background-color: #3D8FA4;
+  background-color: #3d8fa4;
   color: white;
   font-size: 12px;
   font-weight: bold;
@@ -536,21 +536,21 @@
 }
 
 .upload-button:hover {
-  background-color: #35748C;
+  background-color: #35748c;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
 .file-icon {
   font-size: 20px;
-  color: #143E42;
+  color: #143e42;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
 
 .file-icon:hover {
   transform: scale(1.2);
-  color: #35748C;
+  color: #35748c;
 }
 
 /* ========================= */
@@ -604,6 +604,15 @@
   background: darkred;
 }
 
+.delete-tarjeta-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 1.2rem;
+  margin-left: 8px;
+}
+
 @media (max-width: 768px) {
   .resultados-radio-group {
     flex-direction: column;
@@ -612,7 +621,7 @@
   }
 
   .upload-button {
-    font-size: 10px; 
+    font-size: 10px;
   }
 
   .resultados-modal {
