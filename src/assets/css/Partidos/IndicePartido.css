@@ -100,6 +100,7 @@
   font-weight: bold;
   width: 250px; 
   height: 200px; 
+  overflow: hidden;
 }
 
 .all-matches-team-info {
@@ -197,6 +198,23 @@
   color: green;
 }
 
+/* Barra animada para partidos en vivo */
+.estado-vivo-animado {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #00e676, #1de9b6);
+  animation: moverBarra 1.5s linear infinite;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+@keyframes moverBarra {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {

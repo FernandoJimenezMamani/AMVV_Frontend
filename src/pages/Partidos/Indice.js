@@ -211,6 +211,10 @@ const PartidosList = () => {
             onClick={() => handlePartidoClick(partido.id)}
             style={{ cursor: 'pointer', position: 'relative' }} 
           >
+            {partido.estado === estadosPartidoCampMapping.Vivo && (
+              <div className="estado-vivo-animado"></div>
+            )}
+
            {estadoPartido && (
               <div 
                 className={`partido-estado-icon ${estadoPartido.clase}`} 
@@ -249,8 +253,9 @@ const PartidosList = () => {
                 )}
               <div className="all-matches-info">
                   <p className="all-matches-date">{formatDate(partido.fecha)}</p>
-                  {partido.estado === estadosPartidoCampMapping.Confirmado && (
-                    <>
+                  {(partido.estado === estadosPartidoCampMapping.Confirmado || 
+                    partido.estado === estadosPartidoCampMapping.Vivo)  && (
+                      <>
                       <p className="all-matches-time">Hora: {formatTime(partido.fecha)}</p>
                       <p className="all-matches-time">Lugar: {partido.lugar_nombre}</p>
                     </>

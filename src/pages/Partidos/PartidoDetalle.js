@@ -20,6 +20,7 @@ import estadosPartidoCampMapping from "../../constants/estadoPartido";
 import rolMapping from "../../constants/roles";
 import { useSession } from "../../context/SessionContext";
 import PerfilArbitroModal from "../Arbitros/Perfil";
+import EditIcon from '@mui/icons-material/Edit';
 
 ReactModal.setAppElement("#root");
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -74,6 +75,30 @@ const PartidoDetalle = () => {
     fetchArbitros();
   }, [partidoId]);
 
+  const fetchResultados = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/partidos/resultados/${partidoId}`,
+      );
+      setResultadoPartido(response.data);
+    } catch (error) {
+      toast.error("Error al obtener los resultados del partido");
+      console.error("Error al obtener los resultados:", error);
+    }
+  };
+
+  const fetchGanador = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/partidos/ganador/${partidoId}`,
+      );
+      setGanadorPartido(response.data);
+    } catch (error) {
+      toast.error("Error al obtener el ganador del partido");
+      console.error("Error al obtener el ganador:", error);
+    }
+  };
+
   useEffect(() => {
     if (partido) {
       const fetchJugadoresLocal = async (equipoId) => {
@@ -117,39 +142,51 @@ const PartidoDetalle = () => {
       (partido.estado === estadosPartidoCampMapping.Finalizado ||
         partido.estado === estadosPartidoCampMapping.Vivo)
     ) {
-      const fetchResultados = async () => {
-        try {
-          const response = await axios.get(
-            `${API_BASE_URL}/partidos/resultados/${partidoId}`,
-          );
-          setResultadoPartido(response.data);
-        } catch (error) {
-          toast.error("Error al obtener los resultados del partido");
-          console.error("Error al obtener los resultados:", error);
-        }
-      };
-
       fetchResultados();
     }
   }, [partido]);
 
   useEffect(() => {
-    if (partido && partido.estado === estadosPartidoCampMapping.Finalizado) {
-      const fetchGanador = async () => {
-        try {
-          const response = await axios.get(
-            `${API_BASE_URL}/partidos/ganador/${partidoId}`,
-          );
-          setGanadorPartido(response.data);
-        } catch (error) {
-          toast.error("Error al obtener el ganador del partido");
-          console.error("Error al obtener el ganador:", error);
-        }
-      };
-
+    if (partido && (partido.estado === estadosPartidoCampMapping.Finalizado || partido.estado === estadosPartidoCampMapping.Vivo)) {
       fetchGanador();
     }
   }, [partido]);
+
+  useEffect(() => {
+    if (!partidoId) return;
+  
+    const websocketURL = `${process.env.REACT_APP_WEBSOCKET_URL}/partido/${partidoId}`;
+    const ws = new WebSocket(websocketURL);
+  
+    ws.onopen = () => {
+      console.log("✅ WebSocket abierto para actualizaciones de partido");
+    };
+  
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "actualizacion_resultado") {
+          console.log("📡 WebSocket: actualizando resultado del partido...");
+          fetchResultados(); 
+          fetchGanador(); 
+        }
+      } catch (error) {
+        console.error("❌ Error procesando mensaje WebSocket:", error);
+      }
+    };
+  
+    ws.onerror = (error) => {
+      console.error("⚠️ Error WebSocket:", error);
+    };
+  
+    ws.onclose = () => {
+      console.log("🔴 WebSocket cerrado para partido");
+    };
+  
+    return () => {
+      ws.close();
+    };
+  }, [partidoId]);  
 
   if (!partido) {
     return <div>Cargando detalles del partido...</div>;
@@ -246,6 +283,11 @@ const PartidoDetalle = () => {
     navigate(`/equipos/perfil/${equipoId}`);
   };
 
+  const handleEditarPartidoClick = (partidoId) => {
+    console.log("Editando partido con ID:", partidoId);
+    navigate(`/partidos/editar/${partidoId}`);
+  };
+
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
   };
@@ -260,6 +302,12 @@ const PartidoDetalle = () => {
     setSelectedPersonaId(null);
   };
 
+  const esArbitroAsignado = () => {
+    if (!user || user.rol.nombre !== rolMapping.Arbitro) return false;
+  
+    return arbitros.some((arbitro) => arbitro.arbitro_id === user.id);
+  };  
+
   return (
     <div className="partido-detalle-container">
       <h1 className="titulo-partido">Detalles del Partido</h1>
@@ -269,12 +317,18 @@ const PartidoDetalle = () => {
         arbitroId={selectedPersonaId}
       />
       <div className="resultado-button-container">
-        {hasRole(rolMapping.PresidenteAsociacion, rolMapping.Arbitro) && (
+        {(
+          hasRole(rolMapping.PresidenteAsociacion) ||
+          (esArbitroAsignado() && partido.estado !== estadosPartidoCampMapping.Finalizado)
+        ) && (
           <button
             className="resultado-button"
             onClick={() => handlePartidoClick(partidoId)}
           >
-            Registrar Resultado <AssignmentIcon />
+           {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
+              <span>Actualizar Resultado <AssignmentIcon /></span>
+            ):(
+              <span>Registrar Resultado <AssignmentIcon /></span>)} 
           </button>
         )}
         {hasRole(rolMapping.PresidenteAsociacion) &&
@@ -284,6 +338,15 @@ const PartidoDetalle = () => {
               onClick={() => handleReprogramarClick()}
             >
               Reprogramar Partido <CalendarMonthIcon />
+            </button>
+          )}
+          {hasRole(rolMapping.PresidenteAsociacion) &&
+          partido.estado !== estadosPartidoCampMapping.Finalizado && (
+            <button
+              className="reprogramar-button"
+              onClick={() => handleEditarPartidoClick(partido.partido_id)}
+            >
+               <EditIcon />
             </button>
           )}
       </div>
@@ -304,13 +367,20 @@ const PartidoDetalle = () => {
         </p>
       </div>
       <div className="partido-detalle-bloque">
-        <h2
-          className={`titulo-estado ${partido.estado === estadosPartidoCampMapping.Finalizado ? "finalizado" : "proximamente"}`}
-        >
-          {partido.estado === estadosPartidoCampMapping.Finalizado
-            ? "Finalizado"
-            : "Próximamente"}
-        </h2>
+      <h2
+    className={`titulo-estado ${partido.estado === estadosPartidoCampMapping.Finalizado ? "finalizado" : partido.estado === estadosPartidoCampMapping.Vivo ? "vivo" : "proximamente"}`}
+      >
+        {partido.estado === estadosPartidoCampMapping.Vivo ? (
+          <span className="estado-vivo-partido">
+            <span className="punto-vivo"></span> En curso
+          </span>
+        ) : partido.estado === estadosPartidoCampMapping.Finalizado ? (
+          "Finalizado"
+        ) : (
+          "Próximamente"
+        )}
+      </h2>
+
         <div className="partido-equipos">
           <div
             className="equipo-info equipo-local"
@@ -341,10 +411,10 @@ const PartidoDetalle = () => {
           </div>
         </div>
 
-        {partido.estado === estadosPartidoCampMapping.Finalizado &&
+        {(partido.estado === estadosPartidoCampMapping.Finalizado || partido.estado === estadosPartidoCampMapping.Vivo) &&
           ganadorPartido && (
             <div className="resultado-partido-bloque">
-              {ganadorPartido.walkover ? (
+              {ganadorPartido?.walkover ? (
                 <h3 className="resultado-ganador">
                   {ganadorPartido.walkover === "both"
                     ? "Walkover de ambos equipos"
@@ -358,8 +428,11 @@ const PartidoDetalle = () => {
                 resultadoPartido?.resultadoVisitante ? (
                 <>
                   <h3 className="resultado-ganador">
-                    Ganador {ganadorPartido?.ganador}{" "}
+                    {partido.estado === estadosPartidoCampMapping.Finalizado
+                      ? `Ganador ${ganadorPartido?.ganador}`
+                      : "Resultado actual"}
                   </h3>
+
                   <p className="resultado-marcador">
                     {ganadorPartido?.marcador}
                   </p>

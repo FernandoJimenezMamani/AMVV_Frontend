@@ -95,6 +95,32 @@
   animation: parpadeo 1.5s infinite alternate ease-in-out;
 }
 
+.marcador-vivo {
+  margin-left: 8px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.marcador-vivo.ganando {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.marcador-vivo.perdiendo {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.marcador-vivo.empate {
+  background-color: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
 @keyframes parpadeo {
   0% {
     opacity: 0.3;

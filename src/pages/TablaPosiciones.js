@@ -14,6 +14,7 @@ const ListaEquipos = () => {
   const { categoriaId, campeonatoId } = useParams();
   const [estadoCampeonato, setEstadoCampeonato] = useState(null);
   const [categoriaAscenso, setCategoriaAscenso] = useState(null);
+  const [marcadoresVivos, setMarcadoresVivos] = useState({});
 
   const navigate = useNavigate(); 
 
@@ -43,16 +44,35 @@ const ListaEquipos = () => {
     try {
       const incluir = categoriaAscenso ? 'true' : 'false';
       const response = await axios.get(`${API_BASE_URL}/campeonatos/get_campeonato_posiciones/${campeonatoId}/${categoriaId}/${incluir}`);
-      console.log(`🔹 Incluyendo no inscritos: ${incluir}`);
-      console.log('🔹 Equipos obtenidos:', response.data);
       
       setEquipos(response.data);
+      fetchMarcadoresVivos();
     } catch (error) {
       toast.error('Error al obtener los equipos');
       console.error('Error al obtener los equipos:', error);
     }
   }, [campeonatoId, categoriaId, categoriaAscenso]);
+
+  const fetchMarcadoresVivos = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_BASE_URL}/partidos/marcadores-vivos/${campeonatoId}/${categoriaId}`);
+      const data = res.data;
   
+      // Formato esperado: [{ equipo_id: 5, marcador: "2-1", color: "verde" }, ...]
+      const formateado = {};
+      data.forEach(item => {
+        formateado[item.equipo_id] = { 
+          marcador: item.marcador, 
+          estado: item.estado // <- usamos estado, no color
+        };
+      });      
+  
+      setMarcadoresVivos(formateado);
+    } catch (error) {
+      console.error("Error al obtener marcadores vivos:", error);
+    }
+  }, [campeonatoId, categoriaId]);
+   
 
   useEffect(() => {
     fetchTitulo();
@@ -121,6 +141,7 @@ const ListaEquipos = () => {
           <tr>
             <th className="table-positions-th">Posicion</th>
             <th className="table-positions-th">Equipo</th>
+            <th className="table-positions-th"></th>
             <th className="table-positions-th">PJ</th>
             <th className="table-positions-th">PG</th>
             <th className="table-positions-th">PP</th>
@@ -147,7 +168,12 @@ const ListaEquipos = () => {
                   />
                   {equipo.equipo_nombre}
                 </div>
-              </td>         
+              </td>    
+              <td className="table-positions-td">{equipo.partido_vivo_id && marcadoresVivos[equipo.equipo_id] && (
+                    <span className={`marcador-vivo ${marcadoresVivos[equipo.equipo_id].estado}`}>
+                      {marcadoresVivos[equipo.equipo_id].marcador}
+                    </span>
+                  )}</td>     
               <td className="table-positions-td">{equipo.partidos_jugados}</td>
               <td className="table-positions-td">{equipo.partidos_ganados}</td>
               <td className="table-positions-td">{equipo.partidos_perdidos}</td>

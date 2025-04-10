@@ -333,7 +333,7 @@ const PartidoForm = () => {
         >
           {arbitros.map(arbitro => (
             <Option key={arbitro.id} value={arbitro.id}>
-              {arbitro.nombre}
+              {arbitro.nombre} {arbitro.apellido}
             </Option>
           ))}
         </Select>

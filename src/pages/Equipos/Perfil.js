@@ -63,9 +63,10 @@ const PerfilEquipo = () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
         setCampeonatos(response.data);
-        if (response.data.length > 0) {
-          setSelectedCampeonato(response.data[0].id); 
-        }
+        const activo = response.data.find(c => c.estado !== 3);
+
+        // Si hay uno activo, usar ese, si no, usar el primero de la lista
+        setSelectedCampeonato(activo ? activo.id : response.data[0]?.id);
       } catch (error) {
         toast.error('Error al obtener campeonatos');
         console.error('Error al obtener campeonatos:', error);
@@ -472,6 +473,9 @@ const PerfilEquipo = () => {
                 }
                   style={{ cursor: 'pointer', position: 'relative' }}
                 >
+                   {partido.estado === estadosPartidoCampMapping.Vivo && (
+                    <div className="estado-vivo-animado"></div>
+                  )}
                   {estadoPartido && (
                     <div 
                       className={`partido-estado-icon ${estadoPartido.clase}`} 

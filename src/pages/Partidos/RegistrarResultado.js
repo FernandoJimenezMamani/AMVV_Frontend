@@ -4,6 +4,7 @@ import "../../assets/css/RegistroResultados.css";
 import { toast } from "react-toastify";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ClearIcon from "@mui/icons-material/Clear";
+import estadosPartidoCampMapping from "../../constants/estadoPartido";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -31,6 +32,8 @@ const SubmitResultados = () => {
   const location = useLocation();
   const { campeonatoId, categoriaId } = location.state || {};
   const [showImageModal, setShowImageModal] = useState(false);
+  const [imagenPlanillaURL, setImagenPlanillaURL] = useState(null);
+  const [partido , setPartido] = useState(null);
 
   useEffect(() => {
     const fetchEquiposYJugadores = async () => {
@@ -62,13 +65,27 @@ const SubmitResultados = () => {
   }, [partidoId, equipoSeleccionado]);
 
   useEffect(() => {
+    const fetchPartido = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/partidos/get_partido_completo/${partidoId}`);
+        const data = await res.json();
+        setPartido(data);
+      } catch (err) {
+        console.error("Error al obtener el partido:", err);
+      }
+    };
+  
+    if (partidoId) fetchPartido();
+  }, [partidoId]);
+  
+  useEffect(() => {
     const fetchResultadosPrevios = async () => {
       try {
         const response = await fetch(
           `${API_BASE_URL}/partidos/resultados/${partidoId}`,
         );
         const data = await response.json();
-
+      console.log("Resultados previos:", data);
         // ✅ Walkover (si existe)
         if (data.resultadoLocal?.walkover) {
           setWalkover(data.resultadoLocal.walkover);
@@ -107,6 +124,10 @@ const SubmitResultados = () => {
           }));
           setTarjetas(tarjetasFormateadas);
         }
+
+        if (data.imagenPlanilla) {
+          setImagenPlanillaURL(data.imagenPlanilla);
+        }              
 
         // ✅ Mostrar tercer set si hay valores o si ganó 1 y 1
       } catch (error) {
@@ -159,6 +180,7 @@ const SubmitResultados = () => {
     const file = e.target.files[0];
     if (file) {
       setImagenPlanilla(file);
+      setImagenPlanillaURL(URL.createObjectURL(file));
       setShowImageModal(false); // No abrir el modal automáticamente, solo mostrar el icono
     }
   };
@@ -178,10 +200,10 @@ const SubmitResultados = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!imagenPlanilla) {
+    if (!imagenPlanilla && !imagenPlanillaURL) {
       toast.error("Debes subir una imagen de la planilla antes de enviar.");
-      return; // Detiene el envío del formulario
-    }
+      return;
+    }    
 
     const cleanedLocalSets = {
       set1: localSets.set1 ?? 0,
@@ -216,7 +238,7 @@ const SubmitResultados = () => {
           body: formData,
         },
       );
-
+      
       const result = await response.json();
       if (response.ok) {
         toast.success("Registrado con éxito");
@@ -367,8 +389,7 @@ const SubmitResultados = () => {
       if (response.ok) {
         toast.success("Actualización parcial registrada");
       } else {
-        toast.error("Error en la actualización parcial");
-        console.error(result.message);
+        toast.error(result.message || "Error al actualizar");
       }
     } catch (error) {
       toast.error("Error al conectar con el servidor");
@@ -553,7 +574,7 @@ const SubmitResultados = () => {
           </label>
 
           {/* Ícono para indicar que hay una imagen seleccionada */}
-          {imagenPlanilla && (
+          {(imagenPlanilla || imagenPlanillaURL)  && (
             <span
               className="file-icon"
               onClick={() => setShowImageModal(true)}
@@ -565,7 +586,7 @@ const SubmitResultados = () => {
         </div>
 
         {/* Modal para previsualizar la imagen */}
-        {showImageModal && imagenPlanilla && (
+        {showImageModal && imagenPlanillaURL  && (
           <div
             className="image-modal-overlay"
             onClick={() => setShowImageModal(false)}
@@ -582,7 +603,7 @@ const SubmitResultados = () => {
               </button>
               <h3>Previsualización de la Imagen</h3>
               <img
-                src={URL.createObjectURL(imagenPlanilla)}
+                src={imagenPlanillaURL}
                 alt="Imagen Cargada"
                 className="preview-image"
               />
@@ -595,7 +616,6 @@ const SubmitResultados = () => {
             <h3>Tarjetas Registradas</h3>
             <ul>
               {tarjetas.map((tarjeta, index) => {
-                console.log(`Tarjeta ${index + 1}:`, tarjeta); // Debugging para verificar los datos
                 return (
                   <li key={index} className="tarjeta-item">
                     <span className="tarjeta-equipo">
@@ -609,6 +629,7 @@ const SubmitResultados = () => {
                       className={`tarjeta-tipo ${tarjeta.tipoTarjeta}`}
                     ></span>
                     <button
+                       type="button"
                       className="delete-tarjeta-btn"
                       title="Eliminar tarjeta"
                       onClick={() => {
@@ -625,16 +646,21 @@ const SubmitResultados = () => {
         )}
 
         <div className="resultados-acciones">
-          <button
+          {partido && partido.estado !== estadosPartidoCampMapping.Finalizado && (
+            <button
             type="button"
-            className="resultados-submit-btn "
+            className="resultados-actualizar-btn "
             onClick={handleActualizarParciales}
           >
             Actualizar Resultados
           </button>
+          )}
 
           <button type="submit" className="resultados-submit-btn">
-            Enviar Resultados
+            {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
+              <span>Actualizar</span>
+            ):(
+              <span>Finalizar Partido</span>)}  
           </button>
         </div>
       </form>

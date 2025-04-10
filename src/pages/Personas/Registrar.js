@@ -286,6 +286,7 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
           name="image"
           onChange={handleImageChange}
           className="file-input"
+          style={{ display: 'none' }} 
         />
         <label htmlFor="image" className="custom-file-upload">
           {imagePreview ? (

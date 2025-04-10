@@ -193,6 +193,7 @@
   font-size: 12px;
   font-weight: bold;
   margin-top: 10px;
+  margin-left: 10px;
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -205,6 +206,29 @@
 }
 
 .resultados-submit-btn:hover {
+  background-color: #218838;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.resultados-actualizar-btn {
+  background-color: #57a664;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.resultados-actualizar-btn:hover {
   background-color: #218838;
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);

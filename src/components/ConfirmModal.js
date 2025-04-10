@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal } from 'antd'; // O cualquier otra librería que uses para el Modal
+import '../assets/css/Registro.css'
 
 const ConfirmModal = ({ visible, onConfirm, onCancel, message }) => {
   return (

@@ -484,6 +484,27 @@
     background-color: #FF0000; /* Rojo */
   }
   
+  .estado-vivo-partido {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #143E42; /* Verde */
+    font-weight: bold;
+  }
+  
+  .punto-vivo {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #28a745;
+    animation: parpadeo 1s infinite;
+  }
+  
+  @keyframes parpadeo {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }  
   
   /* Ajustes Responsivos */
   @media (max-width: 768px) {

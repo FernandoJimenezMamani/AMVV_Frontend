@@ -66,6 +66,7 @@ import ListaJugadoresClubUsuario from "./pages/Jugadores/ListaJugadoresClubUsuar
 import ListaClubesTraspasos from "./pages/Traspasos/IndiceClubesTraspaso";
 import MisSolicitudesJugador from "./pages/Traspasos/misSolicitudesJugador";
 import HistorialPagosInscripcion from "./pages/Pagos/HistorialPagosInscripcion";
+import EditarPartidoForm from "./pages/Partidos/Editar";
 import "./assets/css/tailwind.css";
 import Toast from "./components/Toast";
 import { toast } from "react-toastify";
@@ -174,6 +175,10 @@ const App = () => {
               <Route
                 path="/partidos/registrar/:campeonatoId/:categoriaId"
                 element={<RegistrarPartido />}
+              />
+              <Route
+                path="/partidos/editar/:partidoId"
+                element={<EditarPartidoForm />}
               />
               <Route
                 path="/partidos/generarFixture/:campeonatoId/:categoriaId"
