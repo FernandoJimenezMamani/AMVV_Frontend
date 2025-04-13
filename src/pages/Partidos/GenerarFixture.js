@@ -15,6 +15,8 @@ const GenerarFixture = () => {
   const [partidos, setPartidos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [registering, setRegistering] = useState(false);
+  const [fixtureGenerado, setFixtureGenerado] = useState(false);
+
   const navigate = useNavigate();
 
   const generarFixture = async () => {
@@ -24,6 +26,7 @@ const GenerarFixture = () => {
         `${API_BASE_URL}/partidos/generar-fixture-completo/${campeonatoId}/${categoriaId}`
       );
       setPartidos(response.data.partidos);
+      setFixtureGenerado(true);
       toast.success("Fixture generado correctamente.");
     } catch (error) {
       if (error.response && error.response.data) {
@@ -125,7 +128,7 @@ const GenerarFixture = () => {
         <button 
           type="primary" 
           onClick={generarFixture} 
-          loading={loading} 
+          disabled={loading || fixtureGenerado} 
           className="fixture-generate-btn"
         >
           Generar Fixture

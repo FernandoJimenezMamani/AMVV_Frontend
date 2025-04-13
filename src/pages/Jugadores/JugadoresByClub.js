@@ -90,6 +90,16 @@ const ListaJugadoresClub = () => {
     return jugador.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const handleVerCarnet = async (personaId) => {
+    try {
+      const urlCarnet = `${API_BASE_URL}/jugador/${personaId}/carnet`;
+      window.open(urlCarnet, '_blank'); // abre el PDF en nueva pestaña
+    } catch (error) {
+      toast.error('No se pudo generar el carnet');
+      console.error('Error al generar carnet:', error);
+    }
+  };  
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Jugadores</h2>
@@ -142,6 +152,9 @@ const ListaJugadoresClub = () => {
             <td className="table-td-p">
               <button className="table-button button-view" onClick={() => handleProfileClick(jugador.persona_id)}>
                 <RemoveRedEyeIcon />
+              </button>
+              <button className="table-button button-add" onClick={() => handleVerCarnet(jugador.persona_id)}>
+                Carnet
               </button>
             </td>
           </tr>

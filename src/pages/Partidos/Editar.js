@@ -182,9 +182,10 @@ const EditarPartidoForm = () => {
       toast.success('Partido actualizado correctamente');
       navigate(-1);
     } catch (error) {
-      toast.error('Error al actualizar el partido');
+      const msg = error.response?.data?.message || 'Error al actualizar el partido';
+      toast.error(msg);
       console.error(error);
-    }
+    }    
   };
 
   const combinarArbitrosSinDuplicados = (disponibles, asignados) => {

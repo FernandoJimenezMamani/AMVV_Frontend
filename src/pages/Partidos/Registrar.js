@@ -196,7 +196,7 @@ const PartidoForm = () => {
       <h2>Registrar Partido</h2>
       <div className="button-container">
         <button className="table-add-button" onClick={handleGenerarFixtureClick}>
-          Generar Fixture Aleatorio <ShuffleIcon/>
+          Generar Fixture Automáticamente <ShuffleIcon/>
         </button>
       </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}

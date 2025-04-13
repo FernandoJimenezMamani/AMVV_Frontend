@@ -22,6 +22,7 @@ const PartidosList = () => {
   const navigate = useNavigate();
   const { user } = useSession();
   const [estadoFiltro, setEstadoFiltro] = useState('todos'); 
+  const [fixtureCompleto, setFixtureCompleto] = useState(null);
 
   useEffect(() => {
     const fetchPartidos = async () => {
@@ -58,6 +59,22 @@ const PartidosList = () => {
       fetchResultados();
     }
   }, [partidos]);
+
+  useEffect(() => {
+    const verificarFixture = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/partidos/verificar-fixture/${campeonatoId}/${categoriaId}`);
+        console.log("👉 Data recibida:", response.data); // Debe contener: { fixtureCompleto: true/false }
+
+        setFixtureCompleto(response.data);
+
+      } catch (error) {
+        console.error("Error al verificar fixture:", error);
+      }
+    };
+  
+    verificarFixture();
+  }, [campeonatoId, categoriaId]);  
 
   const handleRegistrarPartido = () => {
     navigate(`/partidos/registrar/${campeonatoId}/${categoriaId}`);
@@ -159,16 +176,30 @@ const PartidosList = () => {
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
+
+  console.log('⏺ fixtureCompleto:', fixtureCompleto);
+
   
   return (
     <div className="all-matches-container">
       <h2 className="all-matches-titulo">Partidos</h2>
       <div className="all-matches-controls">
-      {hasRole(rolMapping.PresidenteAsociacion) && (
-        <button className="all-matches-registrar-button" onClick={handleRegistrarPartido}>
+      {hasRole(rolMapping.PresidenteAsociacion) && fixtureCompleto !== null && (
+        <button
+          className="all-matches-registrar-button"
+          title={fixtureCompleto ? 'Fixture ya completo' : 'Registrar nuevo partido'}
+          onClick={handleRegistrarPartido}
+          disabled={fixtureCompleto}
+          style={{
+            opacity: fixtureCompleto ? 0.5 : 1,
+            cursor: fixtureCompleto ? 'not-allowed' : 'pointer'
+          }}
+        >
           +1 Partido
         </button>
       )}
+
+
         <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
           Ver tabla
         </button>
