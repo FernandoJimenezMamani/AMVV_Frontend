@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import WomanIcon from '@mui/icons-material/Woman';
 import ManIcon from '@mui/icons-material/Man';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -58,7 +59,12 @@ const ListaCategorias = () => {
   return (
     <div className="categorias-container">
 
-      <h2 className="categorias-titulo">Seleccione una Categoría</h2>
+    <div className="titulo-con-boton">
+    <button className="boton-volver" onClick={() => navigate(`/campeonatos/indice`)}>
+        <ArrowBackIcon />
+      </button>
+          <h2 className="all-matches-titulo">Seleccione una Categoría</h2>
+        </div>
 
       <button 
         className="division-button" 

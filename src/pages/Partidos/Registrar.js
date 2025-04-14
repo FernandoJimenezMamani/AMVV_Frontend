@@ -6,6 +6,7 @@ import '../../assets/css/Partidos/RegistrarPartido.css';
 import { DatePicker, Select } from 'antd';
 import { toast } from 'react-toastify';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -193,7 +194,13 @@ const PartidoForm = () => {
 
   return (
     <div className="registro-campeonato">
-      <h2>Registrar Partido</h2>
+        <div className="titulo-con-boton">
+          <button className="boton-volver" onClick={() => window.history.back()}>
+            <ArrowBackIcon />
+          </button>
+          <h2 className="all-matches-titulo">Registrar Partido</h2>
+        </div>
+      
       <div className="button-container">
         <button className="table-add-button" onClick={handleGenerarFixtureClick}>
           Generar Fixture Automáticamente <ShuffleIcon/>

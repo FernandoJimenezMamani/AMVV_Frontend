@@ -8,6 +8,8 @@ import { useSession } from '../context/SessionContext';
 import rolMapping from '../constants/roles';
 import InicioPresidente from "./PresidenteClub/InicioPresidente";
 import VistaDefault from "./VistaDefault";
+import PartidosJugadorList from "./Partidos/PartidosJugadorList";
+import PartidosArbitroList from "./Partidos/PartidosArbitroList";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 

@@ -1,222 +1,126 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Partidos/IndicePartido.css';
-import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import { useSession } from '../../context/SessionContext';
 import { Select } from 'antd';
+import { toast } from 'react-toastify';
 import estadosPartidoCampMapping from '../../constants/estadoPartido';
+import '../../assets/css/Partidos/IndicePartido.css';
 import ErrorIcon from '@mui/icons-material/Error';
 import PendingIcon from '@mui/icons-material/Pending';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import rolMapping from '../../constants/roles';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const { Option } = Select;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const PartidosList = () => {
-  const { campeonatoId, categoriaId } = useParams();
+const PartidosArbitroList = () => {
   const [partidos, setPartidos] = useState([]);
-  const [agrupacion, setAgrupacion] = useState('todos'); 
-  const [resultados, setResultados] = useState({});
-  const navigate = useNavigate();
+  const [agrupacion, setAgrupacion] = useState('todos');
+  const [campeonatoId, setCampeonatoId] = useState(null);
+  const [estadoFiltro, setEstadoFiltro] = useState('todos');
   const { user } = useSession();
-  const [estadoFiltro, setEstadoFiltro] = useState('todos'); 
-  const [fixtureCompleto, setFixtureCompleto] = useState(null);
+  const navigate = useNavigate();
+  const [resultados, setResultados] = useState({});
+
+  useEffect(() => {
+    const fetchCampeonatos = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
+        const activo = response.data.find(c => c.estado !== 3);
+        setCampeonatoId(activo ? activo.id : response.data[0]?.id);
+      } catch (error) {
+        toast.error('Error al obtener campeonatos');
+        console.error('Error al obtener campeonatos:', error);
+      }
+    };
+    fetchCampeonatos();
+  }, []);
 
   useEffect(() => {
     const fetchPartidos = async () => {
+      if (!user?.id || !campeonatoId) return;
       try {
-        const response = await axios.get(`${API_BASE_URL}/partidos/select/${categoriaId}/${campeonatoId}`);
+        const response = await axios.get(`${API_BASE_URL}/arbitro/partidos/arbitro/${user.id}/${campeonatoId}`);
         setPartidos(response.data);
       } catch (error) {
-        toast.error('error')
+        toast.error('Error al obtener los partidos');
         console.error('Error al obtener los partidos:', error);
       }
     };
-
     fetchPartidos();
-  }, [categoriaId]);
+  }, [user, campeonatoId]);
 
   useEffect(() => {
     const fetchResultados = async () => {
-      const partidosFinalizados = partidos.filter(partido => partido.estado === estadosPartidoCampMapping.Finalizado);
+      const partidosFinalizados = partidos.filter(p => p.estado === estadosPartidoCampMapping.Finalizado);
       const resultadosTemp = {};
-
+  
       for (const partido of partidosFinalizados) {
         try {
           const response = await axios.get(`${API_BASE_URL}/partidos/ganador/${partido.id}`);
-          resultadosTemp[partido.id] = response.data; // Guardamos el resultado con la clave del partido ID
+          resultadosTemp[partido.id] = response.data;
         } catch (error) {
           console.error(`Error al obtener resultado para partido ${partido.id}:`, error);
         }
       }
-
-      setResultados(resultadosTemp); // Almacenamos los resultados en el estado
+  
+      setResultados(resultadosTemp);
     };
-
+  
     if (partidos.length > 0) {
       fetchResultados();
     }
-  }, [partidos]);
+  }, [partidos]);  
 
-  useEffect(() => {
-    const verificarFixture = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/partidos/verificar-fixture/${campeonatoId}/${categoriaId}`);
-        console.log("👉 Data recibida:", response.data); // Debe contener: { fixtureCompleto: true/false }
+  const formatDate = (fecha) => new Date(fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  const formatTime = (fecha) => new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC' });
 
-        setFixtureCompleto(response.data);
-
-      } catch (error) {
-        console.error("Error al verificar fixture:", error);
-      }
-    };
-  
-    verificarFixture();
-  }, [campeonatoId, categoriaId]);  
-
-  const handleRegistrarPartido = () => {
-    navigate(`/partidos/registrar/${campeonatoId}/${categoriaId}`);
-  };
-
-  const agruparPartidos = () => {
-    if (agrupacion === 'todos') {
-      return partidos;
-    }
-  
-    const agrupados = {};
-    partidos.forEach((partido) => {
-      let clave = '';
-  
-      if (agrupacion === 'fecha') {
-        clave = new Date(partido.fecha).toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        });
-      } else if (agrupacion === 'lugar') {
-        clave = partido.lugar_nombre;
-      } else if (agrupacion === 'fecha_lugar') {
-        clave = `${new Date(partido.fecha).toLocaleDateString('es-ES', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })} - ${partido.lugar_nombre}`;
-      }
-  
-      if (!agrupados[clave]) {
-        agrupados[clave] = [];
-      }
-  
-      agrupados[clave].push(partido);
-    });
-  
-    return agrupados;
-  };
-  
-
-  const handleVerTabla = () => {
-    navigate(`/tablaposiciones/${categoriaId}/${campeonatoId}`);
-  };
-
-  const handlePartidoClick = (partidoId) => {
-    navigate(`/partidos/partidoDetalle/${partidoId}`, {
-      state: { campeonatoId, categoriaId },
-    });
-  };
-
-  const formatDate = (fecha) => {
-    const partidoDate = new Date(fecha);
-    
-    return partidoDate.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  };
-  
-  const formatTime = (fecha) => {
-    const partidoDate = new Date(fecha); 
-  
-    return partidoDate.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false, 
-      timeZone: 'UTC', 
-    });
-  };
-
-  const filtrarPartidosPorEstado = (partidos) => {
-    if (estadoFiltro === estadosPartidoCampMapping.Confirmado) {
-      return partidos.filter((partido) => partido.estado === estadosPartidoCampMapping.Confirmado);
-    }
-    if (estadoFiltro === estadosPartidoCampMapping.Finalizado) {
-      return partidos.filter((partido) => partido.estado === estadosPartidoCampMapping.Finalizado);
-    }
-    return partidos; 
-  };
-  
   const getEstadoPartidoIcono = (fecha, estado) => {
     const ahora = new Date();
     const fechaPartido = new Date(fecha);
-  
-    if (fechaPartido < ahora && estado === estadosPartidoCampMapping.Confirmado) {
+    if (fechaPartido < ahora && estado === estadosPartidoCampMapping.Confirmado)
       return { icono: <ErrorIcon />, clase: 'alerta', tooltip: 'Partido vencido, resultados no registrados' };
-    }
-    if (fechaPartido >= ahora && estado === estadosPartidoCampMapping.Confirmado) {
+    if (fechaPartido >= ahora && estado === estadosPartidoCampMapping.Confirmado)
       return { icono: <PendingIcon />, clase: 'pendiente', tooltip: 'Partido confirmado, en espera' };
-    }
-    if (estado === estadosPartidoCampMapping.Finalizado) {
+    if (estado === estadosPartidoCampMapping.Finalizado)
       return { icono: <CheckCircleIcon />, clase: 'finalizado', tooltip: 'Partido finalizado' };
-    }
     return null;
   };
 
-  const hasRole = (...roles) => {
-    return user && user.rol && roles.includes(user.rol.nombre);
-  }; 
+  const filtrarPartidosPorEstado = (partidos) => {
+    if (estadoFiltro === estadosPartidoCampMapping.Confirmado)
+      return partidos.filter(p => p.estado === estadosPartidoCampMapping.Confirmado);
+    if (estadoFiltro === estadosPartidoCampMapping.Finalizado)
+      return partidos.filter(p => p.estado === estadosPartidoCampMapping.Finalizado);
+    return partidos;
+  };
 
-  console.log('⏺ fixtureCompleto:', fixtureCompleto);
+  const handlePartidoClick = (partidoId) => {
+    navigate(`/partidos/partidoDetalle/${partidoId}`, { state: { campeonatoId } });
+  };
 
-  
+  const agruparPartidos = () => {
+    if (agrupacion === 'todos') return partidos;
+    const agrupados = {};
+    partidos.forEach((p) => {
+      let clave = agrupacion === 'fecha' ? formatDate(p.fecha) :
+                  agrupacion === 'lugar' ? p.lugar_nombre :
+                  `${formatDate(p.fecha)} - ${p.lugar_nombre}`;
+      if (!agrupados[clave]) agrupados[clave] = [];
+      agrupados[clave].push(p);
+    });
+    return agrupados;
+  };
+
   return (
     <div className="all-matches-container">
-      <div className="titulo-con-boton">
-      <button className="boton-volver" onClick={() => navigate(`/categorias/indice/${campeonatoId}`)}>
-        <ArrowBackIcon />
-      </button>
-      <h2 className="all-matches-titulo">Partidos</h2>
-    </div>
-
-
+      <h2 className="all-matches-titulo">Partidos Asignados</h2>
       <div className="all-matches-controls">
-      {hasRole(rolMapping.PresidenteAsociacion) && fixtureCompleto !== null && (
-        <button
-          className="all-matches-registrar-button"
-          title={fixtureCompleto ? 'Fixture ya completo' : 'Registrar nuevo partido'}
-          onClick={handleRegistrarPartido}
-          disabled={fixtureCompleto}
-          style={{
-            opacity: fixtureCompleto ? 0.5 : 1,
-            cursor: fixtureCompleto ? 'not-allowed' : 'pointer'
-          }}
-        >
-          +1 Partido
-        </button>
-      )}
-
-
-        <button className="all-matches-ver-tabla-button" onClick={handleVerTabla}>
-          Ver tabla
-        </button>
         <div className="all-matches-filters">
           <Select
-            id="agrupacion"
-            className="all-matches-filter-select"
             value={agrupacion}
-            onChange={(value) => setAgrupacion(value)}
+            onChange={setAgrupacion}
+            className="all-matches-filter-select"
           >
             <Option value="todos">No Agrupar</Option>
             <Option value="fecha">Fecha</Option>
@@ -225,19 +129,18 @@ const PartidosList = () => {
           </Select>
 
           <Select
-            id="estadoFiltro"
-            className="all-matches-filter-select"
             value={estadoFiltro}
-            onChange={(value) => setEstadoFiltro(value)}
+            onChange={setEstadoFiltro}
+            className="all-matches-filter-select"
           >
             <Option value="todos">Todos</Option>
             <Option value={estadosPartidoCampMapping.Confirmado}>Pendientes</Option>
             <Option value={estadosPartidoCampMapping.Finalizado}>Jugados</Option>
           </Select>
         </div>
+      </div>
 
-  </div>
-  <div className="all-matches-groups-container">
+      <div className="all-matches-groups-container">
   {agrupacion === 'todos' ? (
     <div className="all-matches-grid"> 
       {filtrarPartidosPorEstado(partidos).map((partido) => {
@@ -372,8 +275,8 @@ const PartidosList = () => {
     ))
   )}
 </div>
-  </div>
-);
+    </div>
+  );
 };
 
-export default PartidosList;
+export default PartidosArbitroList;

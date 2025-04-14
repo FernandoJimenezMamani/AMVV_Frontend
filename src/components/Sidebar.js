@@ -163,19 +163,23 @@ const Sidebar = () => {
                   </a>
                 </div>
               <div className="menu-item">
+              {hasRole(rolMapping.PresidenteAsociacion) && (
+                 <>
                 <a className={`main-link ${expandedSection === 'asociacion' ? 'active' : ''}`} onClick={() => toggleSection('asociacion')} ref={sidebarRef}>
                     <SportsVolleyballIcon/> Asociacion
                 </a>
                 <div className={`submenu ${expandedSection === 'asociacion' ? 'open' : ''}`}>
                   <Link to="/Campeonatos/Indice">Campeonatos</Link>
                   <Link to="/clubes/indice">Clubes</Link>
-                  {hasRole(rolMapping.PresidenteAsociacion) && (
-                    <>
+                  
+                   
                   <Link to="/categorias/Lista">Categorias</Link>
                   <Link to="/complejos/Indice">Complejos</Link>
-                  </>
-                )}
+
+              
                 </div>
+                </>
+                  )}
               </div>
               <div className="menu-item">
               {hasRole(rolMapping.PresidenteAsociacion) && (
@@ -221,6 +225,20 @@ const Sidebar = () => {
                 {hasRole( rolMapping.Tesorero) && (
                   <a className="main-link" onClick={() => navigate('/pagos/tipos')}>
                     <MonetizationOnIcon /> Pagos
+                  </a>
+                  )}
+                </div>
+                <div className="menu-item">
+                {hasRole( rolMapping.Jugador) && (
+                  <a className="main-link" onClick={() => navigate('/partidos/jugador')}>
+                    <SportsVolleyballIcon /> Mis Partidos
+                  </a>
+                  )}
+                </div>
+                <div className="menu-item">
+                {hasRole( rolMapping.Arbitro) && (
+                  <a className="main-link" onClick={() => navigate('/partidos/arbitro')}>
+                    <SportsVolleyballIcon /> Mis Partidos
                   </a>
                   )}
                 </div>

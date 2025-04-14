@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ClearIcon from "@mui/icons-material/Clear";
 import estadosPartidoCampMapping from "../../constants/estadoPartido";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -399,7 +400,12 @@ const SubmitResultados = () => {
 
   return (
     <div className="resultados-container">
-      <h1 className="resultados-titulo">Registrar Resultados del Partido</h1>
+      <div className="titulo-con-boton">
+      <button className="boton-volver" onClick={() => window.history.back()}>
+                    <ArrowBackIcon />
+                  </button>
+      <h1 className="all-matches-titulo">Registrar Resultados del Partido</h1>
+      </div>
       <form onSubmit={handleSubmit}>
         <div className="resultados-form-group">
           <label>Walkover</label>

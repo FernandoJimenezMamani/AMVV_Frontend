@@ -21,6 +21,7 @@ import rolMapping from "../../constants/roles";
 import { useSession } from "../../context/SessionContext";
 import PerfilArbitroModal from "../Arbitros/Perfil";
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 ReactModal.setAppElement("#root");
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -310,7 +311,13 @@ const PartidoDetalle = () => {
 
   return (
     <div className="partido-detalle-container">
-      <h1 className="titulo-partido">Detalles del Partido</h1>
+      <div className="titulo-con-boton">
+         <button className="boton-volver" onClick={() => window.history.back()}>
+                    <ArrowBackIcon />
+                  </button>
+      <h1 className="all-matches-titulo">Detalles del Partido</h1>
+      </div>
+      
       <PerfilArbitroModal
         isOpen={showPerfilModal}
         onClose={handleClosePerfilModal}
@@ -319,7 +326,7 @@ const PartidoDetalle = () => {
       <div className="resultado-button-container">
         {(
           hasRole(rolMapping.PresidenteAsociacion) ||
-          (esArbitroAsignado() && partido.estado !== estadosPartidoCampMapping.Finalizado)
+          (esArbitroAsignado() && partido.estado !== estadosPartidoCampMapping.Finalizado )
         ) && (
           <button
             className="resultado-button"
@@ -331,17 +338,19 @@ const PartidoDetalle = () => {
               <span>Registrar Resultado <AssignmentIcon /></span>)} 
           </button>
         )}
-        {hasRole(rolMapping.PresidenteAsociacion) &&
-          partido.estado !== estadosPartidoCampMapping.Finalizado && (
-            <button
-              className="reprogramar-button"
-              onClick={() => handleReprogramarClick()}
-            >
-              Reprogramar Partido <CalendarMonthIcon />
-            </button>
-          )}
+       {hasRole(rolMapping.PresidenteAsociacion) &&
+        partido.estado !== estadosPartidoCampMapping.Finalizado &&
+        partido.estado !== estadosPartidoCampMapping.Vivo && (
+          <button
+            className="reprogramar-button"
+            onClick={() => handleReprogramarClick()}
+          >
+            Reprogramar Partido <CalendarMonthIcon />
+          </button>
+      )}
+
           {hasRole(rolMapping.PresidenteAsociacion) &&
-          partido.estado !== estadosPartidoCampMapping.Finalizado && (
+          partido.estado !== estadosPartidoCampMapping.Finalizado && partido.estado !== estadosPartidoCampMapping.Vivo && (
             <button
               className="reprogramar-button"
               onClick={() => handleEditarPartidoClick(partido.partido_id)}

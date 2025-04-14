@@ -67,6 +67,8 @@ import ListaClubesTraspasos from "./pages/Traspasos/IndiceClubesTraspaso";
 import MisSolicitudesJugador from "./pages/Traspasos/misSolicitudesJugador";
 import HistorialPagosInscripcion from "./pages/Pagos/HistorialPagosInscripcion";
 import EditarPartidoForm from "./pages/Partidos/Editar";
+import PartidosArbitroList from "./pages/Partidos/PartidosArbitroList";
+import PartidosJugadorList from "./pages/Partidos/PartidosJugadorList";
 import "./assets/css/tailwind.css";
 import Toast from "./components/Toast";
 import { toast } from "react-toastify";
@@ -270,6 +272,8 @@ const App = () => {
                 element={<ResumenCampeonato />}
               />
               <Route path="/reportes/IndiceGeneral" element={<Reportes />} />
+              <Route path="/partidos/jugador" element={< PartidosJugadorList/>} />
+              <Route path="/partidos/arbitro" element={<PartidosArbitroList />} />
             </Route>
           </Route>
         </Routes>

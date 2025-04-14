@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/css/TablaPosiciones.css'; 
 import { toast } from 'react-toastify';
 import estadosMapping from '../constants/campeonatoEstados';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
@@ -130,7 +131,13 @@ const ListaEquipos = () => {
 
   return (
     <div className="clubes-lista">
+      <div className="titulo-con-boton">
+      <button className="boton-volver" onClick={() => window.history.back()}>
+        <ArrowBackIcon />
+      </button>
       <h2 className="clubes-lista-titulo">{titulo}</h2>
+      </div>
+      
       {estadoCampeonato === 2 && (
           <div className="campeonato-en-curso">
             <span className="status-indicator"></span> En curso

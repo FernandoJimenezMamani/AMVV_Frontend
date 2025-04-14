@@ -7,6 +7,7 @@ import "../../assets/css/Partidos/GenerarFixture.css";
 import moment from "moment";
 import "moment/locale/es";
 import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -122,7 +123,13 @@ const GenerarFixture = () => {
 
   return (
     <div className="generar-fixture-container">
-      <h2 className="fixture-title">Generar y Registrar Fixture</h2>
+      <div className="titulo-con-boton">
+      <button className="boton-volver" onClick={() => window.history.back()}>
+            <ArrowBackIcon />
+          </button>
+        <h2 className="all-matches-titulo">Generar y Registrar Fixture</h2>
+      </div>
+      
 
       <div className="fixture-buttons">
         <button 
