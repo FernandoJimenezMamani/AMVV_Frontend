@@ -6,6 +6,8 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import ClearIcon from "@mui/icons-material/Clear";
 import estadosPartidoCampMapping from "../../constants/estadoPartido";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useSession } from "../../context/SessionContext";
+import rolMapping from "../../constants/roles";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -35,6 +37,7 @@ const SubmitResultados = () => {
   const [showImageModal, setShowImageModal] = useState(false);
   const [imagenPlanillaURL, setImagenPlanillaURL] = useState(null);
   const [partido , setPartido] = useState(null);
+  const { user } = useSession();
 
   useEffect(() => {
     const fetchEquiposYJugadores = async () => {
@@ -243,7 +246,11 @@ const SubmitResultados = () => {
       const result = await response.json();
       if (response.ok) {
         toast.success("Registrado con éxito");
-        navigate(`/partidos/indice/${campeonatoId}/${categoriaId}`);
+        if (user?.rol?.nombre === rolMapping.Arbitro) {
+          navigate("/partidos/arbitro"); 
+        } else {
+          navigate(`/partidos/indice/${campeonatoId}/${categoriaId}`);
+        }
       } else {
         toast.error("Error durante el registro");
         console.error("Error:", result.message);

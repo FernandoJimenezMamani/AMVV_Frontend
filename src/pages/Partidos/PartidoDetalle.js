@@ -48,18 +48,7 @@ const PartidoDetalle = () => {
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
 
   useEffect(() => {
-    const fetchPartido = async () => {
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/partidos/get_partido_completo/${partidoId}`,
-        );
-        setPartido(response.data);
-      } catch (error) {
-        toast.error("Error al obtener los detalles del partido");
-        console.error("Error al obtener los detalles del partido:", error);
-      }
-    };
-
+    
     const fetchArbitros = async () => {
       try {
         const response = await axios.get(
@@ -75,6 +64,18 @@ const PartidoDetalle = () => {
     fetchPartido();
     fetchArbitros();
   }, [partidoId]);
+
+  const fetchPartido = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/partidos/get_partido_completo/${partidoId}`,
+      );
+      setPartido(response.data);
+    } catch (error) {
+      toast.error("Error al obtener los detalles del partido");
+      console.error("Error al obtener los detalles del partido:", error);
+    }
+  };
 
   const fetchResultados = async () => {
     try {
@@ -170,6 +171,7 @@ const PartidoDetalle = () => {
           console.log("📡 WebSocket: actualizando resultado del partido...");
           fetchResultados(); 
           fetchGanador(); 
+          fetchPartido();
         }
       } catch (error) {
         console.error("❌ Error procesando mensaje WebSocket:", error);

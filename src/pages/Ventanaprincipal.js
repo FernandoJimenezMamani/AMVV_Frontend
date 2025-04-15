@@ -18,13 +18,21 @@ const { Option } = Select;
 
 const CustomCarousel = () => {
   const [categorias, setCategorias] = useState([]);
-  const [selectedCategoria, setSelectedCategoria] = useState(null);
+  const [selectedCategoria, setSelectedCategoria] = useState(() => {
+    const stored = localStorage.getItem('selectedCategoria');
+    return stored ? Number(stored) : null;
+  });
   const [partidos, setPartidos] = useState([]);
   const [nextPartidos, setNextPartidos] = useState([]);
-  const [selectedEstado, setSelectedEstado] = useState(estadosPartidoCampMapping.Confirmado);
+  const [selectedEstado, setSelectedEstado] = useState(() => {
+    return localStorage.getItem('selectedEstado') || estadosPartidoCampMapping.Confirmado;
+  });
   const [visiblePartidos, setVisiblePartidos] = useState(12);
   const [campeonatos, setCampeonatos] = useState([]);
-  const [selectedCampeonato, setSelectedCampeonato] = useState(null);
+  const [selectedCampeonato, setSelectedCampeonato] = useState(() => {
+    const stored = localStorage.getItem('selectedCampeonato');
+    return stored ? Number(stored) : null;
+  });
   const [resultados, setResultados] = useState({});
   const navigate = useNavigate();
 
@@ -34,7 +42,13 @@ const CustomCarousel = () => {
         const response = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
         setCategorias(response.data);
         if (response.data.length > 0) {
-          setSelectedCategoria(response.data[0].id); 
+          const storedCategoria = localStorage.getItem('selectedCategoria');
+          if (storedCategoria) {
+            setSelectedCategoria(parseInt(storedCategoria));
+          } else {
+            setSelectedCategoria(response.data[0].id);
+          }
+          
         }
       } catch (error) {
         toast.error('Error al obtener categorías');
@@ -53,11 +67,15 @@ const CustomCarousel = () => {
   
         const campeonatoActivo = response.data.find(camp => camp.estado !== 3);
         
-        if (campeonatoActivo) {
+        const storedCampeonato = localStorage.getItem('selectedCampeonato');
+        if (storedCampeonato) {
+          setSelectedCampeonato(parseInt(storedCampeonato));
+        } else if (campeonatoActivo) {
           setSelectedCampeonato(campeonatoActivo.id);
-        } else if (response.data.length > 0) {
-          setSelectedCampeonato(response.data[0].id); 
+        } else {
+          setSelectedCampeonato(response.data[0].id);
         }
+        
       } catch (error) {
         toast.error("Error al obtener los campeonatos");
         console.error("Error fetching campeonatos:", error);
@@ -66,6 +84,13 @@ const CustomCarousel = () => {
   
     fetchCampeonatos();
   }, []);
+
+  useEffect(() => {
+    const storedEstado = localStorage.getItem('selectedEstado');
+    if (storedEstado) {
+      setSelectedEstado(storedEstado);
+    }
+  }, []);  
   
   useEffect(() => {
     const fetchResultados = async () => {
@@ -98,10 +123,13 @@ const CustomCarousel = () => {
     const fetchMatches = async () => {
       try {
         let endpoint = `${API_BASE_URL}/partidos/get_upcoming_matches/${selectedCategoria}/${selectedCampeonato}`;
+    
         if (selectedEstado === estadosPartidoCampMapping.Finalizado) {
           endpoint = `${API_BASE_URL}/partidos/get_past_matches/${selectedCategoria}/${selectedCampeonato}`;
+        } else if (selectedEstado === estadosPartidoCampMapping.Vivo) {
+          endpoint = `${API_BASE_URL}/partidos/get_live_matches/${selectedCategoria}/${selectedCampeonato}`;
         }
-  
+    
         const response = await axios.get(endpoint);
         setPartidos(response.data);
       } catch (error) {
@@ -109,6 +137,7 @@ const CustomCarousel = () => {
         console.error('Error fetching match data:', error);
       }
     };
+    
   
     const fetchAllMatches = async () => {
       try {
@@ -186,7 +215,10 @@ const CustomCarousel = () => {
           <Select
             className="public-select"
             value={selectedCampeonato}
-            onChange={(value) => setSelectedCampeonato(value)}
+            onChange={(value) => {
+              setSelectedCampeonato(value);
+              localStorage.setItem('selectedCampeonato', value);
+            }}
             style={{ width: '250px' }}
           >
             {campeonatos.map((camp) => (
@@ -200,7 +232,10 @@ const CustomCarousel = () => {
           <Select
             className="public-select"
             value={selectedCategoria}
-            onChange={(value) => setSelectedCategoria(value)}
+            onChange={(value) => {
+              setSelectedCategoria(value);
+              localStorage.setItem('selectedCategoria', value);
+            }}
             style={{ width: '250px' }}
           >
             {categorias.map((categoria) => (
@@ -214,10 +249,14 @@ const CustomCarousel = () => {
           <Select
             className="public-select"
             value={selectedEstado}
-            onChange={(value) => setSelectedEstado(value)}
+            onChange={(value) => {
+              setSelectedEstado(value);
+              localStorage.setItem('selectedEstado', value);
+            }}
             style={{ width: '250px' }}
           >
             <Option value="C"><CalendarMonthIcon/> Partidos Próximos</Option>
+            <Option value="V"><CheckBoxIcon/> Partidos En Vivo</Option>
             <Option value="J"><CheckBoxIcon/> Partidos Finalizados</Option>
           </Select>
         </div>
@@ -235,7 +274,14 @@ const CustomCarousel = () => {
             <div key={index} className="match-slide" onClick={() => handlePartidoClick(match.id)} style={{ cursor: 'pointer' }}>
               <div className="overlay-container">
                 <div className="overlay-text">
-                  <h1>{selectedEstado === estadosPartidoCampMapping.Confirmado ? 'Próximamente' : 'Finalizado'}</h1>
+                <h1>
+                  {selectedEstado === estadosPartidoCampMapping.Confirmado
+                    ? 'Próximamente'
+                    : selectedEstado === estadosPartidoCampMapping.Vivo
+                    ? 'En Vivo'
+                    : 'Finalizado'}
+                </h1>
+
                 </div>
               </div>
               <div className="match-content">
@@ -275,13 +321,22 @@ const CustomCarousel = () => {
                       )}
                     </div>
                   )}
-                <p className="match-date">{formatDate(match.fecha)}</p>
-                {match.estado === estadosPartidoCampMapping.Confirmado && new Date(match.fecha) < new Date() ? (
-                  <p className="matches-pending">Resultado en espera</p>
+                {match.estado === estadosPartidoCampMapping.Vivo ? (
+                  <div className="vivo-indicador">
+                    <span className="vivo-punto"></span>
+                    <span className="vivo-texto">En Vivo</span>
+                  </div>
                 ) : (
-                  match.estado !== estadosPartidoCampMapping.Finalizado && (
-                    <p className="match-time">{formatTime(match.fecha)}</p>
-                  )
+                  <>
+                    <p className="match-date">{formatDate(match.fecha)}</p>
+                    {match.estado === estadosPartidoCampMapping.Confirmado && new Date(match.fecha) < new Date() ? (
+                      <p className="matches-pending">Resultado en espera</p>
+                    ) : (
+                      match.estado !== estadosPartidoCampMapping.Finalizado && (
+                        <p className="match-time">{formatTime(match.fecha)}</p>
+                      )
+                    )}
+                  </>
                 )}
               </div>
       
