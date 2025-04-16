@@ -21,6 +21,7 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
     user_id: 2 // valor predeterminado
   });
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchCategoria = async () => {
@@ -51,6 +52,11 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
       ...formData,
       [e.target.name]: e.target.value
     });
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: ''
+    }));
   };
 
   const handleSelectChange = (name, value) => {
@@ -62,6 +68,12 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
     try {
       await axios.put(`${API_BASE_URL}/categoria/update_categoria/${categoriaId}`, formData);
       toast.success('Editado con éxito');
@@ -72,6 +84,26 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
       console.error('Error al actualizar la categoría:', error);
     }
   };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nombre) {
+      newErrors.nombre = 'El campo nombre es obligatorio';
+    }
+    if (formData.edad_minima && isNaN(formData.edad_minima)) {
+      newErrors.edad_minima = 'La edad mínima debe ser un número';
+    }
+    if (formData.edad_maxima && isNaN(formData.edad_maxima)) {
+      newErrors.edad_maxima = 'La edad máxima debe ser un número';
+    }
+    if (formData.edad_minima && formData.edad_maxima && Number(formData.edad_minima) > Number(formData.edad_maxima)) {
+      newErrors.edad_minima = 'La edad mínima no puede ser mayor que la edad máxima';
+    }
+    if (!formData.costo_traspaso || isNaN(formData.costo_traspaso) || Number(formData.costo_traspaso) < 0) {
+      newErrors.costo_traspaso = 'El costo de traspaso debe ser un número mayor o igual a 0';
+    }
+    return newErrors;
+  };  
 
   return (
     <Modal
@@ -94,6 +126,7 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
           placeholder="Ingrese el nombre de la categoría"
           className="input-field"
         />
+        {errors.nombre && <span className="error-message">{errors.nombre}</span>}
       </div>
 
       <div className="select-container">
@@ -133,6 +166,7 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
           placeholder="Edad mínima (opcional)"
           className="input-field"
         />
+        {errors.edad_minima && <span className="error-message">{errors.edad_minima}</span>}
       </div>
 
       <div className="form-group">
@@ -145,6 +179,7 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
           placeholder="Edad máxima (opcional)"
           className="input-field"
         />
+         {errors.edad_maxima && <span className="error-message">{errors.edad_maxima}</span>}
       </div>
 
       <div className="form-group">
@@ -157,6 +192,7 @@ const EditarCategoria = ({ isOpen, onClose, categoriaId, onCategoriaUpdated }) =
           placeholder="Costo de traspaso"
           className="input-field"
         />
+        {errors.costo_traspaso && <span className="error-message">{errors.costo_traspaso}</span>}
       </div>
 
       <div className="form-buttons">

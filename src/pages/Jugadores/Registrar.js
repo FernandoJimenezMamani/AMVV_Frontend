@@ -300,7 +300,7 @@ const RegistroJugador = ({ isOpen, onClose, onJugadorCreated }) => {
         </div>
 
         <div className="form-buttons">
-          <button type="button" className="button button-cancel" onClick={onClose}>
+         <button type="button" className="button button-cancel" onClick={()=>{resetForm(); onClose();}}>
             Cancelar
           </button>
           <button type="submit" className="button button-primary">

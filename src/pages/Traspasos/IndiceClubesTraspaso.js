@@ -143,7 +143,7 @@ const ListaClubesTraspasos = () => {
         visible={showConfirmTraspaso}
         onConfirm={handleConfirmFichar}
         onCancel={handleCancelFichar}
-        message="¿Seguro que quieres fichar a este jugador?"
+        message="¿Seguro que quieres solicitar el cambio a este club?"
       />
     </div>
 

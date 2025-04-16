@@ -10,7 +10,9 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MapaDetalle from '../../components/MapaDetalle';
+import { Select } from 'antd';
 
+const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaLugar = () => {
@@ -24,7 +26,8 @@ const ListaLugar = () => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [latitud , setLatitud] = useState(null)
   const [longitud , setLongitud] = useState(null)
-
+  const [filterState, setFilterState] = useState('No filtrar');
+  const [filteredComplejos, setFilteredComplejos] = useState([]);
   useEffect(() => {
     fetchComplejos();
   }, []);
@@ -39,6 +42,18 @@ const ListaLugar = () => {
       console.error('Error al obtener los complejos:', error);
     }
   };
+
+  useEffect(() => {
+    let filtered = [...complejos];
+  
+    if (filterState !== 'No filtrar') {
+      filtered = filtered.filter((c) =>
+        filterState === 'Activo' ? c.eliminado === '0' : c.eliminado === '1'
+      );
+    }
+  
+    setFilteredComplejos(filtered);
+  }, [complejos, filterState]);
 
   const handleEditClick = (complejoId) => {
     setSelectedComplejoId(complejoId);
@@ -66,7 +81,7 @@ const ListaLugar = () => {
   const handleConfirmDelete = async () => {
     try {
       const user_id = 1;
-      await axios.put(`${API_BASE_URL}/complejo/delete_complejo/${complejoToDelete}`, { user_id });
+      await axios.put(`${API_BASE_URL}/lugar/delete/${complejoToDelete}`, { user_id });
       setComplejos(complejos.filter(complejo => complejo.id !== complejoToDelete));
       setShowConfirm(false);
       setComplejoToDelete(null);
@@ -87,10 +102,35 @@ const ListaLugar = () => {
     setIsMapModalOpen(true)
   };
 
+  const handleActivateComplejo = async (id) => {
+    try {
+      await axios.put(`${API_BASE_URL}/lugar/activate_complejo/${id}`);
+      toast.success('Complejo activado exitosamente');
+      fetchComplejos();
+    } catch (error) {
+      toast.error('Error al activar el complejo');
+      console.error('Error al activar complejo:', error);
+    }
+  };
+  
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Complejos Deportivos</h2>
-      <button className="table-add-button" onClick={handleRegistrarClick}>+1 Complejo</button>
+      <div className="table-filters">
+        <button className="table-add-button" onClick={handleRegistrarClick}>+1 Complejo</button>
+        <Select
+          className="filter-select"
+          placeholder="Filtrar por estado"
+          value={filterState}
+          onChange={(value) => setFilterState(value)}
+          style={{ width: 180 }}
+        >
+          <Option value="No filtrar">No filtrar</Option>
+          <Option value="Activo">Activo</Option>
+          <Option value="Inactivo">Inactivo</Option>
+        </Select>
+      </div>
       <RegistroComplejo
         isOpen={showFormModal}
         onClose={handleCloseModal}
@@ -111,7 +151,7 @@ const ListaLugar = () => {
           </tr>
         </thead>
         <tbody>
-          {complejos.map((complejo) => (
+        {filteredComplejos.map((complejo) => (
             <tr key={complejo.id} className="table-row">
               <td className="table-td table-td-name">{complejo.nombre}</td>
               <td className="table-td table-td-address">{complejo.direccion}</td>
@@ -124,9 +164,18 @@ const ListaLugar = () => {
                   <EditIcon />
                 </button>
                 
-                <button className="table-button button-delete" onClick={() => handleDeleteClick(complejo.id)}>
-                  <DeleteForeverIcon />
-                </button>
+                <label className="user-activation-switch">
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      complejo.eliminado === '1'
+                        ? handleActivateComplejo(complejo.id)
+                        : handleDeleteClick(complejo.id)
+                    }
+                    checked={complejo.eliminado !== '1'}
+                  />
+                  <span className="user-activation-slider"></span>
+                </label>
               </td>
             </tr>
           ))}

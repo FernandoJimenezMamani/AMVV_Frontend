@@ -61,7 +61,7 @@ const VentanaPrincipalUser = () => {
           <Reportes />
         )
       )}
-      {hasRole(rolMapping.PresidenteClub) && (
+      {(hasRole(rolMapping.PresidenteClub) || hasRole(rolMapping.DelegadoClub))&& (
         <>
         <InicioPresidente presidenteId ={user.id}></InicioPresidente>
         </>

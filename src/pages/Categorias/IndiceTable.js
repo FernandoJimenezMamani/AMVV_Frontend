@@ -163,7 +163,7 @@ const ListaCategorias = () => {
         visible={showConfirm}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        message="¿Seguro que quieres eliminar este club?"
+        message="¿Seguro que quieres eliminar esta categoria?"
       />
   </div>
 

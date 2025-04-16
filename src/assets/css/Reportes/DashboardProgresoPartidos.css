@@ -172,3 +172,28 @@
   }
 }
 
+.punto-vivo {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background-color: red;
+  animation: parpadeo 1s infinite ease-in-out;
+  position: absolute;
+  top: 2px;
+  right: -16px;
+}
+
+@keyframes parpadeo {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.4);
+  }
+}
+
+

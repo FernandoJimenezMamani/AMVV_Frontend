@@ -54,6 +54,19 @@ const RegistroCategoria = ({ isOpen, onClose, onCategoriaCreated }) => {
     return newErrors;
   };
 
+  const resetForm = () => {
+    setFormData({
+      nombre: '',
+      genero: 'V',
+      division: 'MY',
+      edad_minima: '',
+      edad_maxima: '',
+      costo_traspaso: '',
+      user_id: 1
+    });
+    setErrors({});
+  };  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -68,12 +81,15 @@ const RegistroCategoria = ({ isOpen, onClose, onCategoriaCreated }) => {
       const response = await axios.post(`${API_BASE_URL}/categoria/post_categoria`, formData);
       console.log(response.data);
       toast.success('Registrado con éxito');
+      resetForm();
       onClose(); 
       onCategoriaCreated();
     } catch (error) {
-      toast.error('Error al registrar');
+      const mensajeError = error.response?.data?.message || 'Error al registrar';
+      toast.error(mensajeError);
       console.error('Error al crear la categoría:', error);
     }
+    
   };
 
   const handleGeneroChange = (value) => {
@@ -181,9 +197,13 @@ const RegistroCategoria = ({ isOpen, onClose, onCategoriaCreated }) => {
         </div>
 
         <div className="form-buttons">
-          <button type="button" className="button button-cancel" onClick={onClose}>
-            Cancelar
-          </button>
+        <button type="button" className="button button-cancel" onClick={() => {
+          resetForm();     // 👈 también limpia si cancela
+          onClose();
+        }}>
+          Cancelar
+        </button>
+
           <button type="submit" className="button button-primary">
             Registrar
           </button>

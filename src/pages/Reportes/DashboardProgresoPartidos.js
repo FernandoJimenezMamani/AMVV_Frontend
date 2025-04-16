@@ -24,8 +24,8 @@ const DashboardProgresoPartidos = () => {
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/categoria/get_categoria`);
-        setCategorias(response.data);
+        const response = await axios.get(`${API_BASE_URL}/categoria/nombres`);
+        setCategorias(response.data.categorias);
       } catch (error) {
         toast.error("Error al obtener las categorías");
       }
@@ -190,9 +190,10 @@ const DashboardProgresoPartidos = () => {
           className="dashboard-select"
           onChange={(value) => setCategoriaSeleccionada(value)}
         >
+          <Option value="">Todas las categorías</Option> 
           {categorias.map((cat) => (
-            <Option key={cat.nombre} value={cat.nombre}>
-              {cat.nombre}
+            <Option key={cat} value={cat}>
+              {cat}
             </Option>
           ))}
         </Select>
@@ -216,6 +217,14 @@ const DashboardProgresoPartidos = () => {
             <p>✅ Jugados: <strong>{datos.partidosJugados}</strong></p>
             <p>⏳ Faltantes: <strong>{datos.partidosFaltantes}</strong></p>
             <p>⚠️ Vencidos Sin Registro: <strong>{datos.partidosVencidosSinRegistro}</strong></p>
+            <p>
+              🔴 En Vivo: 
+              <strong style={{ marginLeft: "6px", position: "relative" }}>
+                {datos.partidosEnCurso}
+                <span className="punto-vivo" />
+              </strong>
+            </p>
+
             <p>📊 Avance: <strong>{((datos.partidosJugados / datos.totalPartidos) * 100).toFixed(1)}%</strong></p>
           </Card>
         </div>

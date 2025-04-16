@@ -196,7 +196,7 @@ const ListaPresidenteClub = () => {
         <thead className="table-head">
           <tr>
             <th className="table-th-p">Foto</th>
-            <th className="table-th-p">Nombre del Jugador</th>
+            <th className="table-th-p">Nombre del Presidente</th>
             <th className="table-th-p">Fecha de Nacimiento</th>
             <th className="table-th-p">C.I</th>
             <th className="table-th-p">Correo</th>

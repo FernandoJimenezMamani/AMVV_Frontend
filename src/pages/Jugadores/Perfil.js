@@ -4,6 +4,8 @@ import axios from 'axios';
 import '../../assets/css/modalPerfil.css';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 
 Modal.setAppElement('#root');
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -13,7 +15,8 @@ const PerfilJugadorModal = ({ isOpen, onClose, jugadorId }) => {
   const [jugador, setJugador] = useState(null);
   const [clubes, setClubes] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { user } = useSession();
+  
   useEffect(() => {
     if (isOpen && jugadorId) {
       fetchJugadorData(jugadorId);
@@ -60,7 +63,9 @@ const PerfilJugadorModal = ({ isOpen, onClose, jugadorId }) => {
   };
   const clubesActivos = clubes.filter(club => club.estadoclub === 1);
   const clubesInactivos = clubes.filter(club => club.estadoclub !== 1);
-
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  };  
   return (
     <Modal
       isOpen={isOpen}
@@ -80,9 +85,14 @@ const PerfilJugadorModal = ({ isOpen, onClose, jugadorId }) => {
               <p><strong>Nombre:</strong> {jugador?.nombre} {jugador?.apellido}</p>
               <p><strong>Fecha de Nacimiento:</strong> {jugador?.fecha_nacimiento}</p>
               <p><strong>Edad:</strong> {calcularEdad(jugador?.fecha_nacimiento)} años</p>
-              <p><strong>Correo:</strong> {jugador?.correo}</p>
-              <p><strong>Cédula de Identidad:</strong> {jugador?.ci}</p>
-              <p><strong>Dirección:</strong> {jugador?.direccion}</p>
+              {hasRole(rolMapping.PresidenteAsociacion) && (
+                <>
+                <p><strong>Correo:</strong> {jugador?.correo}</p>
+                <p><strong>Cédula de Identidad:</strong> {jugador?.ci}</p>
+                <p><strong>Dirección:</strong> {jugador?.direccion}</p>
+                </>   
+              )}
+              
             </div>
           </div>
           <div className="modal-perfil-clubes">

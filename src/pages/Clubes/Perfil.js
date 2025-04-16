@@ -97,10 +97,6 @@ const PerfilClub = () => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
 
-  const isPresidentAssigned = () => {
-    return user && club && user.id === club.presidente_id;
-  };
-
   const getImagenPerfil = (presidente) => {
     if (presidente.presidente_imagen) {
       return presidente.presidente_imagen; 
@@ -136,7 +132,7 @@ const PerfilClub = () => {
         ) : null}
 
       {hasRole(rolMapping.PresidenteAsociacion) || 
-      (hasRole(rolMapping.PresidenteClub, rolMapping.DelegadoClub) && isPresidentAssigned()) ? (
+      (hasRole(rolMapping.PresidenteClub, rolMapping.DelegadoClub)  &&
         <>
           <button className="assign-jugador-button" onClick={handleListJugador}>
             <PeopleIcon /> Mis Jugadores
@@ -145,7 +141,7 @@ const PerfilClub = () => {
             <SportsVolleyballIcon /> Crear Equipo
           </button>
         </>
-      ) : null}
+      ) }
 
       </div>
         {club.presidente_asignado === 'N' ? (
