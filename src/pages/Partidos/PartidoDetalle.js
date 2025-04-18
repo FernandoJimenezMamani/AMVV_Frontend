@@ -22,6 +22,7 @@ import { useSession } from "../../context/SessionContext";
 import PerfilArbitroModal from "../Arbitros/Perfil";
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import estadosMapping from "../../constants/campeonatoEstados";
 
 ReactModal.setAppElement("#root");
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -46,6 +47,7 @@ const PartidoDetalle = () => {
   const { user } = useSession();
   const [showPerfilModal, setShowPerfilModal] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
+  const[campeonato , setCampeonato] = useState(null);
 
   useEffect(() => {
     
@@ -63,6 +65,7 @@ const PartidoDetalle = () => {
 
     fetchPartido();
     fetchArbitros();
+    
   }, [partidoId]);
 
   const fetchPartido = async () => {
@@ -88,6 +91,22 @@ const PartidoDetalle = () => {
       console.error("Error al obtener los resultados:", error);
     }
   };
+
+  useEffect(() => {
+    const fetchCampeonato = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/campeonatos/${campeonatoId}`);
+        setCampeonato(response.data);
+        console.log("Campeonato:", response.data);
+      } catch (error) {
+        toast.error("Error al obtener el campeonato");
+        console.error("Error al obtener el campeonato:", error);
+      }
+    };
+  
+    fetchCampeonato(); 
+  }, [campeonatoId]); 
+  
 
   const fetchGanador = async () => {
     try {
@@ -342,7 +361,8 @@ const PartidoDetalle = () => {
         )}
        {hasRole(rolMapping.PresidenteAsociacion) &&
         partido.estado !== estadosPartidoCampMapping.Finalizado &&
-        partido.estado !== estadosPartidoCampMapping.Vivo && (
+        partido.estado !== estadosPartidoCampMapping.Vivo &&
+        campeonato?.estado !== estadosMapping.campeonatoFinalizado && (
           <button
             className="reprogramar-button"
             onClick={() => handleReprogramarClick()}
@@ -352,7 +372,8 @@ const PartidoDetalle = () => {
       )}
 
           {hasRole(rolMapping.PresidenteAsociacion) &&
-          partido.estado !== estadosPartidoCampMapping.Finalizado && partido.estado !== estadosPartidoCampMapping.Vivo && (
+          partido.estado !== estadosPartidoCampMapping.Finalizado && partido.estado !== estadosPartidoCampMapping.Vivo &&  
+          campeonato?.estado !== estadosMapping.campeonatoFinalizado &&(
             <button
               className="reprogramar-button"
               onClick={() => handleEditarPartidoClick(partido.partido_id)}

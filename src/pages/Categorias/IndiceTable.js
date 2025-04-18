@@ -8,7 +8,9 @@ import EditarCategoria from './Editar';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ConfirmModal from '../../components/ConfirmModal';
+import { Select } from 'antd';
 
+const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaCategorias = () => {
@@ -18,6 +20,8 @@ const ListaCategorias = () => {
   const [categoriaToDelete, setCategoriaToDelete] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
   const [selectedCategoriaId, setSelectedCategoriaId] = useState(null);
+  const [filteredCategorias, setFilteredCategorias] = useState([]);
+  const [filterState, setFilterState] = useState('No filtrar');
 
   const navigate = useNavigate();
 
@@ -34,6 +38,18 @@ const ListaCategorias = () => {
       console.error('Error al obtener las categorías:', error);
     }
   };
+
+  useEffect(() => {
+      let filtered = [...categorias];
+    
+      if (filterState !== 'No filtrar') {
+        filtered = filtered.filter((c) =>
+          filterState === 'Activo' ? c.eliminado === 'N' : c.eliminado === 'S'
+        );
+      }
+    
+      setFilteredCategorias(filtered);
+    }, [categorias, filterState]);
 
   const handleEditClick = (categoriaId) => {
     setSelectedCategoriaId(categoriaId);  // Guarda el id del club seleccionado
@@ -66,6 +82,7 @@ const ListaCategorias = () => {
       setCategorias(categorias.filter(categoria => categoria.id !== categoriaToDelete));
       setShowConfirm(false);
       setCategoriaToDelete(null);
+      fetchCategorias();
     } catch (error) {
       toast.error('error')
       console.error('Error al eliminar la categoría:', error);
@@ -77,10 +94,35 @@ const ListaCategorias = () => {
     setCategoriaToDelete(null);
   };
 
+  const handleActivateCategoria = async (id) => {
+    try {
+      const user_id = 1; 
+      await axios.put(`${API_BASE_URL}/categoria/activate_categoria/${id}`, { user_id });
+      toast.success('Categoria activado exitosamente');
+      fetchCategorias();
+    } catch (error) {
+      toast.error('Error al activar el Categoria');
+      console.error('Error al activar Categoria:', error);
+    }
+  };
+
   return (
   <div className="table-container">
     <h2 className="table-title">Lista de Categorías</h2>
-    <button className="table-add-button" onClick={handleRegistrarClick} >+1 Categoria</button>
+    <div className="table-filters">
+      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Categoria</button>
+      <Select
+          className="filter-select"
+          placeholder="Filtrar por estado"
+          value={filterState}
+          onChange={(value) => setFilterState(value)}
+          style={{ width: 180 }}
+        >
+          <Option value="No filtrar">No filtrar</Option>
+          <Option value="Activo">Activo</Option>
+          <Option value="Inactivo">Inactivo</Option>
+        </Select>
+    </div>
     <RegistroCategoria
         isOpen={showFormModal}
         onClose={handleCloseModal}
@@ -105,7 +147,7 @@ const ListaCategorias = () => {
         </tr>
       </thead>
       <tbody>
-        {categorias.map((categoria) => (
+        {filteredCategorias.map((categoria) => (
           <tr key={categoria.id} className="table-row">
             <td className="table-td table-td-name">{categoria.nombre}</td>
             
@@ -147,12 +189,18 @@ const ListaCategorias = () => {
               >
                <EditIcon/>
               </button>
-              <button
-                className="table-button button-delete"
-                onClick={() => handleDeleteClick(categoria.id)}
-              >
-                <DeleteForeverIcon/>
-              </button>
+              <label className="user-activation-switch">
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      categoria.eliminado === 'S'
+                        ? handleActivateCategoria(categoria.id)
+                        : handleDeleteClick(categoria.id)
+                    }
+                    checked={categoria.eliminado !== 'S'}
+                  />
+                  <span className="user-activation-slider"></span>
+                </label>
             </td>
           </tr>
         ))}

@@ -11,6 +11,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
+import { Select } from 'antd';
+
+const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -23,7 +26,8 @@ const ListaClubes = () => {
   const [selectedClubId, setSelectedClubId] = useState(null);
   const { user } = useSession();
   const navigate = useNavigate();
-
+  const [filterState, setFilterState] = useState('No filtrar');
+  const [filteredClubes, setFilteredClubes] = useState([]);
   useEffect(() => {
     fetchClubes();
   }, []);
@@ -37,6 +41,18 @@ const ListaClubes = () => {
       console.error('Error al obtener los clubes:', error);
     }
   };
+
+  useEffect(() => {
+      let filtered = [...clubes];
+    
+      if (filterState !== 'No filtrar') {
+        filtered = filtered.filter((c) =>
+          filterState === 'Activo' ? c.eliminado === 'N' : c.eliminado === 'S'
+        );
+      }
+    
+      setFilteredClubes(filtered);
+    }, [clubes, filterState]);
 
   const handleEditClick = (clubId) => {
     setSelectedClubId(clubId);  // Guarda el id del club seleccionado
@@ -86,14 +102,39 @@ const ListaClubes = () => {
 
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
-  }; 
+  };
+  
+  const handleActivateClub = async (id) => {
+    try {
+      const user_id = 1; 
+      await axios.put(`${API_BASE_URL}/club/activate_club/${id}`, { user_id });
+      toast.success('Categoria activado exitosamente');
+      fetchClubes();
+    } catch (error) {
+      toast.error('Error al activar el Categoria');
+      console.error('Error al activar Categoria:', error);
+    }
+  };
 
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Clubes</h2>
-      {hasRole(rolMapping.PresidenteAsociacion) && (
-      <button className="table-add-button" onClick={handleRegistrarClick} >+1 club</button>
-      )}
+      <div className="table-filters">
+        {hasRole(rolMapping.PresidenteAsociacion) && (
+          <button className="table-add-button" onClick={handleRegistrarClick} >+1 club</button>
+        )}
+        <Select
+                  className="filter-select"
+                  placeholder="Filtrar por estado"
+                  value={filterState}
+                  onChange={(value) => setFilterState(value)}
+                  style={{ width: 180 }}
+                >
+                  <Option value="No filtrar">No filtrar</Option>
+                  <Option value="Activo">Activo</Option>
+                  <Option value="Inactivo">Inactivo</Option>
+                </Select>
+      </div>
       <RegistroClub
         isOpen={showFormModal}
         onClose={handleCloseModal}
@@ -115,7 +156,7 @@ const ListaClubes = () => {
           </tr>
         </thead>
         <tbody  >
-          {clubes.map((club) => (
+          {filteredClubes.map((club) => (
             <tr key={club.id} className="table-row">
 
               <td className="table-td">
@@ -128,7 +169,18 @@ const ListaClubes = () => {
                 {hasRole(rolMapping.PresidenteAsociacion) && (
                   <>
                 <button className="table-button button-edit" onClick={() => handleEditClick(club.id)}><EditIcon/></button>
-                <button className="table-button button-delete" onClick={() => handleDeleteClick(club.id)}><DeleteForeverIcon/></button>
+                <label className="user-activation-switch">
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      club.eliminado === 'S'
+                        ? handleActivateClub(club.id)
+                        : handleDeleteClick(club.id)
+                    }
+                    checked={club.eliminado !== 'S'}
+                  />
+                  <span className="user-activation-slider"></span>
+                </label>
                 </>
                 )}
                 </td>
