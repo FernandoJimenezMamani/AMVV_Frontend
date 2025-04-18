@@ -13,6 +13,7 @@ import rolMapping from '../../constants/roles';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { Select } from 'antd'; // Importar Select de Ant Design
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -104,12 +105,19 @@ const PerfilClub = () => {
     return presidente.presidente_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div className="perfil-club">
       <div className="perfil-header-club">
         <div className="club-logo-container">
           <img
-            src={club.club_imagen}
+            src={getImagenClub(club)}
             alt={`${club.nombre} logo`}
             className="club-logo-perfil"
           />

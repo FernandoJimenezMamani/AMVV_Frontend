@@ -12,7 +12,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
 import { Select } from 'antd';
-
+import Club_defecto from '../../assets/img/Club_defecto.png';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -116,6 +116,13 @@ const ListaClubes = () => {
     }
   };
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Clubes</h2>
@@ -160,7 +167,7 @@ const ListaClubes = () => {
             <tr key={club.id} className="table-row">
 
               <td className="table-td">
-                <img src={club.club_imagen} alt={`${club.nombre} logo`} className="table-logo" />
+                <img src={getImagenClub(club)} alt={`${club.nombre} logo`} className="table-logo" />
               </td>
               <td className="table-td table-td-name">{club.nombre}</td>
               <td className="table-td table-td-description">{club.descripcion}</td>

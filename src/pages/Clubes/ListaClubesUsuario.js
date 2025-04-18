@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../../assets/css/Clubes/ListaClubesUsuario.css"; 
+import club_defecto from "../../assets/img/Club_defecto.png"; // Asegúrate de que la ruta sea correcta
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -26,6 +27,13 @@ const ListaClubesUsuario = () => {
     navigate(`/clubes/perfil/${clubId}`);
   };
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return club_defecto;
+  };
+
   return (
     <div className="clubes-container">
       <h2 className="clubes-title">Clubes</h2>
@@ -37,7 +45,7 @@ const ListaClubesUsuario = () => {
             onClick={() => handleClubClick(club.id)}
           >
             <img
-              src={club.club_imagen}
+              src={getImagenClub(club)}
               alt={`${club.nombre} logo`}
               className="club-logo"
             />

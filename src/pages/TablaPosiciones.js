@@ -5,7 +5,7 @@ import '../assets/css/TablaPosiciones.css';
 import { toast } from 'react-toastify';
 import estadosMapping from '../constants/campeonatoEstados';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+import Club_defecto from '../assets/img/Club_defecto.png';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
 
@@ -129,6 +129,13 @@ const ListaEquipos = () => {
     navigate(`/equipos/perfil/${equipoId}`);
   };
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div className="clubes-lista">
       <div className="titulo-con-boton">
@@ -168,7 +175,7 @@ const ListaEquipos = () => {
               <td className="table-positions-td">
                 <div className="equipo-container" onClick={() => handleTeamClick(equipo.equipo_id)} style={{ cursor: 'pointer' }}>
                   <img 
-                    src={equipo.escudo} 
+                    src={getImagenClub(equipo)} 
                     alt={`${equipo.nombre} logo`} 
                     className="club-logo-table" 
                     style={equipo.estado === 'Deuda' ? { filter: 'grayscale(100%)', opacity: 0.4 } : {}}

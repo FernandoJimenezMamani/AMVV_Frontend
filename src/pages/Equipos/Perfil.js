@@ -17,6 +17,7 @@ import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
 import ConfirmModal from '../../components/ConfirmModal';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilEquipo = () => {
@@ -264,6 +265,13 @@ const PerfilEquipo = () => {
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
+
+   const getImagenClub = (club) => {
+      if (club.club_imagen) {
+        return club.club_imagen; 
+      }
+      return Club_defecto;
+    };
   
   return (
     <div className="equipoPerfil-container">
@@ -283,7 +291,7 @@ const PerfilEquipo = () => {
           src={
             equipo.club_imagen && equipo.club_imagen.length > 0
               ? equipo.club_imagen
-              : "default-image-url.png"
+              : Club_defecto
           }
           alt={`${equipo.nombre} logo`}
           className="equipoPerfil-logo"
