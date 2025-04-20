@@ -9,6 +9,7 @@ import '../../assets/css/Partidos/IndicePartido.css';
 import ErrorIcon from '@mui/icons-material/Error';
 import PendingIcon from '@mui/icons-material/Pending';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -112,6 +113,20 @@ const PartidosJugadorList = () => {
     return agrupados;
   };
 
+  const getImagenClubLocal = (club) => {
+    if (club.equipo_local_imagen) {
+      return club.equipo_local_imagen; 
+    }
+    return Club_defecto;
+  };
+
+  const getImagenClubVisitante = (club) => {
+    if (club.equipo_visitante_imagen) {
+      return club.equipo_visitante_imagen; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div className="all-matches-container">
       <h2 className="all-matches-titulo">Mis Partidos</h2>
@@ -168,12 +183,12 @@ const PartidosJugadorList = () => {
 
             <div className="all-matches-team-info">
               <div className="all-matches-team">
-                <img src={partido.equipo_local_imagen} alt={partido.equipo_local_nombre} className="all-matches-team-logo" />
+                <img src={getImagenClubLocal(partido)} alt={partido.equipo_local_nombre} className="all-matches-team-logo" />
                 <p className="all-matches-team-name">{partido.equipo_local_nombre}</p>
               </div>
               <div className="all-matches-vs">VS</div>
               <div className="all-matches-team">
-                <img src={partido.equipo_visitante_imagen} alt={partido.equipo_visitante_nombre} className="all-matches-team-logo" />
+                <img src={getImagenClubVisitante(partido)} alt={partido.equipo_visitante_nombre} className="all-matches-team-logo" />
                 <p className="all-matches-team-name">{partido.equipo_visitante_nombre}</p>
               </div>
             </div>

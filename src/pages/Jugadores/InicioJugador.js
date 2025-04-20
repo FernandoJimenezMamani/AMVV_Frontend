@@ -6,20 +6,20 @@ import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const InicioPresidente = ({ presidenteId }) => {
+const InicioJugador = ({ jugadorId }) => {
   const [clubActual, setClubActual] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (presidenteId) {
-      fetchClubActual(presidenteId);
+    if (jugadorId) {
+      fetchClubActual(jugadorId);
     }
-  }, [presidenteId]);
+  }, [jugadorId]);
 
   const fetchClubActual = async (id) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/presidente_club/clubActual/${id}`);
+      const response = await axios.get(`${API_BASE_URL}/jugador/clubActual/${id}`);
       setClubActual(response.data);
     } catch (error) {
       console.error('Error al obtener el club actual del presidente:', error);
@@ -55,4 +55,4 @@ const InicioPresidente = ({ presidenteId }) => {
   );
 };
 
-export default InicioPresidente;
+export default InicioJugador;

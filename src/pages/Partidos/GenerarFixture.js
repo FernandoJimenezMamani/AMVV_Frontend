@@ -8,6 +8,7 @@ import moment from "moment";
 import "moment/locale/es";
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -36,8 +37,9 @@ const GenerarFixture = () => {
         toast.error("Error al generar el fixture.");
       }
       console.error("Error al generar fixture:", error);
+    }finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
   
 
@@ -68,6 +70,20 @@ const GenerarFixture = () => {
     }
     setRegistering(false);
   };
+
+  const getImagenClubLocal = (club) => {
+    if (club.equipo_local_img) {
+      return club.equipo_local_img; 
+    }
+    return Club_defecto;
+  };
+
+  const getImagenClubVisitante = (club) => {
+    if (club.equipo_visitante_img) {
+      return club.equipo_visitante_img; 
+    }
+    return Club_defecto;
+  };
   
   
 
@@ -86,7 +102,7 @@ const GenerarFixture = () => {
       key: "equipo_local",
       render: (_, record) => (
         <div className="fixture-equipo-info">
-          <Avatar size="large" src={record.equipo_local_img} />
+          <Avatar size="large" src={getImagenClubLocal(record)} />
           <span className="fixture-equipo-nombre">{record.equipo_local}</span>
         </div>
       ),
@@ -97,7 +113,7 @@ const GenerarFixture = () => {
       key: "equipo_visitante",
       render: (_, record) => (
         <div className="fixture-equipo-info">
-          <Avatar size="large" src={record.equipo_visitante_img} />
+          <Avatar size="large" src={getImagenClubVisitante(record)} />
           <span className="fixture-equipo-nombre">{record.equipo_visitante}</span>
         </div>
       ),
@@ -138,7 +154,7 @@ const GenerarFixture = () => {
           disabled={loading || fixtureGenerado} 
           className="fixture-generate-btn"
         >
-          Generar Fixture
+          {loading ? <span className="spinner"></span> : "Generar Fixture"}
         </button>
 
         <button 

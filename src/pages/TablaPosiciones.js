@@ -103,7 +103,7 @@ const ListaEquipos = () => {
       try {
         const mensaje = JSON.parse(event.data);
   
-        if (mensaje.type === "actualizacion_estados") {
+        if (mensaje.type === "tabla_posiciones_actualizada") {
           console.log('🔄 Actualización detectada, refrescando equipos');
           fetchEquipos();
         }

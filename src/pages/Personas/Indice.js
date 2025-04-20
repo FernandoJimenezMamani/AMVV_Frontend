@@ -175,7 +175,6 @@ const ListaPersonas = () => {
             <Option value="DelegadoClub">Delegado de Club</Option>
             <Option value="Arbitro">Árbitro</Option>
             <Option value="Tesorero">Tesorero</Option>
-            <Option value="PresidenteArbitro">Presidente de Arbitros</Option>
        </Select>
 
        <Select

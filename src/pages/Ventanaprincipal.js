@@ -12,6 +12,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CategoryIcon from '@mui/icons-material/Category';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useNavigate } from 'react-router-dom';
+import Club_defecto from '../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const { Option } = Select;
@@ -204,6 +205,20 @@ const CustomCarousel = () => {
     navigate(`/tablaposiciones/${selectedCategoria}/${selectedCampeonato}`);
   };
 
+  const getImagenClubLocal = (club) => {
+    if (club.equipo_local_imagen) {
+      return club.equipo_local_imagen; 
+    }
+    return Club_defecto;
+  };
+
+  const getImagenClubVisitante = (club) => {
+    if (club.equipo_visitante_imagen) {
+      return club.equipo_visitante_imagen; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div>
      <div>
@@ -287,7 +302,7 @@ const CustomCarousel = () => {
               <div className="match-content">
                 <div className="team-content">
                   <div className="team-logo-container">
-                    <img src={match.equipo_local_imagen} alt={match.equipo_local_nombre} className="team-logo" />
+                    <img src={getImagenClubLocal(match)} alt={match.equipo_local_nombre} className="team-logo" />
                   </div>
                   <div className="team-name-container">
                     <p className="team-name">{match.equipo_local_nombre}</p>
@@ -298,7 +313,7 @@ const CustomCarousel = () => {
                 </div>
                 <div className="team-content">
                   <div className="team-logo-container">
-                    <img src={match.equipo_visitante_imagen} alt={match.equipo_visitante_nombre} className="team-logo" />
+                    <img src={getImagenClubVisitante(match)} alt={match.equipo_visitante_nombre} className="team-logo" />
                   </div>
                   <div className="team-name-container">
                     <p className="team-name">{match.equipo_visitante_nombre}</p>
@@ -375,12 +390,12 @@ const CustomCarousel = () => {
               <div key={index} className="next-matches-card" onClick={() =>  handlePartidoClick(match.id)} style={{ cursor: 'pointer' }}>
                 <div className="next-matches-team-info">
                   <div className="next-matches-team">
-                    <img src={match.equipo_local_imagen} alt={match.equipo_local_nombre} className="next-matches-team-logo"/>
+                    <img src={getImagenClubLocal(match)} alt={match.equipo_local_nombre} className="next-matches-team-logo"/>
                     <p className="next-matches-team-name">{match.equipo_local_nombre}</p>
                   </div>
                   <div className="next-matches-vs">VS</div>
                   <div className="next-matches-team">
-                    <img src={match.equipo_visitante_imagen} alt={match.equipo_visitante_nombre} className="next-matches-team-logo"/>
+                    <img src={getImagenClubVisitante(match)} alt={match.equipo_visitante_nombre} className="next-matches-team-logo"/>
                     <p className="next-matches-team-name">{match.equipo_visitante_nombre}</p>
                   </div>
                 </div>

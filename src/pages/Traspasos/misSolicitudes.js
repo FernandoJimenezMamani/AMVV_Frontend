@@ -15,6 +15,7 @@ import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import estadoTraspasoMapping from '../../constants/estadoTraspasos';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -63,8 +64,8 @@ const MisSolicitudes = () => {
 
     const fetchJugadores = async () => {
       try {
-          const requestBody = {
-              club_presidente: presidente.club_presidente, 
+        if( !presidente.id_presidente || !selectedCampeonato) return; 
+          const requestBody = { 
               idTraspasoPresidente: presidente.id_presidente ,
               campeonatoId : selectedCampeonato
           };
@@ -222,6 +223,12 @@ const MisSolicitudes = () => {
             <CheckCircleIcon  style={{ color: 'green' }}  /> Aprobado
           </span>
         );
+        case 'FINALIZADO':
+                  return (
+                    <span style={{alignItems: 'center', gap: '5px', color: 'black' }}>
+                      <CheckCircleIcon  style={{ color: 'green' }}  /> Aprobado
+                    </span>
+                  );
       case 'RECHAZADO':
         return (
           <span style={{ alignItems: 'center', gap: '5px', color: 'black' }}>
@@ -240,9 +247,23 @@ const MisSolicitudes = () => {
     return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  
+
   return (
     <div className="table-container">
-      <h2 className="table-title">Mis Solicitudes</h2>
+       <div className="titulo-con-boton">
+        <button className="boton-volver" onClick={() => window.history.back()}>
+          <ArrowBackIcon />
+        </button>
+        <h2 className="all-matches-titulo">Mis Solicitudes</h2>
+       </div>
+      
       <div className="table-filters">
       <Select
         className="filter-select"
@@ -304,21 +325,13 @@ const MisSolicitudes = () => {
                 {jugador.nombre_persona} {jugador.apellido_persona}
               </td>
               <td className="table-td-p">
-                {new Date(jugador.fecha_nacimiento_persona).toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric' 
-                })}
+                {formatFechaLarga(jugador.fecha_nacimiento_persona)}
               </td>
               <td className="table-td-p">
                 {jugador.nombre_club }
               </td>
               <td className="table-td-p">
-                {new Date(jugador.fecha_solicitud).toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric' 
-                }) }
+              {formatFechaLarga(jugador.fecha_solicitud)}
               </td>
               <td className="table-td-p">
                     {getStatusIcon(jugador.estado_jugador)}
@@ -337,7 +350,9 @@ const MisSolicitudes = () => {
                 >
                   <RemoveRedEyeIcon />
                 </button>
-                <button className="table-button button-delete" onClick={() => handleDeleteClick(jugador.id_traspaso)}><DeleteForeverIcon/></button>
+                {jugador.estado_deuda !== 'FINALIZADO' && (
+                  <button className="table-button button-delete" onClick={() => handleDeleteClick(jugador.id_traspaso)}><DeleteForeverIcon/></button>
+                )}     
               </td>
             </tr>
           ))}

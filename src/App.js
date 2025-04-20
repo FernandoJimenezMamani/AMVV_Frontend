@@ -69,6 +69,7 @@ import HistorialPagosInscripcion from "./pages/Pagos/HistorialPagosInscripcion";
 import EditarPartidoForm from "./pages/Partidos/Editar";
 import PartidosArbitroList from "./pages/Partidos/PartidosArbitroList";
 import PartidosJugadorList from "./pages/Partidos/PartidosJugadorList";
+import HistorialPagosTraspaso from "./pages/Pagos/HistorialPagosTraspasos";
 import "./assets/css/tailwind.css";
 import Toast from "./components/Toast";
 import { toast } from "react-toastify";
@@ -238,6 +239,11 @@ const App = () => {
                 path="/pagos/HistorialInscripcion"
                 element={<HistorialPagosInscripcion />}
               />
+
+              <Route
+                path="/pagos/HistorialTraspasos"
+                element={<HistorialPagosTraspaso />}
+              />  
               <Route path="/pagos/Traspaso" element={<ListaTraspasosPagos />} />
               <Route
                 path="/traspasos/TraspasoListaJugadores"

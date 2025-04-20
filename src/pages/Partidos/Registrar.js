@@ -7,6 +7,7 @@ import { DatePicker, Select } from 'antd';
 import { toast } from 'react-toastify';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -192,6 +193,15 @@ const PartidoForm = () => {
     navigate(`/partidos/generarFixture/${campeonatoId}/${categoriaId}`);
   };
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
+
+  
+
   return (
     <div className="registro-campeonato">
         <div className="titulo-con-boton">
@@ -219,7 +229,7 @@ const PartidoForm = () => {
                 className={`equipo-card ${equipoLocalId === equipo.id ? 'selected' : ''}`}
                 onClick={() => selectEquipoLocal(equipo.id)}
               >
-                <img src={equipo.club_imagen} alt={equipo.club_nombre} className="club-image" />
+                <img src={getImagenClub(equipo)} alt={equipo.club_nombre} className="club-image" />
                 <p>{equipo.nombre}</p>
                 <br /> 
                 <small>{equipo.club_nombre}</small>
@@ -233,7 +243,7 @@ const PartidoForm = () => {
             <h4>Equipo Local Seleccionado</h4>
             {equipoLocal && (
               <div className="equipo-card">
-                <img src={equipoLocal.club_imagen} alt={equipoLocal.club_nombre} className="club-image" />
+                <img src={getImagenClub(equipoLocal)} alt={equipoLocal.club_nombre} className="club-image" />
                 <p>{equipoLocal.nombre}</p>
                 <small>{equipoLocal.club_nombre}</small>
               </div>
@@ -244,7 +254,7 @@ const PartidoForm = () => {
             <h4>Equipo Visitante Seleccionado</h4>
             {equipoVisitante && (
               <div className="equipo-card">
-                <img src={equipoVisitante.club_imagen} alt={equipoVisitante.club_nombre} className="club-image" />
+                <img src={getImagenClub(equipoVisitante)} alt={equipoVisitante.club_nombre} className="club-image" />
                 <p>{equipoVisitante.nombre}</p>
                 <small>{equipoVisitante.club_nombre}</small>
               </div>
@@ -261,7 +271,7 @@ const PartidoForm = () => {
                 className={`equipo-card ${equipoVisitanteId === equipo.id ? 'selected' : ''}`}
                 onClick={() => selectEquipoVisitante(equipo.id)}
               >
-                <img src={equipo.club_imagen} alt={equipo.club_nombre} className="club-image" />
+                <img src={getImagenClub(equipo)} alt={equipo.club_nombre} className="club-image" />
                 <p>{equipo.nombre}</p>
                 <small>{equipo.club_nombre}</small>
               </div>

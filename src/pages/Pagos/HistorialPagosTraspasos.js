@@ -8,22 +8,45 @@ import RegistroPagoTraspaso from './RegistroPagoTraspaso';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import Club_defecto from '../../assets/img/Club_defecto.png';
+import { Select } from 'antd';
+import DetallePagoTraspaso from './DetallePagoTraspaso';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const ListaTraspasosPagos = () => {
+const HistorialPagosTraspaso = () => {
   const [traspasos, setTraspasos] = useState([]);
   const [showFormModal, setShowFormModal] = useState(false);
   const [selectedTraspasoId, setSelectedTraspasoId] = useState(null);
+  const [selectedCampeonato, setSelectedCampeonato] = useState(null);
+  const [campeonatos, setCampeonatos] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchClubes();
+    const fetchCampeonatos = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
+        setCampeonatos(response.data);
+        if (response.data.length > 0) {
+          setSelectedCampeonato(response.data[0].id);
+        }
+      } catch (error) {
+        toast.error('Error al obtener campeonatos');
+        console.error('Error al obtener campeonatos:', error);
+      }
+    };
+
+    fetchCampeonatos();
   }, []);
 
+  useEffect(() => {
+    fetchClubes();
+  }, [selectedCampeonato]);
+
   const fetchClubes = async () => {
+    if(!selectedCampeonato) return; 
     try {
-      const response = await axios.get(`${API_BASE_URL}/pagos/getTraspasosDebt`);
+  
+      const response = await axios.get(`${API_BASE_URL}/pagos/historial-traspasos/${selectedCampeonato}`);
       setTraspasos(response.data);
     } catch (error) {
       toast.error('error')
@@ -62,19 +85,31 @@ const ListaTraspasosPagos = () => {
     return Club_defecto;
   };
   
-  const handleHistorialClick = () => {
-    navigate('/pagos/HistorialTraspasos');
-  }
   return (
     <div className="table-container">
-      <h2 className="table-title">Deuda por Traspasos</h2>
-      <button className="table-add-button" onClick={handleHistorialClick} >Historial</button>
-      <RegistroPagoTraspaso
+      <h2 className="table-title">Historial de Traspasos</h2>
+      <DetallePagoTraspaso
         isOpen={showFormModal}
         onClose={handleCloseModal}
-        onTraspasoCreated={fetchClubes} 
         traspasoId={selectedTraspasoId}
+        campeonatoId={selectedCampeonato}
       />
+        <div className="table-filters">
+        <Select
+                  value={selectedCampeonato ?? undefined} 
+                  onChange={setSelectedCampeonato}
+                  style={{ width: 250, marginBottom: '0px' }}
+                  className="filter-select"
+                  >
+      
+                {campeonatos.map((campeonato) => (
+                  <Select.Option key={campeonato.id} value={campeonato.id}>
+                    {campeonato.nombre}
+                  </Select.Option>
+                ))}
+              </Select>
+        </div>
+      
       <table className="table-layout">
         <thead className="table-head">
           <tr>
@@ -128,4 +163,4 @@ const ListaTraspasosPagos = () => {
   );
 };
 
-export default ListaTraspasosPagos;
+export default HistorialPagosTraspaso;

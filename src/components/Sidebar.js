@@ -148,7 +148,17 @@ const Sidebar = () => {
               {user?.nombre} {user?.apellido}
             </div>
             <div className="user-role">
-              {user?.rol?.nombre || 'Sin rol'}
+            {
+              user?.rol?.nombre === 'PresidenteAsociacion'
+                ? 'Presidente de Asociación' :
+                user?.rol?.nombre === 'PresidenteClub'
+                ? 'Presidente de Club' :
+                user?.rol?.nombre === 'DelegadoClub'
+                ? 'Delegado de Club' 
+                : (user?.rol?.nombre || 'Sin rol')
+            }
+
+              
               
             </div>
           </div>

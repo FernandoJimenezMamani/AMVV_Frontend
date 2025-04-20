@@ -66,6 +66,14 @@ const PerfilJugadorModal = ({ isOpen, onClose, jugadorId }) => {
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
   };  
+
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -83,7 +91,7 @@ const PerfilJugadorModal = ({ isOpen, onClose, jugadorId }) => {
             <img src={getImagenPerfil()} alt="Jugador" className="modal-perfil-avatar" />
             <div className="modal-perfil-info">
               <p><strong>Nombre:</strong> {jugador?.nombre} {jugador?.apellido}</p>
-              <p><strong>Fecha de Nacimiento:</strong> {jugador?.fecha_nacimiento}</p>
+              <p><strong>Fecha de Nacimiento:</strong> {formatFechaLarga(jugador?.fecha_nacimiento)}</p>
               <p><strong>Edad:</strong> {calcularEdad(jugador?.fecha_nacimiento)} años</p>
               {hasRole(rolMapping.PresidenteAsociacion) && (
                 <>

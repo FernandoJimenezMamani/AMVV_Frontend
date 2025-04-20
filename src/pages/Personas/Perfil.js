@@ -75,6 +75,14 @@ const PerfilJugador = () => {
     logout();
     navigate('/login'); 
   };
+
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
  
   return (
     <div className="perfil-jugador">
@@ -107,7 +115,7 @@ const PerfilJugador = () => {
         <div className="perfil-jugador-detalles">
           <p><strong>Nombre Completo:</strong> {jugador.nombre} {jugador.apellido}</p>
           <p><strong>Carnet de Identidad:</strong> {jugador.ci}</p>
-          <p><strong>Fecha de Nacimiento:</strong> {jugador.fecha_nacimiento}</p>
+          <p><strong>Fecha de Nacimiento:</strong> {formatFechaLarga(jugador.fecha_nacimiento)}</p>
           <p><strong>Edad:</strong> {calcularEdad(jugador.fecha_nacimiento)} años</p>
           <p><strong>Genero:</strong> {ConvertGenero(jugador.genero) }</p>
           <p><strong>Dirección vivienda:</strong> {jugador.direccion}</p>

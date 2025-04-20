@@ -5,6 +5,7 @@ import '../../assets/css/IndiceTabla.css';
 import { toast } from 'react-toastify';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import RegistroPagoInscripcion from './RegistroPagoInscripcion';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -50,6 +51,12 @@ const ListaEquiposPagos = () => {
     navigate('/pagos/HistorialInscripcion');
   }
 
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
 
   return (
     <div className="table-container">
@@ -78,7 +85,7 @@ const ListaEquiposPagos = () => {
             <tr key={equipo.id} className="table-row">
 
               <td className="table-td">
-                <img src={equipo.imagen_club} alt={`${equipo.nombre_club} logo`} className="table-logo" />
+                <img src={getImagenClub(equipo)} alt={`${equipo.nombre_club} logo`} className="table-logo" />
               </td>
               <td className="table-td table-td-name">{equipo.equipo_nombre}</td>
               <td className="table-td table-td-name">{equipo.nombre_club}</td>

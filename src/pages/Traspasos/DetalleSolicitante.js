@@ -8,6 +8,7 @@ import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -51,6 +52,26 @@ const DetalleTraspasoPresidenteSolicitante = () => {
     return persona.jugador_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const getImagenClubOrigen = (club) => {
+    if (club.imagen_club_origen) {
+      return club.imagen_club_origen; 
+    }
+    return Club_defecto;
+  };
+
+  const getImagenClubDestino = (club) => {
+    if (club.imagen_club_destino) {
+      return club.imagen_club_destino; 
+    }
+    return Club_defecto;
+  };
+
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
 
   return (
     <div className="detalle-traspaso">
@@ -63,7 +84,7 @@ const DetalleTraspasoPresidenteSolicitante = () => {
           <p><strong>Presidente Actual del Club:</strong> {solicitud.nombre_presi_club_origen} {solicitud.apellido_presi_club_origen}</p>
         </div>
         <div className="imagen-info">
-          <img src={solicitud.imagen_club_origen} alt="Club Origen" />
+          <img src={getImagenClubOrigen(solicitud)} alt="Club Origen" />
         </div>
       </div>
 
@@ -75,7 +96,7 @@ const DetalleTraspasoPresidenteSolicitante = () => {
           <p><strong>Presidente Actual del Club:</strong> {solicitud.nombre_presi_club_dest} {solicitud.apellido_presi_club_dest}</p>
         </div>
         <div className="imagen-info">
-          <img src={solicitud.imagen_club_destino} alt="Club Destino" />
+          <img src={getImagenClubDestino(solicitud)} alt="Club Destino" />
         </div>
       </div>
 
@@ -90,7 +111,7 @@ const DetalleTraspasoPresidenteSolicitante = () => {
           <p><strong>Nombre Completo:</strong> {solicitud.jugador_nombre} {solicitud.jugador_apellido}</p>
           <p><strong>Género:</strong> {solicitud.jugador_genero === 'V' ? 'Varón' : solicitud.jugador_genero === 'D' ? 'Dama' : 'Desconocido'}</p>
           <p><strong>Cédula de Identidad:</strong> {solicitud.jugador_ci}</p>
-          <p><strong>Fecha de Nacimiento:</strong> {new Date(solicitud.jugador_fecha_nacimiento).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p><strong>Fecha de Nacimiento:</strong> {formatFechaLarga(solicitud.jugador_fecha_nacimiento)}</p>
         </div>
         <div className="imagen-info">
           <img src={getImagenPerfil(solicitud)} alt="Jugador" />

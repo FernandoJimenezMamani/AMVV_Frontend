@@ -398,7 +398,6 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
             Delegado de club
           </Option>
           <Option value={(roleNames.Tesorero)}>Tesorero</Option>
-          <Option value={(roleNames.PresidenteArbitro)}>Presidente de arbitros</Option>
         </Select>
         {roleError && <p className="error-message">Debe seleccionar al menos un rol.</p>}
         </div>

@@ -8,8 +8,7 @@ import { useSession } from '../context/SessionContext';
 import rolMapping from '../constants/roles';
 import InicioPresidente from "./PresidenteClub/InicioPresidente";
 import VistaDefault from "./VistaDefault";
-import PartidosJugadorList from "./Partidos/PartidosJugadorList";
-import PartidosArbitroList from "./Partidos/PartidosArbitroList";
+import InicioJugador from "./Jugadores/InicioJugador";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -64,6 +63,12 @@ const VentanaPrincipalUser = () => {
       {(hasRole(rolMapping.PresidenteClub) || hasRole(rolMapping.DelegadoClub))&& (
         <>
         <InicioPresidente presidenteId ={user.id}></InicioPresidente>
+        </>
+       
+      )}
+      {(hasRole(rolMapping.Jugador) )&& (
+        <>
+        <InicioJugador jugadorId ={user.id}></InicioJugador>
         </>
        
       )}

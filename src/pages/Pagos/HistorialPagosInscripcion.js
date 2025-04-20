@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import '../../assets/css/IndiceTabla.css';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DetallePagoInscripcion from './DetallePagoInscripcion';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -76,6 +77,14 @@ const HistorialPagosInscripcion = () => {
     setShowFormModal(false);
   };
 
+  const getImagenClub = (club) => {
+    if (club.imagen_club) {
+      return club.imagen_club; 
+    }
+    return Club_defecto;
+  };
+
+
   return (
     <div className="table-container">
       <h2 className="table-title">Historial de Pagos de Inscripción</h2>
@@ -126,7 +135,7 @@ const HistorialPagosInscripcion = () => {
             filteredPagos.map((pago, index) => (
               <tr key={index} className="table-row">
                 <td className="table-td">
-                  <img src={pago.imagen_club} alt="logo" className="table-logo" />
+                  <img src={getImagenClub(pago)} alt="logo" className="table-logo" />
                 </td>
                 <td className="table-td">{pago.equipo}</td>
                 <td className="table-td">{pago.nombre_club}</td>

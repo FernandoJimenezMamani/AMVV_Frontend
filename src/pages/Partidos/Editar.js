@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../../assets/css/Partidos/RegistrarPartido.css'; 
 import { Select } from 'antd';
 import { toast } from 'react-toastify';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -207,6 +208,12 @@ const EditarPartidoForm = () => {
     return todos;
   };
   
+  const getImagenClub = (club) => {
+    if (club.club_imagen) {
+      return club.club_imagen; 
+    }
+    return Club_defecto;
+  };
   
   return (
     <div className="registro-campeonato">
@@ -219,7 +226,7 @@ const EditarPartidoForm = () => {
                     <h4>Equipo Local</h4>
                     {equipoLocal && (
                         <div className="equipo-card">
-                        <img src={equipoLocal.club_imagen} alt={equipoLocal.club_nombre} className="club-image" />
+                        <img src={getImagenClub(equipoLocal)} alt={equipoLocal.club_nombre} className="club-image" />
                         <p>{equipoLocal.nombre}</p>
                         <small>{equipoLocal.club_nombre}</small>
                         </div>
@@ -232,7 +239,7 @@ const EditarPartidoForm = () => {
                     <h4>Equipo Visitante</h4>
                     {equipoVisitante && (
                         <div className="equipo-card">
-                        <img src={equipoVisitante.club_imagen} alt={equipoVisitante.club_nombre} className="club-image" />
+                        <img src={getImagenClub(equipoVisitante)} alt={equipoVisitante.club_nombre} className="club-image" />
                         <p>{equipoVisitante.nombre}</p>
                         <small>{equipoVisitante.club_nombre}</small>
                         </div>

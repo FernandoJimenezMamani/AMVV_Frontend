@@ -8,6 +8,7 @@ import estadosPartidoCampMapping from "../../constants/estadoPartido";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useSession } from "../../context/SessionContext";
 import rolMapping from "../../constants/roles";
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -405,6 +406,14 @@ const SubmitResultados = () => {
     }
   };
 
+  const getImagenClub = (club) => {
+      if (club.club_imagen) {
+        return club.club_imagen; 
+      }
+      return Club_defecto;
+    };
+  
+
   return (
     <div className="resultados-container">
       <div className="titulo-con-boton">
@@ -468,7 +477,7 @@ const SubmitResultados = () => {
           <div className="resultados-equipo">
             <div className="resultados-equipo-header">
               <img
-                src={equipoLocal.club_imagen}
+                src={getImagenClub(equipoLocal)}
                 alt="Escudo Local"
                 className="resultados-equipo-logo"
               />
@@ -515,7 +524,7 @@ const SubmitResultados = () => {
           <div className="resultados-equipo">
             <div className="resultados-equipo-header">
               <img
-                src={equipoVisitante.club_imagen}
+                src={getImagenClub(equipoVisitante)}
                 alt="Escudo Visitante"
                 className="resultados-equipo-logo"
               />

@@ -15,6 +15,7 @@ import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import estadoTraspasoMapping from '../../constants/estadoTraspasos';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -35,7 +36,7 @@ const MisSolicitudesJugador = () => {
 
   useEffect(() => {
     fetchJugador();
-  }, []);
+  }, [selectedCampeonato]);
 
   useEffect(() => {
     if (jugador) {
@@ -66,7 +67,7 @@ const MisSolicitudesJugador = () => {
         try {
             if(!jugador || !jugador.jugador_id) return;
                 const requestBody = {
-                    jugador_id: jugador.jugador_id,
+                    jugador_id: jugador.id,
                     campeonatoId : selectedCampeonato
                 };
           const response = await axios.post(`${API_BASE_URL}/club/clubes_pending_confirm`, requestBody ,{
@@ -74,6 +75,7 @@ const MisSolicitudesJugador = () => {
                 'Content-Type': 'application/json'
             }
           });
+          console.log('Clubes:', response.data);
           setClubes(response.data);
         } catch (error) {
           toast.error('error')
@@ -121,6 +123,7 @@ const MisSolicitudesJugador = () => {
       else if (
         club.estado_club_receptor === estadoTraspasoMapping.APROBADO &&
         club.estado_club_origen === estadoTraspasoMapping.APROBADO &&
+        club.estado_jugador === estadoTraspasoMapping.APROBADO &&
         club.estado_deuda === estadoTraspasoMapping.FINALIZADO
       ) {
         return { ...club, estado_solicitud: "Realizado" };
@@ -141,7 +144,7 @@ const MisSolicitudesJugador = () => {
           .includes(searchName.toLowerCase())
       );
     }
-  
+    
     setFilteredPersonas(filtered);
   };  
 
@@ -190,6 +193,12 @@ const MisSolicitudesJugador = () => {
             <CheckCircleIcon  style={{ color: 'green' }}  /> Aprobado
           </span>
         );
+        case 'FINALIZADO':
+          return (
+            <span style={{alignItems: 'center', gap: '5px', color: 'black' }}>
+              <CheckCircleIcon  style={{ color: 'green' }}  /> Aprobado
+            </span>
+          );
       case 'RECHAZADO':
         return (
           <span style={{ alignItems: 'center', gap: '5px', color: 'black' }}>
@@ -201,7 +210,20 @@ const MisSolicitudesJugador = () => {
     }
   };
 
+  const getImagenClub = (club) => {
+    if (club.imagen_club) {
+      return club.imagen_club; 
+    }
+    return Club_defecto;
+  };
 
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+  
   return (
     <div className="table-container">
       <h2 className="table-title">Mis Solicitudes</h2>
@@ -251,11 +273,12 @@ const MisSolicitudesJugador = () => {
           </tr>
         </thead>
         <tbody>
+          {console.log("💡 Clubes antes del filtro:", clubes)          }
           {filteredPersonas.map((club) => (
             <tr key={club.club_id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={club.imagen_club}
+                  src={getImagenClub(club)}
                   alt={`${club.nombre_club}`}
                   className="table-logo"
                 />
@@ -265,11 +288,7 @@ const MisSolicitudesJugador = () => {
               </td>
             
               <td className="table-td-p">
-                {new Date(club.fecha_solicitud).toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric' 
-                }) }
+                {formatFechaLarga(club.fecha_solicitud)}
               </td>
               <td className="table-td-p">
                     {getStatusIcon(club.estado_club_origen)}
@@ -288,7 +307,10 @@ const MisSolicitudesJugador = () => {
                 >
                   <RemoveRedEyeIcon />
                 </button>
-                <button className="table-button button-delete" onClick={() => handleDeleteClick(club.traspaso_id)}><DeleteForeverIcon/></button>
+                {club.estado_deuda !== 'FINALIZADO' && (
+                  <button className="table-button button-delete" onClick={() => handleDeleteClick(club.traspaso_id)}><DeleteForeverIcon/></button>
+                )}
+                
               </td>
             </tr>
           ))}

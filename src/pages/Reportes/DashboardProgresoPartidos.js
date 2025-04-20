@@ -64,7 +64,7 @@ const DashboardProgresoPartidos = () => {
     ws.onmessage = (event) => {
       try {
         const mensaje = JSON.parse(event.data);
-        if (mensaje.type === "actualizacion_estados") {
+        if (mensaje.type === "resultado_partido_actualizado") {
           console.log("🔄 Actualización detectada, refrescando progreso del campeonato");
           fetchProgreso();
         }

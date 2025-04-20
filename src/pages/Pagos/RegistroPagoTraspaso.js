@@ -67,7 +67,7 @@ const RegistroPagoTraspaso = ({ isOpen, onClose, traspasoId, onTraspasoCreated }
             nombre_presi_club_origen: traspaso.nombre_presi_club_origen,
             apellido_presi_club_origen: traspaso.apellido_presi_club_origen,
             nombre_campeonato: traspaso.nombre_campeonato,
-            costo_traspaso: traspaso.costo_traspaso ?? 100,
+            costo_traspaso: traspaso.costo_traspaso,
             jugador_ci: traspaso.jugador_ci,
             referencia: `Pago por traspaso de jugador ${traspaso.jugador_nombre} ${traspaso.jugador_apellido} del club ${traspaso.club_origen_nombre} al club ${traspaso.club_destino_nombre}` 
           }));

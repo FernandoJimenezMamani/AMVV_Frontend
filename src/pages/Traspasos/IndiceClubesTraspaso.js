@@ -8,6 +8,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -47,7 +48,7 @@ const ListaClubesTraspasos = () => {
     try {
         if(!jugador || !jugador.jugador_id) return;
     const requestBody = {
-        jugador_id: jugador.jugador_id
+        jugador_id: jugador.id
     };
       const response = await axios.post(`${API_BASE_URL}/club/clubes-disponibles-by-jugador`, requestBody ,{
         headers: {
@@ -78,7 +79,7 @@ const ListaClubesTraspasos = () => {
   
     try {
       await axios.post(`${API_BASE_URL}/traspaso/crearJugador`, {
-        jugador_id: jugador.jugador_id,
+        jugador_id: jugador.id,
         club_origen_id: jugador.club_jugador, 
         club_destino_id: clubToFichar,
         presidente_club_id_destino : presidenteId
@@ -108,6 +109,13 @@ const ListaClubesTraspasos = () => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
 
+  const getImagenClub = (club) => {
+    if (club.imagen_club) {
+      return club.imagen_club; 
+    }
+    return Club_defecto;
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Clubes</h2>
@@ -126,7 +134,7 @@ const ListaClubesTraspasos = () => {
             <tr key={club.club_id} className="table-row">
 
               <td className="table-td">
-                <img src={club.imagen_club} alt={`${club.nombre_club} logo`} className="table-logo" />
+                <img src={getImagenClub(club)} alt={`${club.nombre_club} logo`} className="table-logo" />
               </td>
               <td className="table-td table-td-name">{club.nombre_club}</td>
               <td className="table-td table-td-description">{club.descripcion_club}</td>

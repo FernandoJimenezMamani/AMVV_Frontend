@@ -67,17 +67,19 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
   }, [presidenteId]);
 
   useEffect(() => {
-    const fetchClubes = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/club/get_club`);
-        setClubes(response.data);
-      } catch (error) {
-        toast.error('Error al obtener los clubes');
-        console.error('Error al obtener los clubes:', error);
-      }
-    };
+    
     fetchClubes();
   }, []);
+
+  const fetchClubes = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/club/get_club`);
+      setClubes(response.data);
+    } catch (error) {
+      toast.error('Error al obtener los clubes');
+      console.error('Error al obtener los clubes:', error);
+    }
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -137,6 +139,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
       toast.success('Jugador actualizado exitosamente');
       onClose();
       onPresidenteUpdated();
+      fetchClubes(); 
     } catch (error) {
       console.error('Error al actualizar el jugador:', error);
       toast.error('Error al actualizar el jugador');

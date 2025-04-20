@@ -23,6 +23,7 @@ import PerfilArbitroModal from "../Arbitros/Perfil";
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import estadosMapping from "../../constants/campeonatoEstados";
+import Club_defecto from '../../assets/img/Club_defecto.png';
 
 ReactModal.setAppElement("#root");
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -85,6 +86,7 @@ const PartidoDetalle = () => {
       const response = await axios.get(
         `${API_BASE_URL}/partidos/resultados/${partidoId}`,
       );
+      console.log("Resultados del partido:", response.data);
       setResultadoPartido(response.data);
     } catch (error) {
       toast.error("Error al obtener los resultados del partido");
@@ -330,6 +332,20 @@ const PartidoDetalle = () => {
     return arbitros.some((arbitro) => arbitro.arbitro_id === user.id);
   };  
 
+  const getImagenClubLocal = (club) => {
+      if (club.equipo_local_imagen) {
+        return club.equipo_local_imagen; 
+      }
+      return Club_defecto;
+    };
+  
+    const getImagenClubVisitante = (club) => {
+      if (club.equipo_visitante_imagen) {
+        return club.equipo_visitante_imagen; 
+      }
+      return Club_defecto;
+    };
+
   return (
     <div className="partido-detalle-container">
       <div className="titulo-con-boton">
@@ -419,7 +435,7 @@ const PartidoDetalle = () => {
             onClick={() => handleTeamClick(partido.equipo_local_id)}
           >
             <img
-              src={partido.equipo_local_imagen}
+              src={getImagenClubLocal(partido)}
               alt="Logo equipo local"
               className="equipo-logo"
             />
@@ -435,7 +451,7 @@ const PartidoDetalle = () => {
             onClick={() => handleTeamClick(partido.equipo_visitante_id)}
           >
             <img
-              src={partido.equipo_visitante_imagen}
+              src={getImagenClubVisitante(partido)}
               alt="Logo equipo visitante"
               className="equipo-logo"
             />
