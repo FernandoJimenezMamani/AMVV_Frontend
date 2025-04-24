@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import '../../assets/css/modalPerfil.css';
-
+import Club_defecto from '../../assets/img/Club_defecto.png';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 
@@ -70,6 +70,13 @@ const PerfilDelegadoModal = ({ isOpen, onClose, delegadoId }) => {
     return edad;
   };
 
+  const getImagenClub = (club) => {
+        if (club.club_imagen) {
+          return club.club_imagen; 
+        }
+        return Club_defecto;
+      };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -101,7 +108,7 @@ const PerfilDelegadoModal = ({ isOpen, onClose, delegadoId }) => {
             <div className="modal-perfil-club-box">
               {clubActual ? (
                 <div className="modal-perfil-clubes-item">
-                  <img src={clubActual.club_imagen } alt={clubActual.club_nombre} className="modal-perfil-clubes-icon" />
+                  <img src={getImagenClub(clubActual) } alt={clubActual.club_nombre} className="modal-perfil-clubes-icon" />
                   <div className="modal-perfil-clubes-details">
                     <strong className="modal-perfil-clubes-nombre">{clubActual.club_nombre}</strong>
                     <p className="modal-perfil-clubes-desc">{clubActual.descripcion}</p>
@@ -119,7 +126,7 @@ const PerfilDelegadoModal = ({ isOpen, onClose, delegadoId }) => {
                 <ul className="modal-perfil-clubes-list">
                   {clubesAnteriores.map((club, index) => (
                     <li key={index} className="modal-perfil-clubes-item">
-                      <img src={club.club_imagen } alt={club.club_nombre} className="modal-perfil-clubes-icon" />
+                      <img src={getImagenClub(club) } alt={club.club_nombre} className="modal-perfil-clubes-icon" />
                       <div className="modal-perfil-clubes-details">
                         <strong className="modal-perfil-clubes-nombre">{club.club_nombre}</strong>
                         <p className="modal-perfil-clubes-desc">{club.descripcion}</p>

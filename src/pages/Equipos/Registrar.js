@@ -5,6 +5,8 @@ import Modal from 'react-modal';
 import { useParams } from 'react-router-dom';
 import { Select } from 'antd';
 import '../../assets/css/registroModal.css';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 
 Modal.setAppElement('#root'); 
 const { Option } = Select;
@@ -22,9 +24,10 @@ const RegistroEquipo = ({ isOpen, onClose, onTeamCreated , clubId }) => {
   const [errors, setErrors] = useState({});
   const [formModalIsOpen, setFormModalIsOpen] = useState(false); 
   const closeFormModal = () => setFormModalIsOpen(false);
-
+  const { user } = useSession();
   useEffect(() => {
     const fetchClubName = async () => {
+      if(!clubId) return; // Asegúrate de que clubId esté definido antes de hacer la solicitud
       try {
         const response = await axios.get(`${API_BASE_URL}/club/get_club/${clubId}`);
         if (response.data && response.data.length > 0 && response.data[0].nombre) {
@@ -104,10 +107,14 @@ const RegistroEquipo = ({ isOpen, onClose, onTeamCreated , clubId }) => {
       onClose(); 
       onTeamCreated();
     } catch (error) {
-      toast.error('error')
-      console.error('Error al registrar el equipo:', error);
+      const mensaje = error.response?.data?.error || "Error inesperado";
+      toast.error(mensaje);
     }
   };
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
 
   return (
     <div>
@@ -143,24 +150,47 @@ const RegistroEquipo = ({ isOpen, onClose, onTeamCreated , clubId }) => {
         </div>
 
         <div className="select-container">
-          <Select
-            placeholder="Seleccione una Categoría"
-            value={formData.categoria_id}
-            onChange={handleSelectChange}
-            style={{ width: '100%' }}
-            allowClear
-          >
-            {categorias.map(categoria => {
-              const generoText = categoria.genero === 'V' ? 'masculino' : 'femenino';
-              return (
-                <Option key={categoria.id} value={categoria.id}>
-                  {`${categoria.nombre} - ${generoText}`}
-                </Option>
-              );
-            })}
-          </Select>
+          {hasRole(rolMapping.PresidenteAsociacion) ? (
+            <>
+              <Select
+                placeholder="Seleccione una categoría de ascenso"
+                value={formData.categoria_id}
+                onChange={handleSelectChange}
+                style={{ width: '100%' }}
+                allowClear
+              >
+                {categorias
+                  .filter(c => c.es_ascenso === 'S')
+                  .map(c => (
+                    <Option key={c.id} value={c.id}>
+                      {`${c.nombre} - ${c.genero === 'V' ? 'masculino' : 'femenino'}`}
+                    </Option>
+                  ))}
+              </Select>
+            </>
+          ) : (
+            <>
+              <Select
+                placeholder="Seleccione una categoría"
+                value={formData.categoria_id}
+                onChange={handleSelectChange}
+                style={{ width: '100%' }}
+                allowClear
+              >
+                {categorias
+                  .filter(c => c.es_ascenso === null)
+                  .map(c => (
+                    <Option key={c.id} value={c.id}>
+                      {`${c.nombre} - ${c.genero === 'V' ? 'masculino' : 'femenino'}`}
+                    </Option>
+                  ))}
+              </Select>
+            </>
+          )}
+
           {errors.categoria_id && <span className="error-message">{errors.categoria_id}</span>}
         </div>
+
 
         <div className="form-buttons">
           <button type="button" className="button button-cancel" onClick={onClose}>

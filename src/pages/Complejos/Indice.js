@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MapaDetalle from '../../components/MapaDetalle';
 import { Select } from 'antd';
+import { useCampeonato } from '../../context/CampeonatoContext';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -28,6 +29,7 @@ const ListaLugar = () => {
   const [longitud , setLongitud] = useState(null)
   const [filterState, setFilterState] = useState('No filtrar');
   const [filteredComplejos, setFilteredComplejos] = useState([]);
+  const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   useEffect(() => {
     fetchComplejos();
   }, []);
@@ -163,8 +165,8 @@ const ListaLugar = () => {
                 <button className="table-button button-edit" onClick={() => handleEditClick(complejo.id)}>
                   <EditIcon />
                 </button>
-                
-                <label className="user-activation-switch">
+                {(campeonatoEnTransaccion && 
+                  <label className="user-activation-switch">
                   <input
                     type="checkbox"
                     onChange={() =>
@@ -176,6 +178,7 @@ const ListaLugar = () => {
                   />
                   <span className="user-activation-slider"></span>
                 </label>
+                )}  
               </td>
             </tr>
           ))}

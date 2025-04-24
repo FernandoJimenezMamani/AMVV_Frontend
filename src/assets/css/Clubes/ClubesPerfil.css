@@ -204,3 +204,26 @@
   transition: all 0.3s ease;
   border-left: 4px solid #3D8FA4 !important;
 }
+
+.edit-team-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: #1976d2; 
+  border: none;
+  border-radius: 40%;
+  padding: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.edit-team-button:hover {
+  background-color: #1565c0; /* Azul más oscuro al hacer hover */
+  transform: scale(1.1);
+}
+
+.edit-team-button svg {
+  color: #fff;
+  font-size: 16px;
+}

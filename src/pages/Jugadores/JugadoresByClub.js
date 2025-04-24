@@ -9,6 +9,8 @@ import RegistroJugadorClub from './RegistrarJugadorByCLub';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import PerfilJugadorModal from './Perfil';
+import EditarJugador from './Editar';
+import EditIcon from '@mui/icons-material/Edit';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -20,8 +22,10 @@ const ListaJugadoresClub = () => {
   const [showPerfilModal, setShowPerfilModal] = useState(false);  
   const { id } = useParams(); 
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);  
   const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   useEffect(() => {
     fetchJugadores();
   }, [id]); 
@@ -37,8 +41,9 @@ const ListaJugadoresClub = () => {
     }
   };
 
-  const handleEditClick = (jugadorId) => {
-    navigate(`/jugadores/editar/${jugadorId}`);
+  const handleEditClick = (personaId) => {
+    setSelectedPersonaId(personaId);  
+    setShowEditModal(true);
   };
 
   const handleDeleteClick = (jugadorId) => {
@@ -93,13 +98,51 @@ const ListaJugadoresClub = () => {
   const handleVerCarnet = async (personaId) => {
     try {
       const urlCarnet = `${API_BASE_URL}/jugador/${personaId}/carnet`;
-      window.open(urlCarnet, '_blank'); // abre el PDF en nueva pestaña
+  
+      const response = await axios.get(urlCarnet, {
+        responseType: 'blob',
+      });
+  
+      const contentType = response.headers['content-type'];
+  
+      if (contentType && contentType.includes('application/pdf')) {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.open(blobUrl, '_blank');
+      } else {
+        toast.error("Respuesta inesperada del servidor.");
+      }
     } catch (error) {
-      toast.error('No se pudo generar el carnet');
-      console.error('Error al generar carnet:', error);
+      // ⚠️ Detectar si el error es un blob (caso de error del backend con JSON)
+      if (error.response?.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const json = JSON.parse(reader.result);
+            const mensaje = json?.error || "Ocurrió un error inesperado";
+            toast.error(mensaje);
+          } catch (parseError) {
+            toast.error("Ocurrió un error inesperado");
+          }
+        };
+        reader.readAsText(error.response.data);
+      } else {
+        // Otro tipo de error (por ejemplo, sin conexión)
+        const mensaje = error.response?.data?.error || "Ocurrió un error inesperado";
+        toast.error(mensaje);
+      }
     }
-  };  
-
+  };
+  
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setSelectedPersonaId(null);  
+  };
+  
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = jugadores.slice(indexOfFirstItem, indexOfLastItem);
+  
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Jugadores</h2>
@@ -114,7 +157,12 @@ const ListaJugadoresClub = () => {
       onJugadorCreated = {fetchJugadores}
       club_jugador_id={id}
        />
-
+      <EditarJugador
+        isOpen={showEditModal}
+        onClose={handleCloseEditModal}
+        jugadorId={selectedPersonaId}  
+        onJugadorUpdated={fetchJugadores} 
+      />
       <PerfilJugadorModal
         isOpen={showPerfilModal}
         onClose={handleClosePerfilModal}
@@ -131,7 +179,7 @@ const ListaJugadoresClub = () => {
           </tr>
         </thead>
         <tbody>
-        {jugadores.map((jugador) => (
+        {currentItems.map((jugador) => (
           <tr key={jugador.jugador_id} className="table-row">
             <td className="table-td-p">
               <img
@@ -153,6 +201,13 @@ const ListaJugadoresClub = () => {
               <button className="table-button button-view" onClick={() => handleProfileClick(jugador.persona_id)}>
                 <RemoveRedEyeIcon />
               </button>
+               <button
+                                className={`table-button button-edit ${jugador.eliminado === 'S' ? 'disabled-button' : ''}`}
+                                onClick={() => handleEditClick(jugador.persona_id)}
+                                disabled={jugador.eliminado === 'S'} 
+                              >
+                                <EditIcon />
+                              </button>
               <button className="table-button button-add" onClick={() => handleVerCarnet(jugador.persona_id)}>
                 Carnet
               </button>
@@ -161,6 +216,28 @@ const ListaJugadoresClub = () => {
         ))}
       </tbody>
       </table>
+
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
+
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(jugadores.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(jugadores.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
 
       <ConfirmModal
         visible={showConfirm}

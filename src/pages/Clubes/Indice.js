@@ -13,6 +13,7 @@ import { useSession } from '../../context/SessionContext';
 import rolMapping from '../../constants/roles';
 import { Select } from 'antd';
 import Club_defecto from '../../assets/img/Club_defecto.png';
+import { useCampeonato } from '../../context/CampeonatoContext';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -28,6 +29,9 @@ const ListaClubes = () => {
   const navigate = useNavigate();
   const [filterState, setFilterState] = useState('No filtrar');
   const [filteredClubes, setFilteredClubes] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; 
+  const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   useEffect(() => {
     fetchClubes();
   }, []);
@@ -123,6 +127,11 @@ const ListaClubes = () => {
     return Club_defecto;
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredClubes.slice(indexOfFirstItem, indexOfLastItem);
+  
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Clubes</h2>
@@ -163,7 +172,7 @@ const ListaClubes = () => {
           </tr>
         </thead>
         <tbody  >
-          {filteredClubes.map((club) => (
+          {currentItems.map((club) => (
             <tr key={club.id} className="table-row">
 
               <td className="table-td">
@@ -176,7 +185,8 @@ const ListaClubes = () => {
                 {hasRole(rolMapping.PresidenteAsociacion) && (
                   <>
                 <button className="table-button button-edit" onClick={() => handleEditClick(club.id)}><EditIcon/></button>
-                <label className="user-activation-switch">
+                {(campeonatoEnTransaccion&&
+                  <label className="user-activation-switch">
                   <input
                     type="checkbox"
                     onChange={() =>
@@ -188,6 +198,8 @@ const ListaClubes = () => {
                   />
                   <span className="user-activation-slider"></span>
                 </label>
+                )}
+
                 </>
                 )}
                 </td>
@@ -195,6 +207,29 @@ const ListaClubes = () => {
           ))}
         </tbody>
       </table>
+
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
+
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredClubes.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredClubes.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
+
 
       <ConfirmModal
         visible={showConfirm}

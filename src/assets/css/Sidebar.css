@@ -368,6 +368,11 @@
   background-color: #6E92A1;
 }
 
+.disabled-link {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 /* Responsivo: Ocultar sidebar en pantallas pequeñas */
 @media (max-width: 768px) {

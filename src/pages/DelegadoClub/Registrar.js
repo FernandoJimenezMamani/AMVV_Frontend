@@ -36,6 +36,7 @@ const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
   const [clubes, setClubes] = useState([]);
   const [loadingClubes, setLoadingClubes] = useState(true);
   const fileInputRef = React.createRef();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchClubes = async () => {
@@ -125,6 +126,7 @@ const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -157,8 +159,16 @@ const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
       resetForm();
       onDelegadoCreated();
     } catch (error) {
-      toast.error('Error al registrar jugador');
-      console.error('Error al registrar jugador:', error);
+      if (error.response && error.response.data && error.response.data.message) {
+         toast.error(error.response.data.message); // ahora sí muestra los mensajes 400
+       } else if (error.response && error.response.data && error.response.data.mensaje) {
+         toast.error(error.response.data.mensaje); // para el caso del CI duplicado (409)
+       } else {
+         toast.error('Error al registrar delegado');
+       }
+       console.error('Error al crear delegado:', error);
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -181,7 +191,7 @@ const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
       className="modal"
       overlayClassName="overlay"
     >
-      <h2 className="modal-title">Registrar Presidente de Club</h2>
+      <h2 className="modal-title">Registrar delegado de Club</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         <div className="form-group">
           <input
@@ -306,8 +316,8 @@ const RegistroDelegado = ({ isOpen, onClose, onDelegadoCreated }) => {
           <button type="button" className="button button-cancel" onClick={()=>{resetForm(); onClose();}}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Registrar
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+          {isLoading ? <span className="spinner"></span> : "Registrar"}
           </button>
         </div>
       </form>

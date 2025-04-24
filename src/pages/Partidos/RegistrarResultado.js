@@ -39,6 +39,7 @@ const SubmitResultados = () => {
   const [imagenPlanillaURL, setImagenPlanillaURL] = useState(null);
   const [partido , setPartido] = useState(null);
   const { user } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchEquiposYJugadores = async () => {
@@ -204,6 +205,8 @@ const SubmitResultados = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    if (!validarOrdenSets()) return;
 
     if (!imagenPlanilla && !imagenPlanillaURL) {
       toast.error("Debes subir una imagen de la planilla antes de enviar.");
@@ -211,16 +214,16 @@ const SubmitResultados = () => {
     }    
 
     const cleanedLocalSets = {
-      set1: localSets.set1 ?? 0,
-      set2: localSets.set2 ?? 0,
-      set3: localSets.set3 ?? 0,
+      set1: localSets.set1 ,
+      set2: localSets.set2 ,
+      set3: localSets.set3 ,
       resultado: resultadoLocal,
     };
 
     const cleanedVisitanteSets = {
-      set1: visitanteSets.set1 ?? 0,
-      set2: visitanteSets.set2 ?? 0,
-      set3: visitanteSets.set3 ?? 0,
+      set1: visitanteSets.set1 ,
+      set2: visitanteSets.set2 ,
+      set3: visitanteSets.set3 ,
       resultado: resultadoVisitante,
     };
 
@@ -253,83 +256,14 @@ const SubmitResultados = () => {
           navigate(`/partidos/indice/${campeonatoId}/${categoriaId}`);
         }
       } else {
-        toast.error("Error durante el registro");
-        console.error("Error:", result.message);
+        toast.error(result.message || "Error durante el registro");
       }
+      
     } catch (error) {
       toast.error("Error durante el registro");
       console.error("Error al enviar los resultados:", error);
-    }
-  };
-
-  const validateAllSets = () => {
-    return (
-      validateSetResult("set1") &&
-      validateSetResult("set2") &&
-      validateSetResult("set3")
-    );
-  };
-
-  const validateSetResult = (setName) => {
-    const localScore = localSets[setName];
-    const visitanteScore = visitanteSets[setName];
-
-    if (localScore === "" || visitanteScore === "") return true; // Evita validación con valores vacíos
-
-    const isThirdSet = setName === "set3";
-    const winningScore = isThirdSet ? 15 : 25;
-
-    if (localScore >= winningScore || visitanteScore >= winningScore) {
-      const difference = Math.abs(localScore - visitanteScore);
-      if (difference < 2) {
-        toast.warn(
-          `La diferencia de puntos debe ser de al menos 2 cuando uno de los equipos tiene ${winningScore} puntos o más en el ${isThirdSet ? "tercer" : "set"}. (Actual: ${localScore} - ${visitanteScore})`,
-        );
-        return false;
-      }
-    } else {
-      if (Math.min(localScore, visitanteScore) < (isThirdSet ? 14 : 24)) {
-        toast.warn(
-          `Uno de los equipos debe tener al menos ${winningScore} puntos para ganar el ${isThirdSet ? "tercer set" : "set"}.`,
-        );
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const validateSetResultOnBlur = () => {
-    if (!localSets.set1 || !visitanteSets.set1) return;
-    if (!localSets.set2 || !visitanteSets.set2) return;
-    if (!localSets.set3 || !visitanteSets.set3) return;
-
-    const localScores = [localSets.set1, localSets.set2, localSets.set3].map(
-      Number,
-    );
-    const visitanteScores = [
-      visitanteSets.set1,
-      visitanteSets.set2,
-      visitanteSets.set3,
-    ].map(Number);
-
-    let localWins = 0;
-    let visitanteWins = 0;
-
-    for (let i = 0; i < 3; i++) {
-      if (localScores[i] > visitanteScores[i]) {
-        localWins++;
-      } else if (visitanteScores[i] > localScores[i]) {
-        visitanteWins++;
-      }
-    }
-
-    if (localWins > visitanteWins) {
-      setResultadoLocal("G");
-      setResultadoVisitante("P");
-    } else if (visitanteWins > localWins) {
-      setResultadoLocal("P");
-      setResultadoVisitante("G");
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -340,7 +274,19 @@ const SubmitResultados = () => {
     const equipo = [equipoLocal, equipoVisitante].find(
       (e) => e.equipo_id === parseInt(equipoSeleccionado),
     );
-
+  
+    // ❗ Validación de duplicado
+    const yaExiste = tarjetas.some(
+      (t) =>
+        t.jugadorId === parseInt(jugadorSeleccionado) &&
+        t.tipoTarjeta === tipoTarjeta
+    );
+  
+    if (yaExiste) {
+      toast.warning("Este jugador ya tiene registrada esa tarjeta.");
+      return;
+    }
+  
     const nuevaTarjeta = {
       equipoId: equipoSeleccionado,
       equipoNombre: equipo.equipo_nombre,
@@ -348,30 +294,32 @@ const SubmitResultados = () => {
       jugadorNombre: `${jugador.jugador_nombre} ${jugador.jugador_apellido}`,
       tipoTarjeta,
     };
-
+  
     setTarjetas([...tarjetas, nuevaTarjeta]);
     setEquipoSeleccionado(null);
     setJugadorSeleccionado(null);
     setTipoTarjeta("");
   };
+  
 
   if (!equipoLocal || !equipoVisitante) {
     return <div className="container">Cargando equipos...</div>;
   }
 
   const handleActualizarParciales = async () => {
-    validateSetResultOnBlur();
+    if (!validarOrdenSets()) return;
+
     const cleanedLocalSets = {
-      set1: localSets.set1 ?? 0,
-      set2: localSets.set2 ?? 0,
-      set3: localSets.set3 ?? 0,
+      set1: localSets.set1 ,
+      set2: localSets.set2 ,
+      set3: localSets.set3 ,
       resultado: resultadoLocal,
     };
 
     const cleanedVisitanteSets = {
-      set1: visitanteSets.set1 ?? 0,
-      set2: visitanteSets.set2 ?? 0,
-      set3: visitanteSets.set3 ?? 0,
+      set1: visitanteSets.set1 ,
+      set2: visitanteSets.set2 ,
+      set3: visitanteSets.set3 ,
       resultado: resultadoVisitante,
     };
 
@@ -412,6 +360,35 @@ const SubmitResultados = () => {
       }
       return Club_defecto;
     };
+
+    const validarOrdenSets = () => {
+      const s1L = localSets.set1;
+      const s2L = localSets.set2;
+      const s3L = localSets.set3;
+      const s1V = visitanteSets.set1;
+      const s2V = visitanteSets.set2;
+      const s3V = visitanteSets.set3;
+    
+      const vacio = (val) => val === '' || val === null || val === undefined;
+    
+      const set1Vacio = vacio(s1L) || vacio(s1V);
+      const set2Llenado = !vacio(s2L) || !vacio(s2V);
+      const set2Vacio = vacio(s2L) || vacio(s2V);
+      const set3Llenado = !vacio(s3L) || !vacio(s3V);
+    
+      if (set1Vacio && (set2Llenado || set3Llenado)) {
+        toast.warn("Debes registrar el Set 1 antes que el Set 2 o Set 3.");
+        return false;
+      }
+    
+      if (set2Vacio && set3Llenado) {
+        toast.warn("Debes registrar el Set 2 antes que el Set 3.");
+        return false;
+      }
+    
+      return true;
+    };
+    
   
 
   return (
@@ -489,7 +466,6 @@ const SubmitResultados = () => {
                 placeholder="Set 1 Local"
                 value={localSets.set1}
                 onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
-                onBlur={validateSetResultOnBlur}
                 disabled={walkover !== "null"}
                 required
                 className="resultado-input-field"
@@ -499,7 +475,6 @@ const SubmitResultados = () => {
                 placeholder="Set 2 Local"
                 value={localSets.set2}
                 onChange={(e) => handleInputChange(e, localSets, setLocalSets)}
-                onBlur={validateSetResultOnBlur}
                 disabled={walkover !== "null"}
                 required
                 className="resultado-input-field"
@@ -512,9 +487,7 @@ const SubmitResultados = () => {
                   onChange={(e) =>
                     handleInputChange(e, localSets, setLocalSets)
                   }
-                  onBlur={validateSetResultOnBlur}
                   disabled={walkover === "both" ? false : walkover !== "null"}
-                  required
                   className="resultado-input-field"
                 />
               )}
@@ -538,7 +511,6 @@ const SubmitResultados = () => {
                 onChange={(e) =>
                   handleInputChange(e, visitanteSets, setVisitanteSets)
                 }
-                onBlur={validateSetResultOnBlur}
                 disabled={walkover !== "null"}
                 required
                 className="resultado-input-field"
@@ -550,7 +522,6 @@ const SubmitResultados = () => {
                 onChange={(e) =>
                   handleInputChange(e, visitanteSets, setVisitanteSets)
                 }
-                onBlur={validateSetResultOnBlur}
                 disabled={walkover !== "null"}
                 required
                 className="resultado-input-field"
@@ -563,9 +534,7 @@ const SubmitResultados = () => {
                   onChange={(e) =>
                     handleInputChange(e, visitanteSets, setVisitanteSets)
                   }
-                  onBlur={validateSetResultOnBlur}
                   disabled={walkover === "both" ? false : walkover !== "null"}
-                  required
                   className="resultado-input-field"
                 />
               )}
@@ -678,11 +647,11 @@ const SubmitResultados = () => {
           </button>
           )}
 
-          <button type="submit" className="resultados-submit-btn">
+          <button type="submit" className="resultados-submit-btn" disabled={isLoading}>
             {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
-              <span>Actualizar</span>
+               isLoading ? <span className="spinner"></span> : "Actualizar"
             ):(
-              <span>Finalizar Partido</span>)}  
+              isLoading ? <span className="spinner"></span> : "Finalizar Partido")}  
           </button>
         </div>
       </form>

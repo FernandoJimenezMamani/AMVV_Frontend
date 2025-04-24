@@ -9,7 +9,8 @@ import EditarPresidente from './Editar';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import defaultUserIcon from '../../assets/img/user-icon.png';
+import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
+import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { PresidenteClub } from '../../constants/roles';
 import SportsVolleyballIcon from '@mui/icons-material/SportsVolleyball';
 import { Select } from 'antd';
@@ -33,7 +34,8 @@ const ListaPresidenteClub = () => {
   const [searchPresidente, setSearchPresidente] = useState('');
   const navigate = useNavigate();
   const [showPerfilModal , setShowPerfilModal] = useState(false)
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   useEffect(() => {
     fetchPresidentes();
   }, []);
@@ -148,7 +150,16 @@ const ListaPresidenteClub = () => {
     setSelectedPresidenteId(null);  
   };
 
+  const getImagenPerfil = (jugador) => {
+    if (jugador.persona_imagen) {
+      return jugador.persona_imagen; 
+    }
+    return jugador.genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
+  };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPresidentes.slice(indexOfFirstItem, indexOfLastItem);
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Presidentes de Clubes</h2>
@@ -205,11 +216,11 @@ const ListaPresidenteClub = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPresidentes.map((p) => (
+          {currentItems.map((p) => (
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
-                  src={p.persona_imagen ? p.persona_imagen : defaultUserIcon}
+                  src={getImagenPerfil(p)}
                   alt={`${p.nombre} ${p.apellido}`}
                   className="table-logo"
                 />
@@ -265,6 +276,27 @@ const ListaPresidenteClub = () => {
           ))}
         </tbody>
       </table>
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
+
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredPresidentes.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredPresidentes.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
 
       <ConfirmModal
         visible={showConfirm}

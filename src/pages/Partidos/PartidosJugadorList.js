@@ -248,12 +248,12 @@ const PartidosJugadorList = () => {
 
                 <div className="all-matches-team-info">
                   <div className="all-matches-team">
-                    <img src={partido.equipo_local_imagen} alt={partido.equipo_local_nombre} className="all-matches-team-logo" />
+                    <img src={getImagenClubLocal(partido)} alt={partido.equipo_local_nombre} className="all-matches-team-logo" />
                     <p className="all-matches-team-name">{partido.equipo_local_nombre}</p>
                   </div>
                   <div className="all-matches-vs">VS</div>
                   <div className="all-matches-team">
-                    <img src={partido.equipo_visitante_imagen} alt={partido.equipo_visitante_nombre} className="all-matches-team-logo" />
+                    <img src={getImagenClubVisitante(partido)} alt={partido.equipo_visitante_nombre} className="all-matches-team-logo" />
                     <p className="all-matches-team-name">{partido.equipo_visitante_nombre}</p>
                   </div>
                 </div>

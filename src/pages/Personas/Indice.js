@@ -14,6 +14,7 @@ import { PresidenteClub } from '../../constants/roles';
 import { Select } from 'antd';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
+import { useCampeonato } from '../../context/CampeonatoContext';
 
 const { Option } = Select;
 
@@ -33,6 +34,7 @@ const ListaPersonas = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   useEffect(() => {
     fetchPersonas();
   }, []);
@@ -260,7 +262,8 @@ const ListaPersonas = () => {
                 >
                   <EditIcon />
                 </button>
-                <label className="user-activation-switch">
+                {(campeonatoEnTransaccion &&
+                  <label className="user-activation-switch">
                   <input
                     type="checkbox"
                     onChange={() =>
@@ -270,7 +273,7 @@ const ListaPersonas = () => {
                   />
                   <span className="user-activation-slider"></span>
                 </label>
-
+                )}
               </td>
 
             </tr>

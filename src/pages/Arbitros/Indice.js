@@ -32,6 +32,8 @@ const ListaArbitro = () => {
   const [searchPresidente, setSearchPresidente] = useState('');
   const [showPerfilModal, setShowPerfilModal] = useState(false);  
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -151,6 +153,10 @@ const ListaArbitro = () => {
     return arbitro.genero_persona === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPresidentes.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div className="table-container">
       <h2 className="table-title">Lista de Arbitros</h2>
@@ -206,7 +212,7 @@ const ListaArbitro = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPresidentes.map((p) => (
+          {currentItems.map((p) => (
             <tr key={p.id} className="table-row">
               <td className="table-td-p">
                 <img
@@ -254,7 +260,27 @@ const ListaArbitro = () => {
           ))}
         </tbody>
       </table>
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
 
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredPresidentes.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredPresidentes.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
       <ConfirmModal
         visible={showConfirm}
         onConfirm={handleConfirmDelete}

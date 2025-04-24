@@ -4,7 +4,9 @@ import axios from 'axios';
 import '../../assets/css/modalPerfil.css';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
-
+import Club_defecto from '../../assets/img/Club_defecto.png';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 Modal.setAppElement('#root');
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -13,7 +15,8 @@ const PerfilPresidenteModal = ({ isOpen, onClose, presidenteId }) => {
   const [clubActual, setClubActual] = useState(null);
   const [clubesAnteriores, setClubesAnteriores] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const { user } = useSession();
+  
   useEffect(() => {
     if (isOpen && presidenteId) {
       fetchPresidenteData(presidenteId);
@@ -69,6 +72,17 @@ const PerfilPresidenteModal = ({ isOpen, onClose, presidenteId }) => {
     return edad;
   };
 
+    const getImagenClub = (club) => {
+      if (club.club_imagen) {
+        return club.club_imagen; 
+      }
+      return Club_defecto;
+    };
+
+    const hasRole = (...roles) => {
+      return user && user.rol && roles.includes(user.rol.nombre);
+    };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -88,9 +102,13 @@ const PerfilPresidenteModal = ({ isOpen, onClose, presidenteId }) => {
               <p><strong>Nombre:</strong> {presidente?.nombre} {presidente?.apellido}</p>
               <p><strong>Fecha de Nacimiento:</strong> {presidente?.fecha_nacimiento}</p>
               <p><strong>Edad:</strong> {calcularEdad(presidente?.fecha_nacimiento)} años</p>
+              {hasRole(rolMapping.PresidenteAsociacion) && (
+                <>
               <p><strong>Correo:</strong> {presidente?.correo}</p>
               <p><strong>Cédula de Identidad:</strong> {presidente?.ci}</p>
               <p><strong>Dirección:</strong> {presidente?.direccion}</p>
+              </>   
+            )}
             </div>
           </div>
 
@@ -100,7 +118,7 @@ const PerfilPresidenteModal = ({ isOpen, onClose, presidenteId }) => {
             <div className="modal-perfil-club-box">
               {clubActual ? (
                 <div className="modal-perfil-clubes-item">
-                  <img src={clubActual.club_imagen } alt={clubActual.club_nombre} className="modal-perfil-clubes-icon" />
+                  <img src={getImagenClub(clubActual)} alt={clubActual.club_nombre} className="modal-perfil-clubes-icon" />
                   <div className="modal-perfil-clubes-details">
                     <strong className="modal-perfil-clubes-nombre">{clubActual.club_nombre}</strong>
                     <p className="modal-perfil-clubes-desc">{clubActual.descripcion}</p>
@@ -118,7 +136,7 @@ const PerfilPresidenteModal = ({ isOpen, onClose, presidenteId }) => {
                 <ul className="modal-perfil-clubes-list">
                   {clubesAnteriores.map((club, index) => (
                     <li key={index} className="modal-perfil-clubes-item">
-                      <img src={club.club_imagen} alt={club.club_nombre} className="modal-perfil-clubes-icon" />
+                      <img src={getImagenClub(club)} alt={club.club_nombre} className="modal-perfil-clubes-icon" />
                       <div className="modal-perfil-clubes-details">
                         <strong className="modal-perfil-clubes-nombre">{club.club_nombre}</strong>
                         <p className="modal-perfil-clubes-desc">{club.descripcion}</p>

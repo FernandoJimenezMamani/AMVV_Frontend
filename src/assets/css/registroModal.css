@@ -423,7 +423,16 @@
   padding-left: 2px;
 }
 
-  
+.image-preview {
+  width: 150px;              /* ajustá el tamaño según necesites */
+  height: 150px;
+  border-radius: 50%;        /* esto la hace circular */
+  object-fit: cover;         /* asegura que la imagen se recorte bien */
+  border: 2px solid #ccc;    /* opcional: un borde sutil */
+  display: block;
+  margin: 0 auto;            /* centra la imagen */
+}
+
   @media (max-width: 600px) {
     .modal {
       width: 95vw;  /* Ocupará casi todo el ancho en pantallas pequeñas */

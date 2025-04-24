@@ -34,7 +34,7 @@ const RegistroPresidente = ({ isOpen, onClose, onPresidenteCreated }) => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [loadingClubesPresidente, setLoadingClubesPresidente] = useState(true);
   const fileInputRef = React.createRef();
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     // Carga de clubes específicos para presidente
     const fetchClubesPresidente = async () => {
@@ -124,6 +124,7 @@ const RegistroPresidente = ({ isOpen, onClose, onPresidenteCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -156,9 +157,17 @@ const RegistroPresidente = ({ isOpen, onClose, onPresidenteCreated }) => {
       resetForm();
       onPresidenteCreated();
     } catch (error) {
-      toast.error('Error al registrar jugador');
-      console.error('Error al registrar jugador:', error);
-    }
+         if (error.response && error.response.data && error.response.data.message) {
+                     toast.error(error.response.data.message); // ahora sí muestra los mensajes 400
+                   } else if (error.response && error.response.data && error.response.data.mensaje) {
+                     toast.error(error.response.data.mensaje); // para el caso del CI duplicado (409)
+                   } else {
+                     toast.error('Error al registrar presidente');
+                   }
+                   console.error('Error al crear presidente:', error);
+        }finally {
+          setIsLoading(false);
+        }
   };
 
   const handleGeneroChange = (value) => {
@@ -306,8 +315,8 @@ const RegistroPresidente = ({ isOpen, onClose, onPresidenteCreated }) => {
         <button type="button" className="button button-cancel" onClick={()=>{resetForm(); onClose();}}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Registrar
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+          {isLoading ? <span className="spinner"></span> : "Registrar"}
           </button>
         </div>
       </form>

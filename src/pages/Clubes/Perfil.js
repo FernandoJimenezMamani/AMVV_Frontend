@@ -14,6 +14,10 @@ import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { Select } from 'antd'; // Importar Select de Ant Design
 import Club_defecto from '../../assets/img/Club_defecto.png';
+import PerfilPresidenteModal from '../PresidenteClub/Perfil';
+import EditIcon from '@mui/icons-material/Edit';
+import EditarEquipoModal from '../Equipos/Editar'; 
+import { useCampeonato } from '../../context/CampeonatoContext';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -25,10 +29,22 @@ const PerfilClub = () => {
   const navigate = useNavigate();
   const { user } = useSession();
   const [selectedGenero, setSelectedGenero] = useState(null);
-
+  const [showPerfilModal , setShowPerfilModal] = useState(false)
+  const [selectedPresidenteId, setSelectedPresidenteId] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [equipoSeleccionado, setEquipoSeleccionado] = useState(null);
+  const [delegadosClub, setDelegadosClub] = useState([]);
+  const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   useEffect(() => {
     fetchClubAndTeams();
   }, [id]);
+
+  useEffect(() => {
+    if (club?.club_id) {
+      fetchDelegados();
+    }
+  }, [club]);
+  
 
   const fetchClubAndTeams = async () => {
     try {
@@ -58,6 +74,15 @@ const PerfilClub = () => {
     } catch (error) {
       toast.error('Error al obtener el club y equipos');
       console.error('Error al obtener el club y equipos:', error);
+    }
+  };
+
+  const fetchDelegados = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/club/delegados/${club.club_id}`);
+      setDelegadosClub(response.data); // Se espera que sea un array de IDs
+    } catch (err) {
+      console.error("Error al obtener delegados:", err);
     }
   };
 
@@ -112,6 +137,27 @@ const PerfilClub = () => {
     return Club_defecto;
   };
 
+  const handleClosePerfilModal = () => {
+    setShowPerfilModal(false);
+    setSelectedPresidenteId(null);  
+  };
+
+  const handleProfileClick = (jugadorId) => {
+    setSelectedPresidenteId(jugadorId);  
+    setShowPerfilModal(true);
+  };
+
+  const handleEditTeam = (equipoId) => {
+    setEquipoSeleccionado(equipoId);
+    setShowEditModal(true);
+  };
+  
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEquipoSeleccionado(null);
+    fetchClubAndTeams(); // Refresca la lista al cerrar
+  };  
+
   return (
     <div className="perfil-club">
       <div className="perfil-header-club">
@@ -132,22 +178,39 @@ const PerfilClub = () => {
         onTeamCreated={fetchClubAndTeams} 
         clubId = {club.club_id}
       />
-      <div className="assign-actions-container">
-      {!user || !user.roles || user.roles.length === 0 ? (
-        <button className="assign-jugador-button" onClick={handleListJugadorUsuario}>
-          <PeopleIcon/> Jugadores
-        </button>
-        ) : null}
 
-      {hasRole(rolMapping.PresidenteAsociacion) || 
-      (hasRole(rolMapping.PresidenteClub, rolMapping.DelegadoClub)  &&
+      {showEditModal && equipoSeleccionado && (
+        <EditarEquipoModal
+          equipoId={equipoSeleccionado}
+          isOpen={showEditModal}
+          onClose={handleCloseEditModal}
+          onEquipoUpdated={fetchClubAndTeams} // Refresca la lista al cerrar
+        />
+      )}
+
+      <PerfilPresidenteModal
+              isOpen={showPerfilModal}
+              onClose={handleClosePerfilModal}
+              presidenteId={club.presidente_id}  
+      />
+      <div className="assign-actions-container">
+      {!user ? (
+        <button className="assign-jugador-button" onClick={handleListJugadorUsuario}>
+          <PeopleIcon /> Jugadores
+        </button>
+      ) : null}
+
+
+      {(hasRole(rolMapping.PresidenteClub, rolMapping.DelegadoClub,rolMapping.PresidenteAsociacion)  &&
         <>
           <button className="assign-jugador-button" onClick={handleListJugador}>
             <PeopleIcon /> Mis Jugadores
           </button>
-          <button className="create-team-button" onClick={handleCreateTeam}>
-            <SportsVolleyballIcon /> Crear Equipo
-          </button>
+          {campeonatoEnTransaccion && (
+            <button className="create-team-button" onClick={handleCreateTeam}>
+              <SportsVolleyballIcon /> Crear Equipo
+            </button>
+          )}  
         </>
       ) }
 
@@ -159,7 +222,7 @@ const PerfilClub = () => {
           </button>
           )
         ) : (
-          <p className="president-info-container">
+          <p className="president-info-container"  onClick={() => handleProfileClick(club.presidente_id)}>
             Presidente: {club.presidente_nombre}
             <img
               src={getImagenPerfil(club)} 
@@ -187,19 +250,31 @@ const PerfilClub = () => {
           .filter((team) => !selectedGenero || team.categoria_genero === selectedGenero)
             .map((team) => (
               <div
-                key={team.equipo_id}
-                className="team-card"
-                onClick={() => handleTeamClick(team.equipo_id)}
-                style={{ cursor: 'pointer' }}
-              >
-                <h3>{team.equipo_nombre}</h3>
-                <p>Categoría: {team.categoria_nombre}</p>
-                <p>
-                  Género: {team.categoria_genero === 'V' ? 'Varones' :
-                  team.categoria_genero === 'D' ? 'Damas' :
-                  team.categoria_genero === 'M' ? 'Mixto' : 'Desconocido'}
-                </p>
-              </div>
+            key={team.equipo_id}
+            className="team-card"
+            style={{ cursor: 'pointer', position: 'relative' }}
+          >
+            <div onClick={() => handleTeamClick(team.equipo_id)}>
+              <h3>{team.equipo_nombre}</h3>
+              <p>Categoría: {team.categoria_nombre}</p>
+              <p>
+                Género: {team.categoria_genero === 'V' ? 'Varones' :
+                team.categoria_genero === 'D' ? 'Damas' :
+                team.categoria_genero === 'M' ? 'Mixto' : 'Desconocido'}
+              </p>
+            </div>
+            {campeonatoEnTransaccion &&
+              (
+                (hasRole(rolMapping.PresidenteClub) && user.id === club.presidente_id) ||
+                (hasRole(rolMapping.DelegadoClub) && delegadosClub.includes(user.id))
+              ) && (
+                <button className="edit-team-button" onClick={() => handleEditTeam(team.equipo_id)}>
+                  <EditIcon />
+                </button>
+            )}
+
+          </div>
+
             ))
         ) : (
           <p>No hay equipos disponibles para este club.</p>

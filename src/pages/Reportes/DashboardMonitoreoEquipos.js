@@ -6,25 +6,53 @@ import { toast } from "react-toastify";
 import "../../assets/css/Reportes/DashboardMonitoreoEquipos.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
 const DashboardMonitoreoEquipos = () => {
   const [datos, setDatos] = useState(null);
   const [porcentajeProgreso, setPorcentajeProgreso] = useState(0);
   const [mostrarTooltip, setMostrarTooltip] = useState(false);
   useEffect(() => {
-    const fetchMonitoreoEquipos = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/reportes/dashboard/monitoreo-equipos`);
-        console.log('response', response);
-        setDatos(response.data);
-        calcularProgresoTiempo(response.data);
-      } catch (error) {
-        toast.error("Error al obtener el monitoreo de equipos");
-      }
-    };
-
     fetchMonitoreoEquipos();
   }, []);
+
+  const fetchMonitoreoEquipos = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/reportes/dashboard/monitoreo-equipos`);
+      console.log('response', response);
+      setDatos(response.data);
+      calcularProgresoTiempo(response.data);
+    } catch (error) {
+      toast.error("Error al obtener el monitoreo de equipos");
+    }
+  };
+
+  useEffect(() => {
+    
+      const websocketURL = `${WEBSOCKET_URL}`;
+      const ws = new WebSocket(websocketURL);
+    
+      ws.onopen = () => console.log("✅ Conexión WebSocket establecida:", websocketURL);
+    
+      ws.onmessage = (event) => {
+        try {
+          const mensaje = JSON.parse(event.data);
+          if (mensaje.type === "pago_registro_inscripcion") {
+            console.log("🔄 Actualización detectada, refrescando progreso del campeonato");
+            fetchMonitoreoEquipos();
+          }
+        } catch (error) {
+          console.error("❌ Error al procesar mensaje de WebSocket:", error);
+        }
+      };
+    
+      ws.onerror = (error) => console.error("⚠️ Error en WebSocket:", error);
+      ws.onclose = () => console.log("🔴 Conexión WebSocket cerrada");
+    
+      return () => {
+        ws.close(); // Cerramos WebSocket al desmontar
+      };
+    }, [ fetchMonitoreoEquipos]);
+  
 
   const data = datos
     ? [
@@ -80,8 +108,8 @@ const DashboardMonitoreoEquipos = () => {
   
   return (
     <div className="dashboard-container">
-      <h2 className="dashboard-title">📊 Monitoreo Inscripción de Equipos</h2>
-
+      <h2 className="dashboard-title">📊 Monitoreo Inscripción de Equipos <span className="parpadeo-indicador"></span></h2>
+      
       <h3 className="section-title">⏳ Tiempo Restante para Inscripción</h3>
         {datos && (
                 <div className="progreso-tiempo-container">

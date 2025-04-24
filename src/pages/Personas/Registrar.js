@@ -216,16 +216,12 @@ const RegistroPersona = ({ isOpen, onClose, onPersonaCreated }) => {
       resetForm();
       onPersonaCreated();
     } catch (error) {
-      console.error('Respuesta del error:', error.response);
-      if (error.response) {
-        // Capturamos el mensaje de error del backend
-        const errorMessage = error.response.data.message;
-  
-        // Mostramos el mensaje en un toast
-        toast.error(errorMessage);
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message); // ahora sí muestra los mensajes 400
+      } else if (error.response && error.response.data && error.response.data.mensaje) {
+        toast.error(error.response.data.mensaje); // para el caso del CI duplicado (409)
       } else {
-        // Error inesperado
-        toast.error('Ocurrió un error al registrar la persona. Inténtelo nuevamente.');
+        toast.error('Error al registrar usuario');
       }
     }finally {
       setIsLoading(false);

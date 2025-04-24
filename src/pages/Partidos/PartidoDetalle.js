@@ -24,7 +24,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import estadosMapping from "../../constants/campeonatoEstados";
 import Club_defecto from '../../assets/img/Club_defecto.png';
-
+import { useCampeonato   } from '../../context/CampeonatoContext';
+import ModalPlanilla from "./ModalPlanilla";
+import PermMediaIcon from '@mui/icons-material/PermMedia';
+import estadosCampeonatoMapping from "../../constants/campeonatoEstados";
 ReactModal.setAppElement("#root");
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -49,7 +52,9 @@ const PartidoDetalle = () => {
   const [showPerfilModal, setShowPerfilModal] = useState(false);
   const [selectedPersonaId, setSelectedPersonaId] = useState(null);
   const[campeonato , setCampeonato] = useState(null);
-
+  const { campeonatoEnCurso } = useCampeonato();
+  const [showPlanilla, setShowPlanilla] = useState(false);
+  const [planillaUrl, setPlanillaUrl] = useState("");
   useEffect(() => {
     
     const fetchArbitros = async () => {
@@ -75,6 +80,7 @@ const PartidoDetalle = () => {
         `${API_BASE_URL}/partidos/get_partido_completo/${partidoId}`,
       );
       setPartido(response.data);
+      setPlanillaUrl(response.data.partido_image);
     } catch (error) {
       toast.error("Error al obtener los detalles del partido");
       console.error("Error al obtener los detalles del partido:", error);
@@ -361,20 +367,24 @@ const PartidoDetalle = () => {
         arbitroId={selectedPersonaId}
       />
       <div className="resultado-button-container">
-        {(
-          hasRole(rolMapping.PresidenteAsociacion) ||
-          (esArbitroAsignado() && partido.estado !== estadosPartidoCampMapping.Finalizado )
-        ) && (
-          <button
-            className="resultado-button"
-            onClick={() => handlePartidoClick(partidoId)}
-          >
-           {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
-              <span>Actualizar Resultado <AssignmentIcon /></span>
-            ):(
-              <span>Registrar Resultado <AssignmentIcon /></span>)} 
-          </button>
-        )}
+      {campeonato && (
+        (hasRole(rolMapping.PresidenteAsociacion) ||
+          (esArbitroAsignado() && partido.estado !== estadosPartidoCampMapping.Finalizado)) &&
+        (campeonato.estado === estadosCampeonatoMapping.campeoantoEnCurso || 
+        campeonato.estado === estadosCampeonatoMapping.campeonatoFinalizado)
+      ) && (
+        <button
+          className="resultado-button"
+          onClick={() => handlePartidoClick(partidoId)}
+        >
+          {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
+            <span>Actualizar Resultado <AssignmentIcon /></span>
+          ) : (
+            <span>Registrar Resultado <AssignmentIcon /></span>
+          )}
+        </button>
+      )}
+
        {hasRole(rolMapping.PresidenteAsociacion) &&
         partido.estado !== estadosPartidoCampMapping.Finalizado &&
         partido.estado !== estadosPartidoCampMapping.Vivo &&
@@ -397,6 +407,16 @@ const PartidoDetalle = () => {
                <EditIcon />
             </button>
           )}
+
+          {partido?.partido_image && (
+            <button
+              className="resultado-button"
+              onClick={() => setShowPlanilla(true)}
+            >
+              <PermMediaIcon/>
+            </button>
+          )}
+
       </div>
 
       <div className="partido-info">
@@ -420,7 +440,7 @@ const PartidoDetalle = () => {
       >
         {partido.estado === estadosPartidoCampMapping.Vivo ? (
           <span className="estado-vivo-partido">
-            <span className="punto-vivo"></span> En curso
+            <span className="punto-vivo-Detalle"></span> En curso
           </span>
         ) : partido.estado === estadosPartidoCampMapping.Finalizado ? (
           "Finalizado"
@@ -616,6 +636,12 @@ const PartidoDetalle = () => {
         onCancel={() => setIsConfirmModalOpen(false)}
         message={`¿Estás seguro de reprogramar el partido para el ${formatDate(simulacionReprogramacion?.nuevaFechaHora)} a las ${formatTime(simulacionReprogramacion?.nuevaFechaHora)} en ${simulacionReprogramacion?.nuevoLugar?.nombre}?`}
       />
+      <ModalPlanilla
+        isOpen={showPlanilla}
+        onClose={() => setShowPlanilla(false)}
+        imageUrl={planillaUrl}
+      />
+
     </div>
   );
 };

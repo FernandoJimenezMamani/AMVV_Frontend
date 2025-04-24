@@ -1,150 +1,183 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Select } from 'antd';
-import { useParams, useNavigate } from 'react-router-dom';
-import '../../assets/css/Editar.css';
 import { toast } from 'react-toastify';
+import Modal from 'react-modal';
+import { Select } from 'antd';
+import '../../assets/css/registroModal.css';
 
+Modal.setAppElement('#root');
 const { Option } = Select;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const EditarEquipo = () => {
-  const { id } = useParams();
+const EditarEquipoModal = ({ isOpen, onClose, equipoId, onEquipoUpdated }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     club_id: null,
     categoria_id: null,
-    user_id: 1
+    user_id: 1,
   });
+
   const [clubes, setClubes] = useState([]);
   const [categorias, setCategorias] = useState([]);
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
+  const [esAscenso, setEsAscenso] = useState(null);
 
   useEffect(() => {
     const fetchEquipo = async () => {
       try {
-        const response = await axios.get(`http://localhost:5002/api/equipo/get_equipo/${id}`);
+        const response = await axios.get(`${API_BASE_URL}/equipo/get_equipo/${equipoId}`);
+        const data = response.data;
         setFormData({
-          nombre: response.data.nombre,
-          club_id: { value: response.data.club_id, label: response.data.club_nombre },
-          categoria_id: { value: response.data.categoria_id, label: response.data.categoria_nombre },
-          user_id: response.data.user_id
+          nombre: data.equipo_nombre,
+          club_id: data.club_id,
+          categoria_id: data.categoria_id,
+          user_id: 1,
         });
+        setEsAscenso(data.es_ascenso);
       } catch (error) {
-        toast.error('error')
-        console.error('Error al obtener el equipo:', error);
+        toast.error('Error al obtener los datos del equipo.');
       }
     };
 
-    const fetchClubes = async () => {
+    if (equipoId) {
+      fetchEquipo();
+    }
+  }, [equipoId]);
+
+  useEffect(() => {
+    const fetchSelectData = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/api/club/get_club');
-        setClubes(response.data);
-      } catch (error) {
-        toast.error('error')
-        console.error('Error al obtener los clubes:', error);
+        const [clubRes, catRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/club/get_club`),
+          axios.get(`${API_BASE_URL}/categoria/get_categoria`)
+        ]);
+        setClubes(clubRes.data);
+        setCategorias(catRes.data);
+      } catch (err) {
+        toast.error("Error al cargar datos");
       }
     };
+    fetchSelectData();
+  }, []);
 
-    const fetchCategorias = async () => {
-      try {
-        const response = await axios.get('http://localhost:5002/api/categoria/get_categoria');
-        setCategorias(response.data);
-      } catch (error) {
-        toast.error('error')
-        console.error('Error al obtener las categorías:', error);
-      }
-    };
-
-    fetchEquipo();
-    fetchClubes();
-    fetchCategorias();
-  }, [id]);
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
       [e.target.name]: e.target.value
-    });
+    }));
+    setErrors(prev => ({ ...prev, [e.target.name]: '' }));
   };
 
-  const handleSelectChange = (name, option) => {
-    setFormData({
-      ...formData,
-      [name]: option
-    });
+  const handleSelectChange = (name, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    setErrors(prev => ({ ...prev, [name]: '' }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.nombre) newErrors.nombre = 'El campo nombre es obligatorio';
+    if (!formData.categoria_id) newErrors.categoria_id = 'Debe seleccionar una categoría';
+    if (!formData.club_id) newErrors.club_id = 'Debe seleccionar un club';
+    return newErrors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
+  
     try {
-      await axios.put(`http://localhost:5002/api/equipo/update_equipo/${id}`, {
-        ...formData,
-        club_id: formData.club_id.value,
-        categoria_id: formData.categoria_id.value
-      });
-      toast.success('Editado con éxito');
-      navigate('/equipos/indice');
+      const res = await axios.put(`${API_BASE_URL}/equipo/update_equipo/${equipoId}`, formData);
+  
+      // ✅ Verificá que realmente llegó hasta aquí sin excepciones
+      toast.success('Equipo actualizado con éxito');
+      onEquipoUpdated();
+      onClose(); // <-- Puede lanzar error si algo está mal
     } catch (error) {
-      toast.error('error')
-      console.error('Error al actualizar el equipo:', error);
+      console.error("Error en actualización:", error); // DEBUG
+      const mensaje = error.response?.data?.error || "Error inesperado";
+      toast.error(mensaje);
     }
   };
+  
 
   return (
-    <div className="registro-campeonato">
-      <h2>Editar Equipo</h2>
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Editar Equipo"
+      className="modal"
+      overlayClassName="overlay"
+    >
+      <h2 className="modal-title">Editar Equipo</h2>
       <form onSubmit={handleSubmit}>
-        <label className="label-edit">Nombre del Equipo</label>
         <div className="form-group">
           <input
             type="text"
             placeholder="Nombre del Equipo"
-            id="nombre"
             name="nombre"
             value={formData.nombre}
-            onChange={handleInputChange}
+            onChange={handleChange}
+            className="input-field"
           />
+          {errors.nombre && <span className="error-message">{errors.nombre}</span>}
         </div>
-        <label className="label-edit">Club</label>
+
         <div className="select-container">
           <Select
             placeholder="Seleccione un Club"
             value={formData.club_id}
-            labelInValue
-            onChange={(option) => handleSelectChange('club_id', option)}
+            onChange={(value) => handleSelectChange('club_id', value)}
             style={{ width: '100%' }}
             allowClear
+            disabled
           >
             {clubes.map(club => (
-              <Option key={club.id} value={club.id}>
-                {club.nombre}
-              </Option>
+              <Option key={club.id} value={club.id}>{club.nombre}</Option>
             ))}
           </Select>
+          {errors.club_id && <span className="error-message">{errors.club_id}</span>}
         </div>
-        <label className="label-edit">Categoría</label>
+
         <div className="select-container">
           <Select
             placeholder="Seleccione una Categoría"
             value={formData.categoria_id}
-            labelInValue
-            onChange={(option) => handleSelectChange('categoria_id', option)}
+            onChange={(value) => handleSelectChange('categoria_id', value)}
             style={{ width: '100%' }}
             allowClear
+            disabled
+            
           >
-            {categorias.map(categoria => (
-              <Option key={categoria.id} value={categoria.id}>
-                {categoria.nombre}
-              </Option>
-            ))}
+            {categorias.map(cat => {
+              const generoText = cat.genero === 'V' ? 'masculino' : 'femenino';
+              return (
+                <Option key={cat.id} value={cat.id}>
+                  {`${cat.nombre} - ${generoText}`}
+                </Option>
+              );
+            })}
           </Select>
+          {errors.categoria_id && <span className="error-message">{errors.categoria_id}</span>}
         </div>
-        <div className="form-group">
-          <button id="RegCampBtn" type="primary" htmlType="submit">Guardar Cambios</button>
+
+        <div className="form-buttons">
+          <button type="button" className="button button-cancel" onClick={onClose}>
+            Cancelar
+          </button>
+          <button type="submit" className="button button-primary">
+            Guardar Cambios
+          </button>
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
 
-export default EditarEquipo;
+export default EditarEquipoModal;

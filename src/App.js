@@ -70,10 +70,11 @@ import EditarPartidoForm from "./pages/Partidos/Editar";
 import PartidosArbitroList from "./pages/Partidos/PartidosArbitroList";
 import PartidosJugadorList from "./pages/Partidos/PartidosJugadorList";
 import HistorialPagosTraspaso from "./pages/Pagos/HistorialPagosTraspasos";
+import RegistroEquipo from "./pages/Equipos/Registrar";
 import "./assets/css/tailwind.css";
 import Toast from "./components/Toast";
 import { toast } from "react-toastify";
-
+import { CampeonatoProvider } from "./context/CampeonatoContext";
 const App = () => {
   const [user, setUser] = useState(null);
 
@@ -96,6 +97,7 @@ const App = () => {
 
   return (
     <SessionProvider>
+      <CampeonatoProvider>
       <Router>
         <Routes>
           {/* Rutas públicas */}
@@ -169,8 +171,8 @@ const App = () => {
                 element={<EditarCategoria />}
               />
               <Route
-                path="/equipos/registrar/:clubId"
-                element={<RegistrarEquipo />}
+                path="/equipos/registrar"
+                element={<RegistroEquipo />}
               />
               <Route path="/equipos/editar/:id" element={<EditarEquipo />} />
               <Route path="/complejos/indice" element={<ListaLugar />} />
@@ -286,6 +288,7 @@ const App = () => {
         {/* Aquí va el ToastContainer para que las notificaciones funcionen globalmente */}
         <Toast />
       </Router>
+      </CampeonatoProvider>
     </SessionProvider>
   );
 };

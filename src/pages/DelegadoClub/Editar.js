@@ -255,20 +255,20 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
         </div>
 
         <div className="select-container-u">
-              <Select
-                placeholder="Selecciona Club para Presidente"
-                value={formData.club_presidente_id}
-                onChange={(value) => handleClubChange(value, roleNames.DelegadoClub)}
-                style={{ width: '100%' }}
-                className="custom-ant-select-u"
+        <Select
+          placeholder="Selecciona Club para Delegado"
+          value={formData.club_delegado_id}
+          onChange={(value) => handleClubChange(value)}
+          style={{ width: '100%' }}
+          className="custom-ant-select-u"
+        >
+          {clubes.map((club) => (
+            <Option key={club.id} value={club.id}>
+              {club.nombre}
+            </Option>
+          ))}
+        </Select>
 
-                >
-               {clubes.map((club) => (
-               <Option key={club.id} value={club.id}>
-               {club.nombre}
-              </Option>
-            ))}
-            </Select>
           </div>
         <div className="form-buttons">
           <button type="button" className="button button-cancel" onClick={onClose}>

@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ConfirmModal from '../../components/ConfirmModal';
 import { Select } from 'antd';
-
+import { useCampeonato } from '../../context/CampeonatoContext';
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -22,7 +22,9 @@ const ListaCategorias = () => {
   const [selectedCategoriaId, setSelectedCategoriaId] = useState(null);
   const [filteredCategorias, setFilteredCategorias] = useState([]);
   const [filterState, setFilterState] = useState('No filtrar');
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; 
+  const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -106,6 +108,9 @@ const ListaCategorias = () => {
     }
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCategorias.slice(indexOfFirstItem, indexOfLastItem);
   return (
   <div className="table-container">
     <h2 className="table-title">Lista de Categorías</h2>
@@ -147,7 +152,7 @@ const ListaCategorias = () => {
         </tr>
       </thead>
       <tbody>
-        {filteredCategorias.map((categoria) => (
+        {currentItems.map((categoria) => (
           <tr key={categoria.id} className="table-row">
             <td className="table-td table-td-name">{categoria.nombre}</td>
             
@@ -189,7 +194,8 @@ const ListaCategorias = () => {
               >
                <EditIcon/>
               </button>
-              <label className="user-activation-switch">
+              {(campeonatoEnTransaccion &&
+                <label className="user-activation-switch">
                   <input
                     type="checkbox"
                     onChange={() =>
@@ -201,12 +207,33 @@ const ListaCategorias = () => {
                   />
                   <span className="user-activation-slider"></span>
                 </label>
+              )}       
             </td>
           </tr>
         ))}
       </tbody>
     </table>
+    <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
 
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(filteredCategorias.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(filteredCategorias.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
     <ConfirmModal
         visible={showConfirm}
         onConfirm={handleConfirmDelete}

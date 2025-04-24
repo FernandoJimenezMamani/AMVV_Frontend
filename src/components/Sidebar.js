@@ -12,6 +12,8 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import defaultUserMenIcon from '../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../assets/img/Default_Imagen_Women.webp';
 import rolMapping from '../constants/roles';
+import { useContext } from 'react';
+import { useCampeonato   } from '../context/CampeonatoContext';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -26,7 +28,22 @@ const Sidebar = () => {
   const dropdownRef = useRef(null);
   const sidebarRef = useRef(null);
   const [datosPersona , setDatosPersona] = useState(null);
-
+  const [campeonatoActivo, setCampeonatoActivo] = useState(null);
+  const { campeonatoEnTransaccion } = useCampeonato();
+  useEffect(() => {
+    const fetchCampeonatoActivo = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/campeonatos/obtenerCampeonatosEnTransaccion/EnTransaccion`);
+        setCampeonatoActivo(res.data); // o res.data.length > 0 si retorna arreglo
+      } catch (error) {
+        console.error('No hay campeonato en transacción o hubo un error:', error);
+        setCampeonatoActivo(null);
+      }
+    };
+  
+    fetchCampeonatoActivo();
+  }, []);
+  
   const toggleSidebar = () => {
     setSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -157,9 +174,6 @@ const Sidebar = () => {
                 ? 'Delegado de Club' 
                 : (user?.rol?.nombre || 'Sin rol')
             }
-
-              
-              
             </div>
           </div>
           
@@ -233,7 +247,7 @@ const Sidebar = () => {
 
                 <div className="menu-item">
                 {hasRole( rolMapping.Tesorero) && (
-                  <a className="main-link" onClick={() => navigate('/pagos/tipos')}>
+                  <a className={`main-link ${!campeonatoEnTransaccion ? 'disabled-link' : ''}`} onClick={() => navigate('/pagos/tipos')}>
                     <MonetizationOnIcon /> Pagos
                   </a>
                   )}

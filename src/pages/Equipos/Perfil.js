@@ -142,8 +142,10 @@ const PerfilEquipo = () => {
         toast.warn('No se pudo obtener la categoría actual del equipo.');
       }
     };
-  
-    fetchCategoriaPorCampeonato();
+    if (equipo?.equipo_id && selectedCampeonato){
+      fetchCategoriaPorCampeonato();
+    }
+    
   }, [selectedCampeonato, equipo?.equipo_id]);
   
 
@@ -266,12 +268,20 @@ const PerfilEquipo = () => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
 
-   const getImagenClub = (club) => {
-      if (club.club_imagen) {
-        return club.club_imagen; 
-      }
-      return Club_defecto;
-    };
+  const getImagenClubLocal = (club) => {
+    if (club.equipo_local_imagen) {
+      return club.equipo_local_imagen; 
+    }
+    return Club_defecto;
+  };
+
+  const getImagenClubVisitante = (club) => {
+    if (club.equipo_visitante_imagen) {
+      return club.equipo_visitante_imagen; 
+    }
+    return Club_defecto;
+  };
+
   
   return (
     <div className="equipoPerfil-container">
@@ -364,7 +374,8 @@ const PerfilEquipo = () => {
             <div className="equipoPerfil-participacionesGrid">
               {participaciones.length > 0 ? (
                 participaciones.map((participacion, index) => (
-                  <div key={index} className="equipoPerfil-participacionCard">
+                  <div key={index} className="equipoPerfil-participacionCard"  onClick={() => navigate(`/tablaposiciones/${equipo.categoria_id}/${selectedCampeonato}`)}
+                  style={{ cursor: 'pointer' }}>
                     <h4>
                       {participacion.nombre}
                       {participacion.estado_campeonato !== estadosMapping.campeonatoFinalizado && <span className="equipoPerfil-campeonatoEnCurso"></span>}
@@ -449,7 +460,18 @@ const PerfilEquipo = () => {
               <span>Edad: {jugador.edad_jugador} años</span>
             </div>
             
-            {mostrarEliminar && <div className="equipoPerfil-jugadorEliminar" onClick={() => confirmDeleteJugador(jugador.jugador_id)}><RemoveCircleOutlineIcon/></div>}
+            {mostrarEliminar && (
+              <div 
+                className="equipoPerfil-jugadorEliminar" 
+                onClick={(e) => {
+                  e.stopPropagation(); // <- Esto evita que se propague y dispare el modal de perfil
+                  confirmDeleteJugador(jugador.jugador_id);
+                }}
+              >
+                <RemoveCircleOutlineIcon/>
+              </div>
+            )}
+
           </div>
         ))}
       </div>
@@ -495,12 +517,12 @@ const PerfilEquipo = () => {
 
                   <div className="equipoPerfil-partidoEquipos">
                     <div className="equipoPerfil-partidoEquipo">
-                      <img src={partido.equipo_local_imagen} alt={partido.equipo_local_nombre} className="equipoPerfil-partidoLogo" />
+                      <img src={getImagenClubLocal(partido)} alt={partido.equipo_local_nombre} className="equipoPerfil-partidoLogo" />
                       <p className="equipoPerfil-partidoNombre">{partido.equipo_local_nombre}</p>
                     </div>
                     <div className="equipoPerfil-partidoVS">VS</div>
                     <div className="equipoPerfil-partidoEquipo">
-                      <img src={partido.equipo_visitante_imagen} alt={partido.equipo_visitante_nombre} className="equipoPerfil-partidoLogo" />
+                      <img src={getImagenClubVisitante(partido)} alt={partido.equipo_visitante_nombre} className="equipoPerfil-partidoLogo" />
                       <p className="equipoPerfil-partidoNombre">{partido.equipo_visitante_nombre}</p>
                     </div>
                   </div>

@@ -345,17 +345,18 @@ const EditarCampeonato = ({ isOpen, onClose, campId , onCampEdited }) => {
         </div>
 
         {/* Nombre del Campeonato */}
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Nombre"
-            id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            readOnly
-            className="input-field"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Nombre"
+          id="nombre"
+          name="nombre"
+          value={formData.nombre}
+          onChange={(e) =>
+            setFormData((prevData) => ({ ...prevData, nombre: e.target.value }))
+          }
+          className="input-field"
+        />
+
 
         <div className="form-buttons">
           <button

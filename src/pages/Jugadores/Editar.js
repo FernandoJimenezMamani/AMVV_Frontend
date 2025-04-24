@@ -5,7 +5,8 @@ import ImageCropperModal from '../../components/ImageCropperModal';
 import '../../assets/css/registroModal.css';
 import { toast } from 'react-toastify';
 import { Select } from 'antd';
-import roleNames from '../../constants/roles'
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -31,7 +32,7 @@ const EditarJugador = ({ isOpen, onClose, jugadorId, onJugadorUpdated }) => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [clubes, setClubes] = useState([]);
   const fileInputRef = useRef(null);
-
+  const { user } = useSession();
   useEffect(() => {
     const fetchJugador = async () => {
       if (!jugadorId) return;
@@ -146,6 +147,10 @@ const EditarJugador = ({ isOpen, onClose, jugadorId, onJugadorUpdated }) => {
     fileInputRef.current.click();
   };
 
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
+
   return (
     <Modal
       isOpen={isOpen}
@@ -252,8 +257,9 @@ const EditarJugador = ({ isOpen, onClose, jugadorId, onJugadorUpdated }) => {
             className="input-field-u"
           />
         </div>
-
-        <div className="select-container-u">
+        {hasRole(rolMapping.PresidenteAsociacion) && (
+          <>
+          <div className="select-container-u">
           <Select
             placeholder="Selecciona Club para Jugador"
             value={formData.club_jugador_id}
@@ -268,6 +274,10 @@ const EditarJugador = ({ isOpen, onClose, jugadorId, onJugadorUpdated }) => {
             ))}
           </Select>
         </div>
+          </>
+          
+        )}
+        
 
         <div className="form-buttons">
           <button type="button" className="button button-cancel" onClick={onClose}>
