@@ -16,6 +16,7 @@ export const CampeonatoProvider = ({ children }) => {
         ]);
         setCampeonatoEnCurso(curso.data || null);
         setCampeonatoEnTransaccion(transaccion.data || null);
+
       } catch (err) {
         console.error("Error al obtener campeonatos:", err);
       }

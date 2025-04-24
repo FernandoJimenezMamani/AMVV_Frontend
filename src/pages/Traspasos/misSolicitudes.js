@@ -42,7 +42,7 @@ const MisSolicitudes = () => {
     if (presidente && presidente.club_presidente && presidente.id_presidente) {
       fetchJugadores();
     }
-  }, [presidente]); 
+  }, [presidente,selectedCampeonato]); 
 
    useEffect(() => {
       applyFilters();

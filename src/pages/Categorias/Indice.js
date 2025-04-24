@@ -12,8 +12,9 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);
-  const [selectedDivision, setSelectedDivision] = useState(null);
+  const [selectedDivision, setSelectedDivision] = useState('MY'); 
   const { campeonatoId } = useParams();  
+
   const navigate = useNavigate();
   console.log('campeonatoId:', campeonatoId);
 

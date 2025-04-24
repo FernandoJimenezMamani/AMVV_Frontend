@@ -4,6 +4,8 @@ import { Select, Card, Progress ,Button} from "antd";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { toast } from "react-toastify";
 import "../../assets/css/Reportes/DashboardMonitoreoEquipos.css";
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import {  useNavigate } from 'react-router-dom';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
@@ -11,6 +13,7 @@ const DashboardMonitoreoEquipos = () => {
   const [datos, setDatos] = useState(null);
   const [porcentajeProgreso, setPorcentajeProgreso] = useState(0);
   const [mostrarTooltip, setMostrarTooltip] = useState(false);
+    const navigate = useNavigate();
   useEffect(() => {
     fetchMonitoreoEquipos();
   }, []);
@@ -104,6 +107,10 @@ const DashboardMonitoreoEquipos = () => {
   
       const opciones = { day: "numeric", month: "long", year: "numeric" };
       return fechaObj.toLocaleDateString("es-ES", opciones);
+    };
+
+    const handleVerReportes = () => {
+      navigate(`/reportes/IndiceGeneral`);
     };
   
   return (
@@ -217,9 +224,13 @@ const DashboardMonitoreoEquipos = () => {
          />
        </BarChart>
      </ResponsiveContainer>
+     
       ) : (
         <p className="dashboard-message">Cargando datos...</p>
       )}
+      <div className="report-button-container">
+        <button className="boton-reportes" type="primary" onClick={handleVerReportes}><SummarizeIcon/> Ver Otros Reportes</button>
+        </div>
     </div>
   );
 };

@@ -42,6 +42,7 @@ const Campeonatos = () => {
     
         // Verificar que sea una actualización de estados
         if (data.type === 'estado_campeonato_actualizado' && Array.isArray(data.cambios)) {
+          fetchCampeonatos();
           setCampeonatos((prevCampeonatos) =>
             prevCampeonatos.map((campeonato) => {
               const cambio = data.cambios.find((c) => c.id === campeonato.id);

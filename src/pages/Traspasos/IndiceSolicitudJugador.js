@@ -20,7 +20,7 @@ const Indice = () => {
   const navigate = useNavigate();
   const [campeonatos, setCampeonatos] = useState([]);
   const [selectedCampeonato, setSelectedCampeonato] = useState(null);
-
+  const [estadoFiltro, setEstadoFiltro] = useState('TODOS');
   useEffect(() => {
     const fetchCampeonatos = async () => {
       try {
@@ -44,32 +44,34 @@ const Indice = () => {
   }, []);
 
   useEffect(() => {
-    const fetchSolicitudes = async () => {
-      try {
-        if (!selectedCampeonato) {
-          return; 
-        }
-        const token = sessionStorage.getItem('token');
-        if (!token) {
-          toast.error('No se encontró el token de autenticación');
-          return;
-        }
-
-        const response = await axios.get(`${API_BASE_URL}/traspaso/jugador/${selectedCampeonato}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        });
-        console.log('traspaso pruebas',response.data);
-        setSolicitudes(response.data);
-      } catch (error) {
-        toast.error('Error al obtener las solicitudes de traspaso');
-        console.error('Error al obtener solicitudes de traspaso:', error);
-      }
-    };
+    
 
     fetchSolicitudes();
   }, [selectedCampeonato]);
+
+  const fetchSolicitudes = async () => {
+    try {
+      if (!selectedCampeonato) {
+        return; 
+      }
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        toast.error('No se encontró el token de autenticación');
+        return;
+      }
+
+      const response = await axios.get(`${API_BASE_URL}/traspaso/jugador/${selectedCampeonato}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      console.log('traspaso pruebas',response.data);
+      setSolicitudes(response.data);
+    } catch (error) {
+      toast.error('Error al obtener las solicitudes de traspaso');
+      console.error('Error al obtener solicitudes de traspaso:', error);
+    }
+  };
 
   const handleVerDetalle = (solicitudId) => {
     navigate(`/traspasos/detalleJugador/${solicitudId}`);
@@ -100,6 +102,11 @@ const Indice = () => {
     }
   };
 
+  const filteredSolicitudes = solicitudes.filter((s) => {
+    return estadoFiltro === 'TODOS' || s.estado_jugador === estadoFiltro;
+  });
+  
+
   return (
     <div className="table-container">
       <h2 className="table-title">Mis Solicitudes de Traspaso</h2>
@@ -116,6 +123,12 @@ const Indice = () => {
                     </Option>
                   ))}
                 </Select>
+            <Select value={estadoFiltro} onChange={setEstadoFiltro} className="public-select" style={{ width: '220px' }}>
+             <Option value="TODOS">Todos los Estados</Option>
+             <Option value="PENDIENTE">Pendiente</Option>
+             <Option value="APROBADO">Aprobado</Option>
+             <Option value="RECHAZADO">Rechazado</Option>
+           </Select>
             </div>
       <table className="table-layout">
         <thead className='table-head'>
@@ -128,7 +141,7 @@ const Indice = () => {
           </tr>
         </thead>
         <tbody>
-          {solicitudes.map((solicitud) => (
+          {filteredSolicitudes.map((solicitud) => (
             <tr key={solicitud.traspaso_id} className="table-row">
               <td className="table-td-p">{solicitud.club_destino_nombre}</td>
               <td className="table-td-p">{solicitud.nombre} {solicitud.apellido}</td>

@@ -26,7 +26,8 @@ const ListaJugadoresTraspaso = () => {
   const [searchName, setSearchName] = useState('');
   const [selectJugadorId, setSelectedJugadorId]= useState(null)
   const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; 
   useEffect(() => {
     fetchPresidente();
     
@@ -160,7 +161,11 @@ const ListaJugadoresTraspaso = () => {
     setShowPefilModal(false)
   }
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredPersonas.slice(indexOfFirstItem, indexOfLastItem);
 
+  
   return (
     <div className="table-container">
       <h2 className="table-title">Jugadores</h2>
@@ -172,17 +177,6 @@ const ListaJugadoresTraspaso = () => {
       
       <div className="table-filters">
       <button className="table-add-button" onClick={handleSolicitudesClick} >Mis Solicitudes</button>
-      <Select
-            className="filter-select"
-            placeholder="Filtrar por estado"
-            value={filterState}
-            onChange={(value) => setFilterState(value)}
-            style={{ width: 180, marginRight: 10 }}
-          >
-            <Option value="No filtrar">No filtrar</Option>
-            <Option value="Activo">Activo</Option>
-            <Option value="Inactivo">Inactivo</Option>
-        </Select>
 
           <input
             type="text"
@@ -203,7 +197,7 @@ const ListaJugadoresTraspaso = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPersonas.map((jugador) => (
+          {currentItems.map((jugador) => (
             <tr key={jugador.jugador_id} className="table-row">
               <td className="table-td-p">
                 <img
@@ -242,7 +236,27 @@ const ListaJugadoresTraspaso = () => {
           ))}
         </tbody>
       </table>
+      <div className="pagination-container">
+        <button
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="pagination-button"
+        >
+          Anterior
+        </button>
 
+        <span className="pagination-info">
+          Página {currentPage} de {Math.ceil(jugadores.length / itemsPerPage)}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === Math.ceil(jugadores.length / itemsPerPage)}
+          className="pagination-button"
+        >
+          Siguiente
+        </button>
+      </div>
       <ConfirmModal
         visible={showConfirmTraspaso}
         onConfirm={handleConfirmFichar}

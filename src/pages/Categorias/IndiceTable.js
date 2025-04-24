@@ -26,6 +26,7 @@ const ListaCategorias = () => {
   const itemsPerPage = 10; 
   const { campeonatoEnCurso, campeonatoEnTransaccion } = useCampeonato();
   const navigate = useNavigate();
+  console.log('Campeonato en transacción:', campeonatoEnTransaccion);
 
   useEffect(() => {
     fetchCategorias();
@@ -111,6 +112,7 @@ const ListaCategorias = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredCategorias.slice(indexOfFirstItem, indexOfLastItem);
+  
   return (
   <div className="table-container">
     <h2 className="table-title">Lista de Categorías</h2>
