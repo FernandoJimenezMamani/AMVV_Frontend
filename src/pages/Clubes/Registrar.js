@@ -28,7 +28,7 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
   const [formModalIsOpen, setFormModalIsOpen] = useState(false); // Nuevo modal para el formulario
   const navigate = useNavigate();
   const fileInputRef = React.createRef();  
-
+  const [isLoading, setIsLoading] = useState(false);
   // Función para abrir el modal del formulario
   const openFormModal = () => setFormModalIsOpen(true);
   const closeFormModal = () => setFormModalIsOpen(false);
@@ -75,6 +75,7 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const formErrors = validateForm();
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
@@ -102,6 +103,8 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
     } catch (error) {
       toast.error('Error al registrar');
       console.error('Error al crear el club:', error);
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -172,7 +175,9 @@ const RegistroClub = ({ isOpen, onClose, onClubCreated }) => {
           <button type="button" className="button button-cancel" onClick={onClose}>
               Cancelar
             </button>
-            <button type="submit" className="button button-primary">Registrar</button>
+            <button type="submit" className="button button-primary" disabled={isLoading}>
+              {isLoading ? <span className="spinner"></span> : "Registrar"}
+            </button>
             
           </div>
         </form>

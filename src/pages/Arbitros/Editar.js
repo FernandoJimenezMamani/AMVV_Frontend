@@ -32,7 +32,7 @@ const EditarArbitro = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   const [disabledRoles, setDisabledRoles] = useState([]);
   const [clubes, setClubes] = useState([]);
   const fileInputRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchPersona = async () => {
       if (!personaId) return;
@@ -76,6 +76,10 @@ const EditarArbitro = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -118,7 +122,7 @@ const EditarArbitro = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-    
+    setIsLoading(true);
     console.log('Datos del formulario antes de procesar:', formData);
     const formDataToSend = new FormData();
 
@@ -154,6 +158,8 @@ const EditarArbitro = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
     } catch (error) {
       console.error('Error al actualizar el árbitro:', error);
       toast.error('Error al actualizar el árbitro');
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -269,8 +275,8 @@ const EditarArbitro = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Guardar Cambios
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+            {isLoading ? <span className="spinner"></span> : "Guardar Cambios"}
           </button>
         </div>
       </form>

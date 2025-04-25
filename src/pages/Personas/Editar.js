@@ -45,7 +45,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   const [clubes, setClubes] = useState([]);
   const [loadingClubes, setLoadingClubes] = useState(true);
   const [disabledRoles, setDisabledRoles] = useState([]);
- 
+  const [isLoading, setIsLoading] = useState(false);
   const { user } = useSession(); 
   const navigate = useNavigate();
 
@@ -93,6 +93,9 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -165,7 +168,7 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
  
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-  
+    setIsLoading(true);
     const formDataToSend = new FormData();
   
     // Añadir campos de texto al formData
@@ -202,6 +205,8 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
     } catch (error) {
       console.error("Error al actualizar la persona:", error);
       toast.error("Error al actualizar la persona");
+    }finally {
+      setIsLoading(false);
     }
   };
   
@@ -429,8 +434,8 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Guardar Cambios
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+              {isLoading ? <span className="spinner"></span> : "Guardar Cambios"}
           </button>
         </div>
       </form>

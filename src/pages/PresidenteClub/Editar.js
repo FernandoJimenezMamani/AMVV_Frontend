@@ -31,7 +31,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
   const [croppedImage, setCroppedImage] = useState(null);
   const [clubes, setClubes] = useState([]);
   const fileInputRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchJugador = async () => {
       if (!presidenteId) return;
@@ -87,6 +87,9 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -118,7 +121,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const formDataToSend = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -144,6 +147,8 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
       console.error('Error al actualizar el jugador:', error);
       toast.error('Error al actualizar el jugador');
       
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -282,8 +287,8 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Guardar Cambios
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+             {isLoading ? <span className="spinner"></span> : "Guardar Cambios"}
           </button>
         </div>
       </form>

@@ -20,7 +20,7 @@ const EditarClub = ({ isOpen, onClose, clubId ,onClubUpdated }) => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchClub = async () => {
       if (!clubId) return; 
@@ -103,7 +103,7 @@ const EditarClub = ({ isOpen, onClose, clubId ,onClubUpdated }) => {
 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     if (tempImage && !croppedImage) {
       toast.error('Por favor, recorta la imagen antes de guardar.');
       return;
@@ -131,6 +131,8 @@ const EditarClub = ({ isOpen, onClose, clubId ,onClubUpdated }) => {
     } catch (error) {
       toast.error('Error al actualizar el club');
       console.error('Error al actualizar el club:', error);
+    }finally {
+      setIsLoading(false);
     }
   };
   
@@ -192,8 +194,8 @@ const EditarClub = ({ isOpen, onClose, clubId ,onClubUpdated }) => {
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Guardar Cambios
+          <button type="submit" className="button button-primary" disabled={isLoading}> 
+              {isLoading ? <span className="spinner"></span> : "Guardar Cambios"}
           </button>
         </div>
       </form>

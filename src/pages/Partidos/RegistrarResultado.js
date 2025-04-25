@@ -210,6 +210,7 @@ const SubmitResultados = () => {
 
     if (!imagenPlanilla && !imagenPlanillaURL) {
       toast.error("Debes subir una imagen de la planilla antes de enviar.");
+      setIsLoading(false); 
       return;
     }    
 
@@ -278,14 +279,15 @@ const SubmitResultados = () => {
     // ❗ Validación de duplicado
     const yaExiste = tarjetas.some(
       (t) =>
-        t.jugadorId === parseInt(jugadorSeleccionado) &&
-        t.tipoTarjeta === tipoTarjeta
+        parseInt(t.jugadorId) === parseInt(jugadorSeleccionado) &&
+        t.tipoTarjeta.toLowerCase().trim() === tipoTarjeta.toLowerCase().trim()
     );
+    
   
     if (yaExiste) {
       toast.warning("Este jugador ya tiene registrada esa tarjeta.");
       return;
-    }
+    }    
   
     const nuevaTarjeta = {
       equipoId: equipoSeleccionado,

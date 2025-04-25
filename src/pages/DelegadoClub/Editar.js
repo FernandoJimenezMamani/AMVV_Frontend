@@ -31,7 +31,7 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
   const [croppedImage, setCroppedImage] = useState(null);
   const [clubes, setClubes] = useState([]);
   const fileInputRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     const fetchJugador = async () => {
       if (!delegadoId) return;
@@ -85,6 +85,9 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
       setTempImage(file);
       setImagePreview(URL.createObjectURL(file));
       setModalIsOpen(true);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -116,7 +119,7 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
 
   const handleSubmitProfile = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true);
     const formDataToSend = new FormData();
 
     Object.keys(formData).forEach((key) => {
@@ -140,6 +143,8 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
     } catch (error) {
       console.error('Error al actualizar el delegado:', error);
       toast.error('Error al actualizar el delegado');
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -274,8 +279,8 @@ const EditarDelegado = ({ isOpen, onClose, delegadoId, onDelegadoUpdated }) => {
           <button type="button" className="button button-cancel" onClick={onClose}>
             Cancelar
           </button>
-          <button type="submit" className="button button-primary">
-            Guardar Cambios
+          <button type="submit" className="button button-primary" disabled={isLoading}>
+              {isLoading ? <span className="spinner"></span> : "Guardar Cambios"}
           </button>
         </div>
       </form>
