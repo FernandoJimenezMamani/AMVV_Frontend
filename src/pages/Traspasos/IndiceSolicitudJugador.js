@@ -106,6 +106,10 @@ const Indice = () => {
     return estadoFiltro === 'TODOS' || s.estado_jugador === estadoFiltro;
   });
   
+  const solicitudAceptadaActiva = solicitudes.find(s =>
+    s.estado_jugador === 'APROBADO' &&
+    (s.estado_club_origen === 'PENDIENTE' || s.estado_club_origen === 'APROBADO')
+  );  
 
   return (
     <div className="table-container">
@@ -155,7 +159,22 @@ const Indice = () => {
 
               <td className="table-td-p">{getStatusIcon(solicitud.estado_jugador)}</td>
               <td className="table-td-p">
-                <button className='table-button button-view' onClick={() => handleVerDetalle(solicitud.traspaso_id)}><RemoveRedEyeIcon/></button>
+              <button
+                className={`table-button button-view ${solicitudAceptadaActiva && solicitud.traspaso_id !== solicitudAceptadaActiva.traspaso_id ? 'disabled-button' : ''}`}
+                onClick={() => handleVerDetalle(solicitud.traspaso_id)}
+                disabled={
+                  solicitudAceptadaActiva &&
+                  solicitud.traspaso_id !== solicitudAceptadaActiva.traspaso_id
+                }
+                title={
+                  solicitudAceptadaActiva &&
+                  solicitud.traspaso_id !== solicitudAceptadaActiva.traspaso_id
+                    ? 'Ya has aceptado otra solicitud. Espera resolución del presidente.'
+                    : ''
+                }
+              >
+                <RemoveRedEyeIcon />
+              </button>
               </td>
             </tr>
           ))}
