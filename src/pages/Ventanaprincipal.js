@@ -127,9 +127,7 @@ const CustomCarousel = () => {
     
         if (selectedEstado === estadosPartidoCampMapping.Finalizado) {
           endpoint = `${API_BASE_URL}/partidos/get_past_matches/${selectedCategoria}/${selectedCampeonato}`;
-        } else if (selectedEstado === estadosPartidoCampMapping.Vivo) {
-          endpoint = `${API_BASE_URL}/partidos/get_live_matches/${selectedCategoria}/${selectedCampeonato}`;
-        }
+        } 
     
         const response = await axios.get(endpoint);
         setPartidos(response.data);
@@ -145,6 +143,8 @@ const CustomCarousel = () => {
         let endpoint = `${API_BASE_URL}/partidos/get_all_matchesUpcoming/${selectedCategoria}/${selectedCampeonato}`;
         if (selectedEstado === estadosPartidoCampMapping.Finalizado) {
           endpoint = `${API_BASE_URL}/partidos/get_all_matchesPast/${selectedCategoria}/${selectedCampeonato}`;
+        }else if (selectedEstado === estadosPartidoCampMapping.Vivo) {
+          endpoint = `${API_BASE_URL}/partidos/get_live_matches/${selectedCategoria}/${selectedCampeonato}`;
         }
   
         const response = await axios.get(endpoint);
@@ -279,7 +279,8 @@ const CustomCarousel = () => {
           Ver tabla de Posiciones
         </button>
       </div>
-      <div className="carousel-container">
+      {selectedEstado === estadosPartidoCampMapping.Confirmado && partidos.length > 0 && (
+        <div className="carousel-container">
         {partidos.length > 0 ? (
         <Carousel showArrows showThumbs={false} infiniteLoop autoPlay interval={5000} showStatus={false}>
         {partidos.map((match, index) => {
@@ -373,15 +374,23 @@ const CustomCarousel = () => {
 
         )}
       </div>
+      )}
     </div>
 
       {/* Next Matches Section */}
       <div className="next-matches-container">
       <h2 className="next-matches-titulo">
-        {nextPartidos.length > 0
-          ? (selectedEstado === estadosPartidoCampMapping.Confirmado ? "Próximos Partidos" : "Partidos Finalizados")
-          : "No hay más partidos en esta categoría"}
+        {nextPartidos.length > 0 ? (
+          selectedEstado === estadosPartidoCampMapping.Confirmado
+            ? "Próximos Partidos"
+            : selectedEstado === estadosPartidoCampMapping.Vivo
+            ? "Partidos en Vivo"
+            : "Partidos Finalizados"
+        ) : (
+          "No hay más partidos en esta categoría"
+        )}
       </h2>
+
       <div className="next-matches-grid">
           {nextPartidos.slice(0, visiblePartidos).map((match, index) => {
             const resultado = resultados[match.id];
@@ -389,6 +398,7 @@ const CustomCarousel = () => {
             return (
               <div key={index} className="next-matches-card" onClick={() =>  handlePartidoClick(match.id)} style={{ cursor: 'pointer' }}>
                 <div className="next-matches-team-info">
+                
                   <div className="next-matches-team">
                     <img src={getImagenClubLocal(match)} alt={match.equipo_local_nombre} className="next-matches-team-logo"/>
                     <p className="next-matches-team-name">{match.equipo_local_nombre}</p>
@@ -399,7 +409,12 @@ const CustomCarousel = () => {
                     <p className="next-matches-team-name">{match.equipo_visitante_nombre}</p>
                   </div>
                 </div>
-
+                {match.estado === estadosPartidoCampMapping.Vivo && (
+                  <div className="vivo-indicador">
+                    <span className="vivo-punto"></span>
+                    <span className="vivo-texto">En Vivo</span>
+                  </div>
+                )}
                 <div className="next-matches-info">
                     {match.estado === estadosPartidoCampMapping.Finalizado && resultado && (
                       <div className="next-matches-result">
