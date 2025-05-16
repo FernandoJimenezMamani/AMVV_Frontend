@@ -81,12 +81,12 @@ const HistorialPagosTraspasoClub = () => {
     setShowDetalle(false);
   };
 
-  const formatFecha = (fecha) =>
-    new Date(fecha).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
+   const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
 
   return (
     <div className="table-container">
@@ -140,7 +140,7 @@ const HistorialPagosTraspasoClub = () => {
                 <td className="table-td">{pago.club_origen_nombre}</td>
                 <td className="table-td">{pago.club_destino_nombre}</td>
                 <td className="table-td">{pago.monto_real} Bs</td>
-                <td className="table-td">{formatFecha(pago.pago_fecha)}</td>
+                <td className="table-td">{formatFechaLarga(pago.pago_fecha)}</td>
                 <td className="table-td">
                   <button className="table-button button-view" onClick={() => handleVerDetalle(pago.traspaso_id)}>
                     <RemoveRedEyeIcon />

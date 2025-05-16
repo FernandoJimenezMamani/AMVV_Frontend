@@ -69,13 +69,6 @@ const HistorialPagosInscripcionClub = () => {
     p.equipo.toLowerCase().includes(searchEquipo.toLowerCase())
   );
 
-  const formatFecha = (fecha) =>
-    new Date(fecha).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-
   const handleVerDetalle = (equipoId) => {
     setSelectedEquipoId(equipoId);
     setShowFormModal(true);
@@ -88,6 +81,13 @@ const HistorialPagosInscripcionClub = () => {
 
   const getImagenClub = (pago) => {
     return pago.imagen_club ? pago.imagen_club : Club_defecto;
+  };
+
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   return (
@@ -141,7 +141,7 @@ const HistorialPagosInscripcionClub = () => {
                 <td className="table-td">{pago.equipo}</td>
                 <td className="table-td">{pago.categoria}</td>
                 <td className="table-td">{pago.monto} Bs</td>
-                <td className="table-td">{formatFecha(pago.fecha)}</td>
+                <td className="table-td">{formatFechaLarga(pago.fecha)}</td>
                 <td className="table-td">
                   <button className="table-button button-view" onClick={() => handleVerDetalle(pago.equipoId)}>
                     <RemoveRedEyeIcon />

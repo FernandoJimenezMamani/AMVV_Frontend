@@ -84,7 +84,12 @@ const HistorialPagosInscripcion = () => {
     return Club_defecto;
   };
 
-
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
   return (
     <div className="table-container">
       <h2 className="table-title">Historial de Pagos de Inscripción</h2>
@@ -97,6 +102,7 @@ const HistorialPagosInscripcion = () => {
       />
       <div className="table-filters">
       <Select
+            className="filter-select"
             value={selectedCampeonato ?? undefined} // evita pasar null como value
             onChange={setSelectedCampeonato}
             style={{ width: 250, marginBottom: '0px' }}
@@ -141,7 +147,7 @@ const HistorialPagosInscripcion = () => {
                 <td className="table-td">{pago.nombre_club}</td>
                 <td className="table-td">{pago.categoria}</td>
                 <td className="table-td">{pago.monto} Bs</td>
-                <td className="table-td">{formatFecha(pago.fecha)}</td>
+                <td className="table-td">{formatFechaLarga(pago.fecha)}</td>
                 <td className="table-td">
                 <button className="table-button button-view"  onClick={() => handleRegistrarClick(pago.equipoId)}><RemoveRedEyeIcon/></button>
               </td>

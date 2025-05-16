@@ -29,12 +29,11 @@ const DetallePagoInscripcion = ({ isOpen, onClose, equipoId, campeonatoId }) => 
     fetchHistorialPagos();
   }, [equipoId, campeonatoId]);
 
-  const formatFecha = (fecha) => {
-    return new Date(fecha).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   return (
@@ -83,7 +82,7 @@ const DetallePagoInscripcion = ({ isOpen, onClose, equipoId, campeonatoId }) => 
 
               <div className="form-group">
                 <label className="label-pago">Fecha:</label>
-                <input type="text" value={formatFecha(pago.fecha)} disabled className="input-pago" />
+                <input type="text" value={formatFechaLarga(pago.fecha)} disabled className="input-pago" />
               </div>
 
               <div className="form-group">
