@@ -17,7 +17,16 @@ L.Icon.Default.mergeOptions({
 Modal.setAppElement('#root');
 
 const MapModal = ({ isOpen, onClose, onLocationSelect, latitud, longitud }) => {
-  const [position, setPosition] = useState([latitud || -17.3935, longitud || -66.1570]);
+  const parseCoordinate = (value, fallback) => {
+  const num = parseFloat(value);
+  return isNaN(num) ? fallback : num;
+  };
+
+  const [position, setPosition] = useState([
+    parseCoordinate(latitud),
+    parseCoordinate(longitud)
+  ]);
+
   const [address, setAddress] = useState('');
   const mapRef = useRef(null);  // Referencia al mapa
 

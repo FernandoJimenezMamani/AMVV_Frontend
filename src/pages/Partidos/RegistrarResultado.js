@@ -409,24 +409,25 @@ const SubmitResultados = () => {
               <input
                 type="radio"
                 name="walkover"
-                value="L"
-                checked={walkover === "L"}
-                onChange={handleWalkoverChange}
-                id="walkoverL"
-              />
-              <label htmlFor="walkoverL">Local</label>
-            </div>
-            <div className="resultados-radio-option">
-              <input
-                type="radio"
-                name="walkover"
                 value="V"
                 checked={walkover === "V"}
                 onChange={handleWalkoverChange}
                 id="walkoverV"
               />
-              <label htmlFor="walkoverV">Visitante</label>
+              <label htmlFor="walkoverV">Equipo A</label>
             </div>
+            <div className="resultados-radio-option">
+              <input
+                type="radio"
+                name="walkover"
+                value="L"
+                checked={walkover === "L"}
+                onChange={handleWalkoverChange}
+                id="walkoverL"
+              />
+              <label htmlFor="walkoverL">Equipo B</label>
+            </div>
+            
             <div className="resultados-radio-option">
               <input
                 type="radio"

@@ -58,6 +58,13 @@ const TablaSolicitudesJugador = ({ campeonatoId , estadoFiltro }) => {
     return Club_defecto;
   };
 
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
   return (
     <table className="table-layout">
       <thead className='table-head'>
@@ -93,7 +100,7 @@ const TablaSolicitudesJugador = ({ campeonatoId , estadoFiltro }) => {
                         <span>{s.club_destino_nombre}</span>
                     </div>
             </td>
-            <td className="table-td-p">{new Date(s.fecha_solicitud).toLocaleDateString('es-ES')}</td>
+            <td className="table-td-p">{formatFechaLarga(s.fecha_solicitud)}</td>
             <td className="table-td-p">{getStatusIcon(s.estado_club_receptor)}</td>
             <td className="table-td-p">{getStatusIcon(s.estado_club_origen)}</td>
             <td className="table-td-p"><button className='table-button button-view' onClick={() => navigate(`/traspasos/detallePresidente/${s.traspaso_id}`)}><RemoveRedEyeIcon /></button></td>

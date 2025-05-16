@@ -132,12 +132,6 @@ const VentanaPrincipalUser = () => {
     const inicioCamp = sumarHoras(new Date(campeonato.fecha_inicio_campeonato), 4);
     const finCamp = sumarHoras(new Date(campeonato.fecha_fin_campeonato), 4);
   
-    console.log("🕒 Fecha actual:", ahora.toString());
-    console.log("📅 Inicio Transacción (corr):", inicioTrans.toString());
-    console.log("📅 Fin Transacción (corr):", finTrans.toString());
-    console.log("📅 Inicio Campeonato (corr):", inicioCamp.toString());
-    console.log("📅 Fin Campeonato (corr):", finCamp.toString());
-  
     if (ahora < inicioTrans) {
       return `La etapa de transacción inicia el ${inicioTrans.toLocaleDateString("es-ES", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
     } else if (ahora >= inicioTrans && ahora < finTrans) {
@@ -160,15 +154,16 @@ const VentanaPrincipalUser = () => {
         </div>
       )}
 
-      {hasRole(rolMapping.PresidenteAsociacion) && (
-        campeonatoEnCurso ? (
-          <Dashboard campeonato={campeonatoEnCurso} />
-        ) : campeonatoEnTransaccion ? (
+      {(hasRole(rolMapping.PresidenteAsociacion) || hasRole(rolMapping.Tesorero)) && (
+        campeonatoEnTransaccion ? (
           <TransaccionDashboard campeonato={campeonatoEnTransaccion} />
-        ) : (
+        ) : hasRole(rolMapping.PresidenteAsociacion) && campeonatoEnCurso ? (
+          <Dashboard campeonato={campeonatoEnCurso} />
+        ) : hasRole(rolMapping.PresidenteAsociacion) ? (
           <Reportes />
-        )
+        ) : null
       )}
+
       {(hasRole(rolMapping.PresidenteClub) || hasRole(rolMapping.DelegadoClub))&& (
         <>
         <InicioPresidente presidenteId ={user.id}></InicioPresidente>

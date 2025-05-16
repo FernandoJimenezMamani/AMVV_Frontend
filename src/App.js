@@ -71,6 +71,8 @@ import PartidosArbitroList from "./pages/Partidos/PartidosArbitroList";
 import PartidosJugadorList from "./pages/Partidos/PartidosJugadorList";
 import HistorialPagosTraspaso from "./pages/Pagos/HistorialPagosTraspasos";
 import RegistroEquipo from "./pages/Equipos/Registrar";
+import HistorialPagosInscripcionClub from "./pages/Pagos/HistorialPagosInscripcionClub";
+import HistorialPagosTraspasoClub from "./pages/Pagos/HistorialPagosTraspasoClub";
 import "./assets/css/tailwind.css";
 import Toast from "./components/Toast";
 import { toast } from "react-toastify";
@@ -282,6 +284,8 @@ const App = () => {
               <Route path="/reportes/IndiceGeneral" element={<Reportes />} />
               <Route path="/partidos/jugador" element={< PartidosJugadorList/>} />
               <Route path="/partidos/arbitro" element={<PartidosArbitroList />} />
+              <Route path="/pagos/historialClubTraspaso/:presidenteId" element={<HistorialPagosTraspasoClub />} />
+              <Route path="/pagos/historialClubInscripcion/:presidenteId" element={<HistorialPagosInscripcionClub />} />
             </Route>
           </Route>
         </Routes>

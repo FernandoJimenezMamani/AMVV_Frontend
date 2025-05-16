@@ -111,6 +111,13 @@ const Indice = () => {
     (s.estado_club_origen === 'PENDIENTE' || s.estado_club_origen === 'APROBADO')
   );  
 
+  const formatFechaLarga = (fechaString) => {
+    if (!fechaString) return '';
+    const [year, month, day] = fechaString.split('-');
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
+    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+  };
+
   return (
     <div className="table-container">
       <h2 className="table-title">Mis Solicitudes de Traspaso</h2>
@@ -150,11 +157,7 @@ const Indice = () => {
               <td className="table-td-p">{solicitud.club_destino_nombre}</td>
               <td className="table-td-p">{solicitud.nombre} {solicitud.apellido}</td>
               <td className="table-td-p">
-                {new Date(solicitud.fecha_solicitud).toLocaleDateString('es-ES', { 
-                  day: 'numeric', 
-                  month: 'long', 
-                  year: 'numeric' 
-                })}
+                {formatFechaLarga(solicitud.fecha_solicitud)}
               </td>
 
               <td className="table-td-p">{getStatusIcon(solicitud.estado_jugador)}</td>

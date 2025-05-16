@@ -22,7 +22,7 @@ const Sidebar = () => {
   const [expandedSection, setExpandedSection] = useState(null);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { user, logout } = useSession();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -266,6 +266,23 @@ const Sidebar = () => {
                   </a>
                   )}
                 </div>
+                <div className="menu-item">
+              {hasRole(rolMapping.PresidenteClub) && (
+                  <>
+                    <a
+                      className={`main-link ${expandedSection === 'historial' ? 'active' : ''}`}
+                      onClick={() => toggleSection('historial')}
+                      ref={sidebarRef}
+                    >
+                      <MonetizationOnIcon /> Historial de Pagos
+                    </a>
+                    <div className={`submenu ${expandedSection === 'historial' ? 'open' : ''}`}>
+                      <Link to={`/pagos/historialClubTraspaso/${user.id}`}>Traspasos</Link>
+                      <Link to={`/pagos/historialClubInscripcion/${user.id}`}>Inscripción</Link>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           )}
           <div className="mi-cuenta-container ">
