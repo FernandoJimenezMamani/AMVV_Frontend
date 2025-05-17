@@ -247,8 +247,12 @@ const PerfilClub = () => {
       <div className="perfil-teams">
         {teams.length > 0 ? (
           teams
-          .filter((team) => !selectedGenero || team.categoria_genero === selectedGenero)
-            .map((team) => (
+          .filter(
+            (team) =>
+              team && team.equipo_id && team.equipo_nombre && 
+              (!selectedGenero || team.categoria_genero === selectedGenero)
+          )
+          .map((team) => (
               <div
             key={team.equipo_id}
             className="team-card"

@@ -219,7 +219,7 @@ const ListaJugadoresTraspaso = () => {
               <td className="table-td-p">
               <button
                   className={`table-button button-view `}
-                  onClick={() => handleShowPefilModal(jugador.jugador_id)}
+                  onClick={() => handleShowPefilModal(jugador.persona_id)}
                   disabled={jugador.eliminado === 'S'} // Desactiva el botón si el usuario está eliminado
                 >
                   <RemoveRedEyeIcon />
