@@ -159,9 +159,9 @@ const ListaArbitro = () => {
 
   return (
     <div className="table-container">
-      <h2 className="table-title">Lista de Arbitros</h2>
+      <h2 className="table-title">Lista de Árbitros</h2>
       <div className="table-filters">
-      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Arbitro</button>
+      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Árbitro</button>
        <Select
             className="filter-select"
             placeholder="Filtrar por estado"

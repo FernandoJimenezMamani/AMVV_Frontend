@@ -117,7 +117,7 @@ const ListaCategorias = () => {
   <div className="table-container">
     <h2 className="table-title">Lista de Categorías</h2>
     <div className="table-filters">
-      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Categoria</button>
+      <button className="table-add-button" onClick={handleRegistrarClick} >+1 Categoría</button>
       <Select
           className="filter-select"
           placeholder="Filtrar por estado"

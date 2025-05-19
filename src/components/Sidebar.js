@@ -190,14 +190,14 @@ const Sidebar = () => {
               {hasRole(rolMapping.PresidenteAsociacion) && (
                  <>
                 <a className={`main-link ${expandedSection === 'asociacion' ? 'active' : ''}`} onClick={() => toggleSection('asociacion')} ref={sidebarRef}>
-                    <SportsVolleyballIcon/> Asociacion
+                    <SportsVolleyballIcon/> Asociación
                 </a>
                 <div className={`submenu ${expandedSection === 'asociacion' ? 'open' : ''}`}>
                   <Link to="/Campeonatos/Indice">Campeonatos</Link>
                   <Link to="/clubes/indice">Clubes</Link>
                   
                    
-                  <Link to="/categorias/Lista">Categorias</Link>
+                  <Link to="/categorias/Lista">Categorías</Link>
                   <Link to="/complejos/Indice">Complejos</Link>
 
               
@@ -212,7 +212,7 @@ const Sidebar = () => {
                     <PersonIcon/> Miembros
                 </a>
                 <div className={`submenu ${expandedSection === 'usuarios' ? 'open' : ''}`} >
-                  <Link to="/Arbitro/Indice">Arbitros</Link>
+                  <Link to="/Arbitro/Indice">Árbitros</Link>
                   <Link to="/Jugadores/Indice">Jugadores</Link>
                   <Link to="/PresidenteClub/Indice">Presidentes</Link>
                   <Link to="/DelegadoClub/Indice">Delegados</Link>

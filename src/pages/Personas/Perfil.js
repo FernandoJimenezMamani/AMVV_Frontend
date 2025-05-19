@@ -106,7 +106,7 @@ const PerfilJugador = () => {
         </button>
 
           <button onClick={() => setIsModalOpen(true)} className="editar-perfil-boton">Cambiar Contraseña <EditIcon/></button>
-          <button onClick={handleLogout} className="cerrar-sesion-boton">Cerrar Sesion <LogoutIcon/></button>
+          <button onClick={handleLogout} className="cerrar-sesion-boton">Cerrar Sesión <LogoutIcon/></button>
       </div>
       <div className="perfil-jugador-contenido">
         <div className="perfil-jugador-imagen">
