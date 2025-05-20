@@ -408,7 +408,6 @@
   color: #143E42;
 }
 
-/* ========== Responsividad ========== */
 @media (max-width: 768px) {
   .table-th, .table-td {
     font-size: 0.9em;
@@ -423,4 +422,92 @@
     padding: 6px 8px;
     font-size: 0.8em;
   }
+
+  .table-title {
+    margin-left: 20px;
+    font-size: 25px !important;
+  }
+
+  .table-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .table-filters .table-add-button,
+  .table-filters .filter-select,
+  .table-filters .search-box {
+    width: 100% !important;
+  }
+  
 }
+
+@media (max-width: 768px) {
+  .table-layout {
+    display: none; /* Oculta tabla */
+  }
+
+  .card-container {
+    display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .card-container {
+    display: none; /* Oculta tarjetas en desktop */
+  }
+}
+
+.card-item {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-photo {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-right: 12px;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #143E42;
+}
+
+.card-subinfo {
+  font-size: 14px;
+  color: #555;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.card-btn-view,
+.card-btn-edit {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.card-btn-view {
+  color: #579FA6;
+}
+
+.card-btn-edit {
+  color: #9DAC42;
+}
+

@@ -276,6 +276,38 @@ const ListaPresidenteClub = () => {
           ))}
         </tbody>
       </table>
+      <div className="card-container">
+        {currentItems.map((p) => (
+          <div key={p.id} className="card-item">
+            <img
+              src={getImagenPerfil(p)}
+              alt={`${p.nombre} ${p.apellido}`}
+              className="card-photo"
+            />
+            <div className="card-content">
+              <p className="card-title">{p.nombre} {p.apellido}</p>
+              <p className="card-subinfo">C.I: {p.ci}</p>
+              <div className="card-actions">
+                <button
+                  onClick={() => handleProfileClick(p.id)}
+                  className="card-btn-view"
+                  disabled={p.eliminado === 'S'}
+                >
+                  <RemoveRedEyeIcon />
+                </button>
+                <button
+                  onClick={() => handleEditClick(p.id)}
+                  className="card-btn-edit"
+                  disabled={p.eliminado === 'S'}
+                >
+                  <EditIcon />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="pagination-container">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}

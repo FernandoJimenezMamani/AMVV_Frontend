@@ -275,6 +275,37 @@ const ListaJugadoresAll = () => {
         </tbody>
         
       </table>
+      <div className="card-container">
+        {currentItems.map((jugador) => (
+          <div key={jugador.jugador_id} className="card-item">
+            <img
+              src={getImagenPerfil(jugador)}
+              alt={`${jugador.nombre_persona} ${jugador.apellido_persona}`}
+              className="card-photo"
+            />
+            <div className="card-content">
+              <p className="card-title">{jugador.nombre_persona} {jugador.apellido_persona}</p>
+              <div className="card-actions">
+                <button
+                  onClick={() => handleProfileClick(jugador.persona_id)}
+                  className="card-btn-view"
+                  disabled={jugador.eliminado === 'S'}
+                >
+                  <RemoveRedEyeIcon />
+                </button>
+                <button
+                  onClick={() => handleEditClick(jugador.persona_id)}
+                  className="card-btn-edit"
+                  disabled={jugador.eliminado === 'S'}
+                >
+                  <EditIcon />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="pagination-container">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}

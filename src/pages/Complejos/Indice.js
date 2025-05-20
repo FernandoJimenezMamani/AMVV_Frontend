@@ -184,6 +184,47 @@ const ListaLugar = () => {
           ))}
         </tbody>
       </table>
+      <div className="card-container">
+      {filteredComplejos.map((complejo) => (
+        <div key={complejo.id} className="card-item">
+          <div className="card-content">
+            <p className="card-title">{complejo.nombre}</p>
+            <p className="card-subinfo">{complejo.direccion}</p>
+            <div className="card-actions">
+              <button
+                onClick={() => handleProfileClick(complejo)}
+                className="card-btn-view"
+              >
+                <RemoveRedEyeIcon />
+              </button>
+
+              <button
+                onClick={() => handleEditClick(complejo.id)}
+                className="card-btn-edit"
+              >
+                <EditIcon />
+              </button>
+
+              {campeonatoEnTransaccion && (
+                <label className="user-activation-switch">
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      complejo.eliminado === '1'
+                        ? handleActivateComplejo(complejo.id)
+                        : handleDeleteClick(complejo.id)
+                    }
+                    checked={complejo.eliminado !== '1'}
+                  />
+                  <span className="user-activation-slider"></span>
+                </label>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
       <MapaDetalle 
       isOpen={isMapModalOpen}
       onClose={() => setIsMapModalOpen(false)}

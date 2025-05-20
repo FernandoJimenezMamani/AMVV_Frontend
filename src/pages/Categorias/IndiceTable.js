@@ -215,6 +215,50 @@ const ListaCategorias = () => {
         ))}
       </tbody>
     </table>
+    <div className="card-container">
+      {currentItems.map((categoria) => (
+        <div key={categoria.id} className="card-item">
+          <div className="card-content">
+            <p className="card-title">{categoria.nombre}</p>
+
+            <p className="card-subinfo">
+              Género: {categoria.genero === 'V' ? 'Varones' :
+                      categoria.genero === 'D' ? 'Damas' :
+                      categoria.genero === 'M' ? 'Mixto' : 'No especificado'}
+            </p>
+
+            <p className="card-subinfo">
+              División: {categoria.division === 'MY' ? 'Mayores' :
+                        categoria.division === 'MN' ? 'Menores' : 'No especificado'}
+            </p>
+            <div className="card-actions">
+              <button
+                onClick={() => handleEditClick(categoria.id)}
+                className="card-btn-edit"
+              >
+                <EditIcon />
+              </button>
+
+              {campeonatoEnTransaccion && (
+                <label className="user-activation-switch">
+                  <input
+                    type="checkbox"
+                    onChange={() =>
+                      categoria.eliminado === 'S'
+                        ? handleActivateCategoria(categoria.id)
+                        : handleDeleteClick(categoria.id)
+                    }
+                    checked={categoria.eliminado !== 'S'}
+                  />
+                  <span className="user-activation-slider"></span>
+                </label>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
     <div className="pagination-container">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}

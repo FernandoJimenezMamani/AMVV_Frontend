@@ -280,6 +280,45 @@ const ListaPersonas = () => {
           ))}
         </tbody>
       </table>
+        <div className="card-container">
+          {currentItems.map((p) => (
+            <div key={p.id} className="card-item">
+              <img
+                src={getImagenPerfil(p)}
+                alt={`${p.nombre} ${p.apellido}`}
+                className="card-photo"
+              />
+              <div className="card-content">
+                <p className="card-title">{p.nombre} {p.apellido}</p>
+                <p className="card-subinfo">C.I: {p.ci}</p>
+                <div className="card-actions">
+                  <button
+                    onClick={() => handleEditClick(p.id)}
+                    className="card-btn-edit"
+                    disabled={p.eliminado === 'S'}
+                  >
+                    <EditIcon />
+                  </button>
+
+                  {campeonatoEnTransaccion && (
+                    <label className="user-activation-switch">
+                      <input
+                        type="checkbox"
+                        onChange={() =>
+                          p.eliminado === 'S'
+                            ? handleActivateUser(p.id)
+                            : handleDeleteClick(p.id, p.roles)
+                        }
+                        checked={p.eliminado !== 'S'}
+                      />
+                      <span className="user-activation-slider"></span>
+                    </label>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
       <div className="pagination-container">
         <button

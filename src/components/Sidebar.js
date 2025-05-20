@@ -112,6 +112,15 @@ const Sidebar = () => {
   const hasRole = (...roles) => {
     return user && user.rol && roles.includes(user.rol.nombre);
   }; 
+
+  const handleNavigate = (path) => {
+    navigate(path);
+    if (window.innerWidth <= 768) {
+      setMobileMenuOpen(false);
+    }
+  };
+
+
   
   return (
     <div className="sidebar-layout" >
@@ -182,8 +191,8 @@ const Sidebar = () => {
           {!isSidebarCollapsed && (
             <div className="menu-container">
                 <div className="menu-item">
-                  <a className="main-link" onClick={() => navigate('/ventanaPrincipalUser')}>
-                    <HomeIcon/>    Inicio
+                  <a className="main-link" onClick={() => handleNavigate('/ventanaPrincipalUser')}>
+                    <HomeIcon /> Inicio
                   </a>
                 </div>
               <div className="menu-item">
@@ -193,14 +202,10 @@ const Sidebar = () => {
                     <SportsVolleyballIcon/> Asociación
                 </a>
                 <div className={`submenu ${expandedSection === 'asociacion' ? 'open' : ''}`}>
-                  <Link to="/Campeonatos/Indice">Campeonatos</Link>
-                  <Link to="/clubes/indice">Clubes</Link>
-                  
-                   
-                  <Link to="/categorias/Lista">Categorías</Link>
-                  <Link to="/complejos/Indice">Complejos</Link>
-
-              
+                  <a onClick={() => handleNavigate('/Campeonatos/Indice')}>Campeonatos</a>
+                  <a onClick={() => handleNavigate('/clubes/indice')}>Clubes</a>
+                  <a onClick={() => handleNavigate('/categorias/Lista')}>Categorías</a>
+                  <a onClick={() => handleNavigate('/complejos/Indice')}>Complejos</a>
                 </div>
                 </>
                   )}
@@ -212,11 +217,11 @@ const Sidebar = () => {
                     <PersonIcon/> Miembros
                 </a>
                 <div className={`submenu ${expandedSection === 'usuarios' ? 'open' : ''}`} >
-                  <Link to="/Arbitro/Indice">Árbitros</Link>
-                  <Link to="/Jugadores/Indice">Jugadores</Link>
-                  <Link to="/PresidenteClub/Indice">Presidentes</Link>
-                  <Link to="/DelegadoClub/Indice">Delegados</Link>
-                  <Link to="/Personas/Indice">Usuarios</Link>
+                  <a onClick={() => handleNavigate('/Arbitro/Indice')}>Árbitros</a>
+                  <a onClick={() => handleNavigate('/Jugadores/Indice')}>Jugadores</a>
+                  <a onClick={() => handleNavigate('/PresidenteClub/Indice')}>Presidentes</a>
+                  <a onClick={() => handleNavigate('/DelegadoClub/Indice')}>Delegados</a>
+                  <a onClick={() => handleNavigate('/Personas/Indice')}>Usuarios</a>
                 </div>
                 </>
                  )}
@@ -230,14 +235,14 @@ const Sidebar = () => {
                   <div className={`submenu ${expandedSection === 'traspasos' ? 'open' : ''}`}>
                   {hasRole(rolMapping.PresidenteClub) && (
                     <>
-                      <Link to="/traspasos/TraspasoListaJugadores">Fichar Jugadores</Link>
-                      <Link to="/traspasos/indiceSolicitudesPresidente">Ver solicitudes</Link>
+                        <a onClick={() => handleNavigate('/traspasos/TraspasoListaJugadores')}>Fichar Jugadores</a>
+                        <a onClick={() => handleNavigate('/traspasos/indiceSolicitudesPresidente')}>Ver solicitudes</a>
                       </>
                     )}
                     {hasRole(rolMapping.Jugador) && (
                       <>
-                        <Link to="/traspasos/TraspasoListaClubes">Cambiar de club</Link>
-                        <Link to="/traspasos/indice">Ver solicitudes</Link>
+                        <a onClick={() => handleNavigate('/traspasos/TraspasoListaClubes')}>Cambiar de club</a>
+                        <a onClick={() => handleNavigate('/traspasos/indice')}>Ver solicitudes</a>
                       </>
                     )}
                   </div>
@@ -247,21 +252,24 @@ const Sidebar = () => {
 
                 <div className="menu-item">
                 {hasRole( rolMapping.Tesorero) && (
-                  <a className={`main-link ${!campeonatoEnTransaccion ? 'disabled-link' : ''}`} onClick={() => navigate('/pagos/tipos')}>
+                  <a
+                    className={`main-link ${!campeonatoEnTransaccion ? 'disabled-link' : ''}`}
+                    onClick={() => handleNavigate('/pagos/tipos')}
+                  >
                     <MonetizationOnIcon /> Pagos
                   </a>
                   )}
                 </div>
                 <div className="menu-item">
                 {hasRole( rolMapping.Jugador) && (
-                  <a className="main-link" onClick={() => navigate('/partidos/jugador')}>
+                  <a className="main-link" onClick={() => handleNavigate('/partidos/jugador')}>
                     <SportsVolleyballIcon /> Mis Partidos
                   </a>
                   )}
                 </div>
                 <div className="menu-item">
                 {hasRole( rolMapping.Arbitro) && (
-                  <a className="main-link" onClick={() => navigate('/partidos/arbitro')}>
+                  <a className="main-link" onClick={() => handleNavigate('/partidos/arbitro')}>
                     <SportsVolleyballIcon /> Mis Partidos
                   </a>
                   )}
@@ -277,8 +285,8 @@ const Sidebar = () => {
                       <MonetizationOnIcon /> Historial de Pagos
                     </a>
                     <div className={`submenu ${expandedSection === 'historial' ? 'open' : ''}`}>
-                      <Link to={`/pagos/historialClubTraspaso/${user.id}`}>Traspasos</Link>
-                      <Link to={`/pagos/historialClubInscripcion/${user.id}`}>Inscripción</Link>
+                     <a onClick={() => handleNavigate(`/pagos/historialClubTraspaso/${user.id}`)}>Traspasos</a>
+                     <a onClick={() => handleNavigate(`/pagos/historialClubInscripcion/${user.id}`)}>Inscripción</a>
                     </div>
                   </>
                 )}
@@ -286,7 +294,15 @@ const Sidebar = () => {
             </div>
           )}
           <div className="mi-cuenta-container ">
-            <button className="mi-cuenta-btn" onClick={() => handleProfileClick(user.id)}>
+            <button
+              className="mi-cuenta-btn"
+              onClick={() => {
+                handleProfileClick(user.id);
+                if (window.innerWidth <= 768) {
+                  setMobileMenuOpen(false);
+                }
+              }}
+            >
               <i className="fas fa-user-circle"></i> Mi cuenta
             </button>
           </div>

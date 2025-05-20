@@ -260,6 +260,22 @@ const ListaArbitro = () => {
           ))}
         </tbody>
       </table>
+      <div className="card-container">
+        {currentItems.map((p) => (
+          <div key={p.id} className="card-item">
+            <img src={getImagenPerfil(p)} className="card-photo" />
+            <div className="card-content">
+              <p className="card-title">{p.nombre} {p.apellido}</p>
+              <p className="card-subinfo">C.I: {p.ci}</p>
+              <div className="card-actions">
+                <button onClick={() => handleProfileClick(p.id)} className="card-btn-view"><RemoveRedEyeIcon /></button>
+                <button onClick={() => handleEditClick(p.id)} className="card-btn-edit"><EditIcon /></button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="pagination-container">
         <button
           onClick={() => setCurrentPage(currentPage - 1)}

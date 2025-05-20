@@ -207,6 +207,50 @@ const ListaClubes = () => {
           ))}
         </tbody>
       </table>
+        <div className="card-container">
+          {currentItems.map((club) => (
+            <div key={club.id} className="card-item">
+              <img src={getImagenClub(club)} className="card-photo" alt={`Logo de ${club.nombre}`} />
+              <div className="card-content">
+                <p className="card-title">{club.nombre}</p>
+                <div className="card-actions">
+                  <button
+                    onClick={() => handleProfileClick(club.id)}
+                    className="card-btn-view"
+                  >
+                    <RemoveRedEyeIcon />
+                  </button>
+
+                  {hasRole(rolMapping.PresidenteAsociacion) && (
+                    <>
+                      <button
+                        onClick={() => handleEditClick(club.id)}
+                        className="card-btn-edit"
+                      >
+                        <EditIcon />
+                      </button>
+
+                      {campeonatoEnTransaccion && (
+                        <label className="user-activation-switch">
+                          <input
+                            type="checkbox"
+                            onChange={() =>
+                              club.eliminado === 'S'
+                                ? handleActivateClub(club.id)
+                                : handleDeleteClick(club.id)
+                            }
+                            checked={club.eliminado !== 'S'}
+                          />
+                          <span className="user-activation-slider"></span>
+                        </label>
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
       <div className="pagination-container">
         <button
