@@ -275,7 +275,7 @@ const EditarPresidente = ({ isOpen, onClose, presidenteId, onPresidenteUpdated }
                 <Option
                 key={club.id}
                 value={club.id}
-                disabled={club.presidente_asignado === 'S'} 
+                disabled={club.presidente_asignado && club.presidente_asignado === 'S'}
               >
                 {club.nombre}
               </Option>

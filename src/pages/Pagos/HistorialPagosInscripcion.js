@@ -6,7 +6,10 @@ import '../../assets/css/IndiceTabla.css';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DetallePagoInscripcion from './DetallePagoInscripcion';
 import Club_defecto from '../../assets/img/Club_defecto.png';
-
+import ConfirmModal from '../../components/ConfirmModal';
+import estadosMapping from '../../constants/campeonatoEstados';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const HistorialPagosInscripcion = () => {
@@ -16,14 +19,19 @@ const HistorialPagosInscripcion = () => {
   const [searchClub, setSearchClub] = useState('');
   const [showFormModal, setShowFormModal] = useState(false);
   const [selectedEquipoId, setSelectedEquipoId] = useState(null);
-
+  const [estadoCampeonatoSeleccionado, setEstadoCampeonatoSeleccionado] = useState(null);
+  const [pagoSeleccionado, setPagoSeleccionado] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const { user } = useSession();
   useEffect(() => {
     const fetchCampeonatos = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
         setCampeonatos(response.data);
         if (response.data.length > 0) {
-          setSelectedCampeonato(response.data[0].id);
+          const primerCampeonato = response.data[0];
+          setSelectedCampeonato(primerCampeonato.id);
+          setEstadoCampeonatoSeleccionado(primerCampeonato.estado);
         }
       } catch (error) {
         toast.error('Error al obtener campeonatos');
@@ -90,6 +98,46 @@ const HistorialPagosInscripcion = () => {
     const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)); // mes empieza en 0
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   };
+
+  const handleRevertirClick = (pago) => {
+  setPagoSeleccionado(pago);
+  setShowConfirmModal(true);
+  };
+
+  const confirmarReversion = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+
+      const data = {
+        pago_id: pagoSeleccionado.id,
+        equipo_id: pagoSeleccionado.equipoId,
+        monto: pagoSeleccionado.monto,
+        fecha: pagoSeleccionado.fecha,
+        referencia: pagoSeleccionado.referencia,
+        campeonatoId: pagoSeleccionado.campeonatoId,
+        userId
+      };
+
+      await axios.post(`${API_BASE_URL}/pagos/revertir-inscripcion`, data);
+      toast.success("✅ Reversión de inscripción realizada correctamente");
+      setShowConfirmModal(false);
+      fetchPagosInscripcion(); // refrescar
+    } catch (error) {
+      console.error('❌ Error al revertir inscripción:', error);
+      toast.error("Error al revertir inscripción");
+      setShowConfirmModal(false);
+    }
+  };
+
+   const handleCampeonatoChange = (id) => {
+    const campeonato = campeonatos.find(c => c.id === id);
+    setSelectedCampeonato(id);
+    setEstadoCampeonatoSeleccionado(campeonato?.estado ?? null);
+  };
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
   return (
     <div className="table-container">
       <h2 className="table-title">Historial de Pagos de Inscripción</h2>
@@ -104,7 +152,7 @@ const HistorialPagosInscripcion = () => {
       <Select
             className="filter-select"
             value={selectedCampeonato ?? undefined} // evita pasar null como value
-            onChange={setSelectedCampeonato}
+            onChange={handleCampeonatoChange}
             style={{ width: 250, marginBottom: '0px' }}
             >
 
@@ -150,6 +198,12 @@ const HistorialPagosInscripcion = () => {
                 <td className="table-td">{formatFechaLarga(pago.fecha)}</td>
                 <td className="table-td">
                 <button className="table-button button-view"  onClick={() => handleRegistrarClick(pago.equipoId)}><RemoveRedEyeIcon/></button>
+                {estadoCampeonatoSeleccionado === estadosMapping.transaccionProceso && hasRole(rolMapping.PresidenteAsociacion) && (
+                  <button className="table-button button-delete" onClick={() => handleRevertirClick(pago)}>
+                    Revertir
+                  </button>
+                )}
+
               </td>
               </tr>
             ))
@@ -158,6 +212,13 @@ const HistorialPagosInscripcion = () => {
           )}
         </tbody>
       </table>
+      <ConfirmModal
+        visible={showConfirmModal}
+        onConfirm={confirmarReversion}
+        onCancel={() => setShowConfirmModal(false)}
+        message="¿Estás seguro de que deseas revertir este pago de inscripción? Esta acción no se puede deshacer."
+      />
+
     </div>
   );
 };

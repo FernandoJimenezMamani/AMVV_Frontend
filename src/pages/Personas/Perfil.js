@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ChangePasswordModal from '../CambiarContrasenia';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EditarPerfilPersona from './EditarPerfil';
-
+import rolMapping from '../../constants/roles';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const PerfilJugador = () => {
@@ -83,7 +83,9 @@ const PerfilJugador = () => {
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
- 
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
   return (
     <div className="perfil-jugador">
       <ChangePasswordModal 
@@ -101,10 +103,11 @@ const PerfilJugador = () => {
       />
       <div className="perfil-jugador-header">
         <h2>Mi Perfil</h2>
+        {hasRole(rolMapping.PresidenteAsociacion) && (
         <button onClick={handleEditProfile} className="editar-perfil-boton">
           Editar perfil <EditIcon />
         </button>
-
+        )}
           <button onClick={() => setIsModalOpen(true)} className="editar-perfil-boton">Cambiar Contraseña <EditIcon/></button>
           <button onClick={handleLogout} className="cerrar-sesion-boton">Cerrar Sesión <LogoutIcon/></button>
       </div>

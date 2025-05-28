@@ -94,7 +94,14 @@ const DashboardProgresoPartidos = () => {
     navigate(`/reportes/IndiceGeneral`);
   };
   
+  const handleVerHistorialTraspasos = () => {
+      navigate(`/pagos/HistorialTraspasos`);
+    };
 
+    const handleVerHistorialInscripcion = () => {
+      navigate(`/pagos/HistorialInscripcion`);
+    };
+    
   const calcularProgresoTiempo = (data) => {
     if (!data || !data.fecha_inicio_campeonato || !data.fecha_fin_campeonato) return;
 
@@ -306,6 +313,8 @@ const DashboardProgresoPartidos = () => {
 
         <div className="report-button-container">
         <button className="boton-reportes" type="primary" onClick={handleVerReportes}><SummarizeIcon/> Ver Otros Reportes</button>
+        <button className="boton-reportes" type="primary" onClick={handleVerHistorialTraspasos}><HistoryIcon/> Ver Historial de Traspasos</button>
+        <button className="boton-reportes" type="primary" onClick={handleVerHistorialInscripcion}><HistoryIcon/> Ver Historial de Inscripciones</button>
         </div>
     </div>
   );

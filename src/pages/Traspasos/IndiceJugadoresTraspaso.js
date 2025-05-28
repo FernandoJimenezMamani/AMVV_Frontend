@@ -121,7 +121,7 @@ const ListaJugadoresTraspaso = () => {
     try {
 
       await axios.post(`${API_BASE_URL}/traspaso/crear`, {
-        jugador_id: jugadorToFichar.jugador_id,
+        jugador_id: jugadorToFichar.persona_id,
         club_origen_id: jugadorToFichar.club_id, 
         club_destino_id: presidente.club_presidente, 
         presidente_club_id_destino : presidente.id_presidente

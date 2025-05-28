@@ -100,7 +100,13 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
   };
 
   useEffect(() => {
-    const fetchClubes = async () => {
+    if (isOpen) {
+      fetchClubes();
+    }
+  }, [isOpen]);
+
+
+  const fetchClubes = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/club/get_club`);
         
@@ -112,9 +118,6 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
         console.error('Error al obtener los clubes:', error);
       }
     };
-
-    fetchClubes();
-  }, []);
 
   useEffect(() => {
     // Carga de clubes específicos para presidente

@@ -10,7 +10,10 @@ import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import Club_defecto from '../../assets/img/Club_defecto.png';
 import { Select } from 'antd';
 import DetallePagoTraspaso from './DetallePagoTraspaso';
-
+import ConfirmModal from '../../components/ConfirmModal';
+import estadosMapping from '../../constants/campeonatoEstados';
+import { useSession } from '../../context/SessionContext';
+import rolMapping from '../../constants/roles';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const HistorialPagosTraspaso = () => {
@@ -19,23 +22,29 @@ const HistorialPagosTraspaso = () => {
   const [selectedTraspasoId, setSelectedTraspasoId] = useState(null);
   const [selectedCampeonato, setSelectedCampeonato] = useState(null);
   const [campeonatos, setCampeonatos] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [traspasoSeleccionado, setTraspasoSeleccionado] = useState(null);
+  const [estadoCampeonatoSeleccionado, setEstadoCampeonatoSeleccionado] = useState(null);
+  const { user } = useSession();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCampeonatos = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
-        setCampeonatos(response.data);
-        if (response.data.length > 0) {
-          setSelectedCampeonato(response.data[0].id);
-        }
-      } catch (error) {
-        toast.error('Error al obtener campeonatos');
-        console.error('Error al obtener campeonatos:', error);
+  const fetchCampeonatos = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/campeonatos/select`);
+      setCampeonatos(response.data);
+      if (response.data.length > 0) {
+        const primerCampeonato = response.data[0];
+        setSelectedCampeonato(primerCampeonato.id);
+        setEstadoCampeonatoSeleccionado(primerCampeonato.estado); // 👈 aquí
       }
-    };
+    } catch (error) {
+      toast.error('Error al obtener campeonatos');
+      console.error('Error al obtener campeonatos:', error);
+    }
+  };
 
-    fetchCampeonatos();
+  fetchCampeonatos();
   }, []);
 
   useEffect(() => {
@@ -84,7 +93,44 @@ const HistorialPagosTraspaso = () => {
     }
     return Club_defecto;
   };
-  
+
+  const handleRevertirClick = (traspaso) => {
+  setTraspasoSeleccionado(traspaso);
+  setShowConfirmModal(true);
+  };
+
+  const confirmarReversion = async () => {
+    try {
+      if (!traspasoSeleccionado) return;
+
+      const userId = localStorage.getItem('userId'); // o desde context, según tu implementación
+
+      const data = {
+        ...traspasoSeleccionado,
+        userId
+      };
+
+      await axios.post(`${API_BASE_URL}/pagos/revertir-traspaso`, data);
+      toast.success('✅ Traspaso revertido correctamente');
+      setShowConfirmModal(false);
+      fetchClubes(); // refrescar tabla
+    } catch (error) {
+      console.error('Error al revertir traspaso:', error);
+      toast.error('❌ Error al revertir el traspaso');
+      setShowConfirmModal(false);
+    }
+  };
+
+  const handleCampeonatoChange = (id) => {
+    const campeonato = campeonatos.find(c => c.id === id);
+    setSelectedCampeonato(id);
+    setEstadoCampeonatoSeleccionado(campeonato?.estado ?? null);
+  };
+
+  const hasRole = (...roles) => {
+    return user && user.rol && roles.includes(user.rol.nombre);
+  }; 
+
   return (
     <div className="table-container">
       <h2 className="table-title">Historial de Traspasos</h2>
@@ -97,7 +143,7 @@ const HistorialPagosTraspaso = () => {
         <div className="table-filters">
         <Select
                   value={selectedCampeonato ?? undefined} 
-                  onChange={setSelectedCampeonato}
+                  onChange={handleCampeonatoChange}
                   style={{ width: 250, marginBottom: '0px' }}
                   className="filter-select"
                   >
@@ -154,12 +200,28 @@ const HistorialPagosTraspaso = () => {
                 </td>
               <td className="table-td">
                 <button className="table-button button-view"  onClick={() => handleRegistrarClick(traspaso.traspaso_id)}><RemoveRedEyeIcon/></button>
+                {estadoCampeonatoSeleccionado === estadosMapping.transaccionProceso &&
+                  hasRole(rolMapping.PresidenteAsociacion) && (
+                    <button
+                      className="table-button button-delete"
+                      onClick={() => handleRevertirClick(traspaso)}
+                    >
+                      Revertir
+                    </button>
+                  )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <ConfirmModal
+        visible={showConfirmModal}
+        onConfirm={confirmarReversion}
+        onCancel={() => setShowConfirmModal(false)}
+        message="¿Estás seguro de que deseas revertir este traspaso? Esta acción no se puede deshacer."
+      />
     </div>
+    
   );
 };
 

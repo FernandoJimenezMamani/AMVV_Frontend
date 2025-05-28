@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import "../../assets/css/Reportes/DashboardMonitoreoEquipos.css";
 import SummarizeIcon from '@mui/icons-material/Summarize';
 import {  useNavigate } from 'react-router-dom';
-
+import HistoryIcon from '@mui/icons-material/History';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL
 const DashboardMonitoreoEquipos = () => {
@@ -111,6 +111,14 @@ const DashboardMonitoreoEquipos = () => {
 
     const handleVerReportes = () => {
       navigate(`/reportes/IndiceGeneral`);
+    };
+
+    const handleVerHistorialTraspasos = () => {
+      navigate(`/pagos/HistorialTraspasos`);
+    };
+
+    const handleVerHistorialInscripcion = () => {
+      navigate(`/pagos/HistorialInscripcion`);
     };
   
   return (
@@ -230,6 +238,8 @@ const DashboardMonitoreoEquipos = () => {
       )}
       <div className="report-button-container">
         <button className="boton-reportes" type="primary" onClick={handleVerReportes}><SummarizeIcon/> Ver Otros Reportes</button>
+        <button className="boton-reportes" type="primary" onClick={handleVerHistorialTraspasos}><HistoryIcon/> Ver Historial de Traspasos</button>
+        <button className="boton-reportes" type="primary" onClick={handleVerHistorialInscripcion}><HistoryIcon/> Ver Historial de Inscripciones</button>
         </div>
     </div>
   );
