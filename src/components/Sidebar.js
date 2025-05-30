@@ -229,8 +229,18 @@ const Sidebar = () => {
               <div className="menu-item">
               {hasRole(rolMapping.PresidenteClub,rolMapping.Jugador) && (
                  <>
-                  <a className={`main-link ${expandedSection === 'traspasos' ? 'active' : ''}`} onClick={() => toggleSection('traspasos')} ref={sidebarRef}>
-                      <ChangeCircleIcon/> Traspasos
+                 <a
+                    className={`main-link ${expandedSection === 'traspasos' ? 'active' : ''} ${!campeonatoEnTransaccion ? 'disabled-link' : ''}`}
+                    onClick={(e) => {
+                      if (!campeonatoEnTransaccion) {
+                        e.preventDefault();
+                        return;
+                      }
+                      toggleSection('traspasos');
+                    }}
+                    ref={sidebarRef}
+                  >
+                    <ChangeCircleIcon /> Traspasos
                   </a>
                   <div className={`submenu ${expandedSection === 'traspasos' ? 'open' : ''}`}>
                   {hasRole(rolMapping.PresidenteClub) && (
