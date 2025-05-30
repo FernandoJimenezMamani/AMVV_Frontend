@@ -15,7 +15,7 @@ import { Select } from 'antd';
 import defaultUserMenIcon from '../../assets/img/Default_Imagen_Men.webp';
 import defaultUserWomenIcon from '../../assets/img/Default_Imagen_Women.webp';
 import { useCampeonato } from '../../context/CampeonatoContext';
-
+import rolMapping from '../../constants/roles';
 const { Option } = Select;
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -262,18 +262,18 @@ const ListaPersonas = () => {
                 >
                   <EditIcon />
                 </button>
-                {(campeonatoEnTransaccion &&
-                  <label className="user-activation-switch">
-                  <input
-                    type="checkbox"
-                    onChange={() =>
-                      p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id,p.roles)
-                    }
-                    checked={p.eliminado !== 'S'} // Marcado si no está eliminado
-                  />
-                  <span className="user-activation-slider"></span>
-                </label>
-                )}
+                 {campeonatoEnTransaccion && !p.roles.includes(rolMapping.PresidenteAsociacion) && (
+                    <label className="user-activation-switch">
+                      <input
+                        type="checkbox"
+                        onChange={() =>
+                          p.eliminado === 'S' ? handleActivateUser(p.id) : handleDeleteClick(p.id,p.roles)
+                        }
+                        checked={p.eliminado !== 'S'}
+                      />
+                      <span className="user-activation-slider"></span>
+                    </label>
+                  )}
               </td>
 
             </tr>
@@ -300,7 +300,7 @@ const ListaPersonas = () => {
                     <EditIcon />
                   </button>
 
-                  {campeonatoEnTransaccion && (
+                  {campeonatoEnTransaccion && !p.roles.includes(rolMapping.PresidenteAsociacion) && (
                     <label className="user-activation-switch">
                       <input
                         type="checkbox"

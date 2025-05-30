@@ -7,7 +7,7 @@ import { ClockCircleOutlined, CheckCircleOutlined, ExclamationCircleOutlined } f
 import "../../assets/css/Reportes/DashboardProgresoPartidos.css";
 import {  useNavigate } from 'react-router-dom';
 import SummarizeIcon from '@mui/icons-material/Summarize';
-
+import HistoryIcon from '@mui/icons-material/History';
 const { Option } = Select;
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL

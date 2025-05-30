@@ -358,6 +358,13 @@ const EditarPersona = ({ isOpen, onClose, personaId, onPersonaUpdated }) => {
           <Option value={(roleNames.Arbitro)}>Árbitro</Option>
           <Option value={(roleNames.Jugador)}>Jugador</Option>
           <Option
+            value={roleNames.PresidenteAsociacion}
+            disabled={formData.roles.includes(roleNames.PresidenteAsociacion)}
+          >
+            Presidente de Asociación
+          </Option>
+
+          <Option
             value={roleNames.PresidenteClub}
             disabled={disabledRoles.includes(roleNames.PresidenteClub)}
           >
