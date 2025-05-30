@@ -221,7 +221,7 @@ const Sidebar = () => {
                   <a onClick={() => handleNavigate('/Jugadores/Indice')}>Jugadores</a>
                   <a onClick={() => handleNavigate('/PresidenteClub/Indice')}>Presidentes</a>
                   <a onClick={() => handleNavigate('/DelegadoClub/Indice')}>Delegados</a>
-                  <a onClick={() => handleNavigate('/Personas/Indice')}>Usuarios</a>
+                  <a onClick={() => handleNavigate('/Personas/Indice')}>Todos</a>
                 </div>
                 </>
                  )}

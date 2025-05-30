@@ -15,7 +15,6 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
-  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -28,11 +27,13 @@
 }
 
 .campeonato-card {
+  flex: 1 1 calc(50% - 20px);
   background: linear-gradient(to bottom, #507788, #141e22);
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  width: 700px; /* Aumentar el ancho del card */
+  width: 500px; /* Aumentar el ancho del card */
+  min-width: 500px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más marcada */
   flex: 1 1 calc(33% - 20px); /* Ajustar para pantallas grandes */
   max-width: 700px;
