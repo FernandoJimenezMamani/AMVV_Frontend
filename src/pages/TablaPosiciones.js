@@ -132,8 +132,8 @@ const ListaEquipos = () => {
   };
 
   const getImagenClub = (club) => {
-    if (club.club_imagen) {
-      return club.club_imagen; 
+    if (club.escudo) {
+      return club.escudo; 
     }
     return Club_defecto;
   };

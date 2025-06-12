@@ -241,8 +241,8 @@ const MisSolicitudes = () => {
   };
 
   const getImagenPerfil = (persona) => {
-    if (persona.persona_imagen) {
-      return persona.persona_imagen; 
+    if (persona.imagen_persona) {
+      return persona.imagen_persona; 
     }
     return persona.persona_genero === 'V' ? defaultUserMenIcon : defaultUserWomenIcon; 
   };

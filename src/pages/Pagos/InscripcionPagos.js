@@ -54,8 +54,8 @@ const ListaEquiposPagos = () => {
   }
 
   const getImagenClub = (club) => {
-    if (club.club_imagen) {
-      return club.club_imagen; 
+    if (club.imagen_club) {
+      return club.imagen_club; 
     }
     return Club_defecto;
   };
