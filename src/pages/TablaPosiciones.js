@@ -34,6 +34,9 @@ const ListaEquipos = () => {
       if (categoriaActual && categoriaActual.es_ascenso === 'S') {
         setCategoriaAscenso(true);
       }
+      else{
+        setCategoriaAscenso(false);
+      }
     } catch (error) {
       toast.error('Error al obtener el título');
       console.error('Error al obtener el título:', error);
@@ -43,8 +46,7 @@ const ListaEquipos = () => {
   // Función para obtener los equipos (tabla de posiciones)
   const fetchEquipos = useCallback(async () => {
     try {
-      const incluir = categoriaAscenso ? 'true' : 'false';
-      const response = await axios.get(`${API_BASE_URL}/campeonatos/get_campeonato_posiciones/${campeonatoId}/${categoriaId}/${incluir}`);
+      const response = await axios.get(`${API_BASE_URL}/campeonatos/get_campeonato_posiciones/${campeonatoId}/${categoriaId}/${categoriaAscenso}`);
       
       setEquipos(response.data);
       fetchMarcadoresVivos();

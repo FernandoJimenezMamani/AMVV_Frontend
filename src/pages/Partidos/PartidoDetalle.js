@@ -270,7 +270,12 @@ const PartidoDetalle = () => {
       console.error("Error en la simulación de reprogramación:", error);
     }
   };
-
+  const isPartidoDatePassed = () => {
+    if (!partido?.fecha) return false;
+    const partidoDate = new Date(partido.fecha);
+    const now = new Date();
+    return now > partidoDate;
+  };
   const handleOpenConfirmModal = () => {
     setIsConfirmModalOpen(true);
   };
@@ -374,8 +379,10 @@ const PartidoDetalle = () => {
         campeonato.estado === estadosCampeonatoMapping.campeonatoFinalizado)
       ) && (
         <button
-          className="resultado-button"
-          onClick={() => handlePartidoClick(partidoId)}
+          className={`resultado-button ${!isPartidoDatePassed() ? 'disabled-button' : ''}`}
+          onClick={isPartidoDatePassed() ? () => handlePartidoClick(partidoId) : null}
+          disabled={!isPartidoDatePassed()}
+          title={!isPartidoDatePassed() ? "El partido aún no ha comenzado" : ""}
         >
           {partido && partido.estado === estadosPartidoCampMapping.Finalizado ? (
             <span>Actualizar Resultado <AssignmentIcon /></span>
