@@ -1,10 +1,8 @@
-# AMVV
+# AMVV Frontend
 
-#Añadir esta variable de entorno para completar el endpoint
-
-REACT_APP_API_BASE_URL=http://localhost:5002/api
-REACT_APP_WEBSOCKET_URL =ws://localhost:5002
-DISABLE_ESLINT_PLUGIN=true
+## Desarrollo Normal (Sin Docker)
+npm install
+npm start
 
 # Eslint Comando
 
@@ -18,7 +16,19 @@ npx eslint src/pages/Partidos/RegistrarResultado.js --fix
 
 npx prettier --write src/pages/Partidos/PartidoDetalle.js
 
-# .env
+# DOCKER
+
+# Primera vez
+docker-compose up --build
+
+# Iniciar  
+docker-compose up
+
+# Detener
+docker-compose down
+
+# Ver logs
+docker-compose logs -f
 
 
 
