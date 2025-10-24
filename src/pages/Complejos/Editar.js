@@ -44,15 +44,15 @@ const EditarComplejo = ({ isOpen, onClose, complejoId, onComplejoUpdated }) => {
   }, [complejoId]);
 
   const handleLocationSelect = (lat, lng, address) => {
-    setFormData((prevData) => ({
+    setFormData(prevData => ({
       ...prevData,
-      latitud: lat,
-      longitud: lng,
+      latitud: lat.toString(),  // Convertir a string
+      longitud: lng.toString(), // Convertir a string
       direccion: address,
     }));
-    closeMapModal();
+    closeMapModal(); // Mover closeMapModal aquí dentro
   };
-
+  
   const openMapModal = () => setMapModalOpen(true);
   const closeMapModal = () => setMapModalOpen(false);
 

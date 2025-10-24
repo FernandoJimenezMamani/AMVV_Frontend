@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import axios from 'axios';
@@ -17,42 +17,46 @@ L.Icon.Default.mergeOptions({
 Modal.setAppElement('#root');
 
 const MapModal = ({ isOpen, onClose, onLocationSelect, latitud, longitud }) => {
+  const defaultLat = -17.396019;
+  const defaultLng = -66.155891;
+ 
+  const [position, setPosition] = useState([defaultLat, defaultLng]);
+  const [address, setAddress] = useState('');
+  const [mapReady, setMapReady] = useState(false);
+  const mapRef = useRef(null);
+
   const parseCoordinate = (value, fallback) => {
-  const num = parseFloat(value);
-  return isNaN(num) ? fallback : num;
+    if (value === null || value === undefined || value === '') return fallback;
+    const num = parseFloat(value);
+    return isNaN(num) ? fallback : num;
   };
 
-  const [position, setPosition] = useState([
-    parseCoordinate(latitud),
-    parseCoordinate(longitud)
-  ]);
-
-  const [address, setAddress] = useState('');
-  const mapRef = useRef(null);  // Referencia al mapa
 
   useEffect(() => {
-    if (latitud && longitud) {
-      setPosition([latitud, longitud]);
-      reverseGeocode(latitud, longitud);
-    }
-  }, [latitud, longitud]);
+    if (isOpen) {
+      const initialLat = parseCoordinate(latitud, defaultLat);
+      const initialLng = parseCoordinate(longitud, defaultLng);
+      setPosition([initialLat, initialLng]);
 
-  useEffect(() => {
-    // Esperar a que el mapa esté listo para centrarlo correctamente
-    if (mapRef.current && latitud && longitud) {
-      mapRef.current.setView([latitud, longitud], 13);
+      if (latitud && longitud) {
+        reverseGeocode(initialLat, initialLng);
+      }
     }
-  }, [isOpen]);  // Cuando el modal se abre, centramos el mapa
+  }, [isOpen, latitud, longitud]);
 
-  // Geocodificación inversa para obtener la dirección
   const reverseGeocode = async (lat, lng) => {
     try {
       const response = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`,
+        {
+          headers: {
+            'Accept-Language': 'es',
+          },
+          timeout: 10000
+        }
       );
       const address = response.data.display_name;
       setAddress(address);
-      onLocationSelect(lat, lng, address);  // Pasar dirección al padre
     } catch (error) {
       console.error('Error al obtener la dirección:', error);
       setAddress('Dirección no disponible');
@@ -60,51 +64,77 @@ const MapModal = ({ isOpen, onClose, onLocationSelect, latitud, longitud }) => {
   };
 
   const MapClickHandler = () => {
-    const map = useMap();
-
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
         setPosition([lat, lng]);
         reverseGeocode(lat, lng);
-        map.setView([lat, lng], map.getZoom());
       },
     });
-    return position ? <Marker position={position}></Marker> : null;
+    return null;
+  };
+
+  const handleConfirmLocation = () => {
+    if (position[0] && position[1]) {
+      onLocationSelect(position[0], position[1], address);
+      onClose();
+    }
+  };
+
+  const handleClose = () => {
+    setMapReady(false);
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
       contentLabel="Seleccionar Ubicación"
       className="map-modal"
       overlayClassName="overlay"
+      shouldCloseOnOverlayClick={true}
     >
       <h2 className="map-title">Seleccionar Ubicación</h2>
 
+
       <div className="map-container">
-        <MapContainer
-          center={position}
-          zoom={13}
-          style={{ height: '100%', width: '100%' }}
-          whenCreated={(mapInstance) => (mapRef.current = mapInstance)}  // Asignar referencia
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
-          <MapClickHandler />
-        </MapContainer>
+        {isOpen && (
+          <MapContainer
+            center={position}
+            zoom={13}
+            style={{ height: '100%', width: '100%' }}
+            whenReady={() => setMapReady(true)}
+            key={JSON.stringify(position)} // Forzar re-render cuando cambia la posición
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <MapClickHandler />
+            {position && <Marker position={position} />}
+          </MapContainer>
+        )}
       </div>
+
 
       <div className="address-display">
         <p><strong>Dirección:</strong> {address || 'Selecciona una ubicación en el mapa'}</p>
+        <p><strong>Coordenadas:</strong> {position[0]?.toFixed(6)}, {position[1]?.toFixed(6)}</p>
       </div>
 
+
       <div className="form-buttons">
-        <button className="button button-cancel" onClick={onClose}>
-          Cerrar
+        <button type="button" className="button button-cancel" onClick={handleClose}>
+          Cancelar
+        </button>
+        <button
+          type="button"
+          className="button button-primary"
+          onClick={handleConfirmLocation}
+          disabled={!position[0] || !position[1]}
+        >
+          Confirmar Ubicación
         </button>
       </div>
     </Modal>

@@ -112,6 +112,8 @@ const RegistroComplejo = ({ isOpen, onClose, onComplejoCreated }) => {
         isOpen={mapModalOpen}
         onClose={closeMapModal}
         onLocationSelect={handleLocationSelect}
+        latitud={latitud}
+        longitud={longitud}
       />
     </Modal>
     );
