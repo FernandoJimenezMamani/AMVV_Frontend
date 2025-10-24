@@ -150,6 +150,7 @@ const ListaCategorias = () => {
           <th className="table-th">Edad Minima</th>
           <th className="table-th">Edad Maxima</th>
           <th className="table-th">Costo de traspaso</th>
+          <th className="table-th">Costo de inscripción</th>
           <th className="table-th">Acción</th>
         </tr>
       </thead>
@@ -186,6 +187,12 @@ const ListaCategorias = () => {
             <td className="table-td table-td-name">
               {categoria.costo_traspaso !== null && categoria.costo_traspaso !== undefined 
                 ? categoria.costo_traspaso 
+                : 'No especificado'}
+            </td>
+
+            <td className="table-td table-td-name">
+              {categoria.costo_inscripcion !== null && categoria.costo_inscripcion !== undefined 
+                ? categoria.costo_inscripcion 
                 : 'No especificado'}
             </td>
 
